@@ -5,6 +5,7 @@ import Loader from "./components/Loader"
 import ToneToggle from "./components/ToneToggle"
 import History from "./components/History"
 import SurpriseButton from "./components/SurpriseButton"
+import ThemeToggle from "./components/ThemeToggle"
 import { getExplanation } from "./services/gemini"
 
 function App() {
@@ -18,10 +19,18 @@ function App() {
     const saved = localStorage.getItem("curioo-favorites")
     return saved ? JSON.parse(saved) : []
   })
+  const [dark, setDark] = useState(() => {
+    return localStorage.getItem("curioo-theme") === "dark"
+  })
 
   useEffect(() => {
     localStorage.setItem("curioo-favorites", JSON.stringify(favorites))
   }, [favorites])
+
+  useEffect(() => {
+    document.documentElement.classList.toggle("dark", dark)
+    localStorage.setItem("curioo-theme", dark ? "dark" : "light")
+  }, [dark])
 
   const handleExplain = async (customTopic) => {
     const searchTopic = customTopic || topic
@@ -48,9 +57,11 @@ function App() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-blue-50 to-white px-4 py-10">
-      <h1 className="text-4xl font-bold text-center text-gray-800 mb-2">🔍 Curioo</h1>
-      <p className="text-center text-gray-500 mb-8">Understand how anything really works</p>
+    <div className="min-h-screen bg-gradient-to-b from-blue-50 to-white dark:from-gray-900 dark:to-gray-950 px-4 py-10 transition-colors duration-300">
+      <ThemeToggle dark={dark} setDark={setDark} />
+
+      <h1 className="text-4xl font-bold text-center text-gray-800 dark:text-gray-100 mb-2">🔍 Curioo</h1>
+      <p className="text-center text-gray-500 dark:text-gray-400 mb-8">Understand how anything really works</p>
 
       <div className="flex items-center justify-center gap-3 mt-3">
         <SurpriseButton onPick={(picked) => { setTopic(picked); handleExplain(picked) }} />
