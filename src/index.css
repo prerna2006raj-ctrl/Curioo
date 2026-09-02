@@ -1,6 +1,42 @@
 @import "tailwindcss";
 @custom-variant dark (&:where(.dark, .dark *));
 
+@theme {
+  --font-display: "Space Grotesk", sans-serif;
+  --font-body: "Lora", Georgia, serif;
+
+  --color-paper: #faf8f2;
+  --color-panel: #ffffff;
+  --color-ink: #1b2a33;
+  --color-line: #0b3d5c;
+
+  --color-blueprint: #10293b;
+  --color-blueprint-panel: #163c52;
+  --color-paper-dark: #e8f1f5;
+  --color-line-dark: #8ecae6;
+
+  --color-amber: #d98829;
+  --color-amber-light: #f0a94a;
+}
+
+@layer base {
+  body {
+    font-family: var(--font-body);
+  }
+}
+
+.grid-paper {
+  background-image:
+    linear-gradient(rgba(11, 61, 92, 0.08) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(11, 61, 92, 0.08) 1px, transparent 1px);
+  background-size: 28px 28px;
+}
+.dark .grid-paper {
+  background-image:
+    linear-gradient(rgba(142, 202, 230, 0.12) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(142, 202, 230, 0.12) 1px, transparent 1px);
+}
+
 @keyframes fade-in-up {
   from {
     opacity: 0;
@@ -11,7 +47,6 @@
     transform: translateY(0);
   }
 }
-
 @keyframes pop-in {
   from {
     opacity: 0;
@@ -22,12 +57,9 @@
     transform: scale(1);
   }
 }
-
 .animate-fade-in-up {
   animation: fade-in-up 0.45s ease-out;
 }
-
 .animate-pop-in {
   animation: pop-in 0.3s ease-out;
 }
-

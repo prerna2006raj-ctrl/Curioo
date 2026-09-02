@@ -20,9 +20,9 @@ function SurpriseButton({ onPick }) {
   return (
     <button
       onClick={handleClick}
-      className="px-4 py-1.5 rounded-full text-sm font-medium bg-purple-100 dark:bg-purple-900 text-purple-700 dark:text-purple-200 hover:bg-purple-200 dark:hover:bg-purple-800 transition-transform duration-150 hover:scale-105 hover:-rotate-2 active:scale-95"
+      className="font-display text-xs tracking-wide px-3 py-1.5 rounded-sm border border-amber/50 text-amber hover:bg-amber hover:text-blueprint transition-all duration-150 hover:-rotate-1 active:scale-95"
     >
-      🎲 Surprise Me
+      🎲 surprise me
     </button>
   )
 }

@@ -57,21 +57,36 @@ function App() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-blue-50 to-white dark:from-gray-900 dark:to-gray-950 px-4 py-10 transition-colors duration-300">
+    <div className="grid-paper min-h-screen bg-paper dark:bg-blueprint text-ink dark:text-paper-dark px-4 py-10 transition-colors duration-300">
       <ThemeToggle dark={dark} setDark={setDark} />
 
-      <h1 className="text-4xl font-bold text-center text-gray-800 dark:text-gray-100 mb-2">🔍 Curioo</h1>
-      <p className="text-center text-gray-500 dark:text-gray-400 mb-8">Understand how anything really works</p>
+      <header className="flex flex-col items-center mb-10">
+        <div className="flex items-center gap-2 mb-1">
+          <svg width="26" height="26" viewBox="0 0 28 28" fill="none" className="text-line dark:text-line-dark">
+            <circle cx="14" cy="14" r="11" stroke="currentColor" strokeWidth="1.5" />
+            <line x1="14" y1="1" x2="14" y2="7" stroke="currentColor" strokeWidth="1.5" />
+            <line x1="14" y1="21" x2="14" y2="27" stroke="currentColor" strokeWidth="1.5" />
+            <line x1="1" y1="14" x2="7" y2="14" stroke="currentColor" strokeWidth="1.5" />
+            <line x1="21" y1="14" x2="27" y2="14" stroke="currentColor" strokeWidth="1.5" />
+            <circle cx="14" cy="14" r="2.5" fill="currentColor" />
+          </svg>
+          <h1 className="font-display text-3xl font-semibold tracking-tight">Curioo</h1>
+        </div>
+        <p className="font-body italic text-ink/60 dark:text-paper-dark/60">
+          understand how anything really works
+        </p>
+      </header>
 
-      <div className="flex items-center justify-center gap-3 mt-3">
-        <SurpriseButton onPick={(picked) => { setTopic(picked); handleExplain(picked) }} />
+      <div className="max-w-xl mx-auto bg-panel dark:bg-blueprint-panel border border-line/20 dark:border-line-dark/20 rounded-md p-5">
+        <div className="flex justify-end mb-3">
+          <SurpriseButton onPick={(picked) => { setTopic(picked); handleExplain(picked) }} />
+        </div>
+        <SearchBar topic={topic} setTopic={setTopic} onExplain={() => handleExplain()} loading={loading} />
+        <ToneToggle tone={tone} setTone={setTone} />
       </div>
 
-      <SearchBar topic={topic} setTopic={setTopic} onExplain={() => handleExplain()} loading={loading} />
-      <ToneToggle tone={tone} setTone={setTone} />
-
       {loading && <Loader />}
-      {error && <p className="text-red-500 text-center mt-4">{error}</p>}
+      {error && <p className="font-body text-red-500 text-center mt-4">{error}</p>}
       {result && (
         <ResultCard
           text={result}

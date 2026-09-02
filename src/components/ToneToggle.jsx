@@ -1,25 +1,25 @@
 function ToneToggle({ tone, setTone }) {
   return (
-    <div className="flex justify-center gap-2 mt-4">
+    <div className="font-display text-sm mt-4 inline-flex w-full rounded-sm border border-line/30 dark:border-line-dark/30 overflow-hidden">
       <button
         onClick={() => setTone("kid")}
-        className={`px-4 py-1.5 rounded-full text-sm font-medium transition-all duration-200 hover:scale-105 active:scale-95 ${
+        className={`flex-1 py-1.5 transition-colors duration-200 ${
           tone === "kid"
-            ? "bg-blue-600 text-white"
-            : "bg-gray-200 dark:bg-gray-700 text-gray-600 dark:text-gray-300"
+            ? "bg-line dark:bg-amber text-paper dark:text-blueprint"
+            : "bg-transparent text-ink/70 dark:text-paper-dark/70 hover:bg-line/5 dark:hover:bg-line-dark/10"
         }`}
       >
-        Explain like I'm 5
+        like I'm 5
       </button>
       <button
         onClick={() => setTone("engineer")}
-        className={`px-4 py-1.5 rounded-full text-sm font-medium transition-all duration-200 hover:scale-105 active:scale-95 ${
+        className={`flex-1 py-1.5 border-l border-line/30 dark:border-line-dark/30 transition-colors duration-200 ${
           tone === "engineer"
-            ? "bg-blue-600 text-white"
-            : "bg-gray-200 dark:bg-gray-700 text-gray-600 dark:text-gray-300"
+            ? "bg-line dark:bg-amber text-paper dark:text-blueprint"
+            : "bg-transparent text-ink/70 dark:text-paper-dark/70 hover:bg-line/5 dark:hover:bg-line-dark/10"
         }`}
       >
-        Explain like an engineer
+        like an engineer
       </button>
     </div>
   )
