@@ -1,6 +1,6 @@
 import { useState } from "react"
 
-function ResultCard({ text, onFavorite, isFavorite }) {
+function ResultCard({ text, onFavorite, isFavorite, onRegenerate, regenerating, relatedTopics, onRelatedClick, onQuiz, quizLoading }) {
   const [copied, setCopied] = useState(false)
 
   const handleCopy = async () => {
@@ -38,7 +38,44 @@ function ResultCard({ text, onFavorite, isFavorite }) {
           {isFavorite ? "⭐" : "☆"}
         </button>
       </div>
+
       <div className="font-body whitespace-pre-line leading-relaxed">{text}</div>
+
+      <div className="flex flex-wrap gap-2 mt-5">
+        <button
+          onClick={onRegenerate}
+          disabled={regenerating}
+          className="font-display text-xs px-3 py-1.5 rounded-sm border border-line/30 dark:border-line-dark/30 text-ink/70 dark:text-paper-dark/70 hover:border-amber hover:text-amber transition-colors duration-150 disabled:opacity-40"
+        >
+          {regenerating ? "regenerating…" : "🔄 explain differently"}
+        </button>
+        <button
+          onClick={onQuiz}
+          disabled={quizLoading}
+          className="font-display text-xs px-3 py-1.5 rounded-sm border border-line/30 dark:border-line-dark/30 text-ink/70 dark:text-paper-dark/70 hover:border-amber hover:text-amber transition-colors duration-150 disabled:opacity-40"
+        >
+          {quizLoading ? "loading quiz…" : "🧩 quiz me"}
+        </button>
+      </div>
+
+      {relatedTopics && relatedTopics.length > 0 && (
+        <div className="mt-6 pt-4 border-t border-dashed border-line/25 dark:border-line-dark/25">
+          <h3 className="font-display text-xs tracking-wide text-ink/50 dark:text-paper-dark/50 mb-2">
+            explore next
+          </h3>
+          <div className="flex flex-wrap gap-2">
+            {relatedTopics.map((rt) => (
+              <button
+                key={rt}
+                onClick={() => onRelatedClick(rt)}
+                className="font-display text-xs px-3 py-1.5 rounded-sm border border-amber/40 text-amber hover:bg-amber hover:text-blueprint transition-colors duration-150"
+              >
+                {rt}
+              </button>
+            ))}
+          </div>
+        </div>
+      )}
     </div>
   )
 }

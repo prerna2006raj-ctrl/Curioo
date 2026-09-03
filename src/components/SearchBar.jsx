@@ -26,6 +26,12 @@ function SearchBar({ topic, setTopic, onExplain, loading }) {
     recognition.start()
   }
 
+  const handleKeyDown = (e) => {
+    if (e.key === "Enter" && topic.trim() && !loading) {
+      onExplain()
+    }
+  }
+
   return (
     <div className="flex flex-col sm:flex-row gap-3 w-full">
       <div className="relative flex-1">
@@ -33,6 +39,7 @@ function SearchBar({ topic, setTopic, onExplain, loading }) {
           type="text"
           value={topic}
           onChange={(e) => setTopic(e.target.value)}
+          onKeyDown={handleKeyDown}
           placeholder="e.g. how does WiFi work"
           className="font-body w-full border border-line/30 dark:border-line-dark/30 bg-paper dark:bg-blueprint text-ink dark:text-paper-dark rounded-sm pl-4 pr-11 py-2 focus:outline-none focus:ring-2 focus:ring-amber transition-shadow duration-200"
         />
