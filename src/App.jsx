@@ -89,9 +89,14 @@ function App() {
 
   const oneWeekAgo = Date.now() - 7 * 24 * 60 * 60 * 1000
   const thisWeekCount = log.filter((entry) => entry.timestamp > oneWeekAgo).length
+  const kidMode = tone === "kid"
 
   return (
-    <div className="grid-paper min-h-screen bg-paper dark:bg-blueprint text-ink dark:text-paper-dark px-4 py-10 transition-colors duration-300">
+    <div
+      className={`min-h-screen px-4 py-10 transition-colors duration-300 text-ink dark:text-paper-dark ${
+        kidMode ? "dot-paper bg-paper dark:bg-blueprint" : "grid-paper bg-paper dark:bg-blueprint"
+      }`}
+    >
       <ThemeToggle dark={dark} setDark={setDark} />
 
       <button
@@ -103,7 +108,7 @@ function App() {
 
       <header className="flex flex-col items-center mb-10">
         <div className="flex items-center gap-2 mb-1">
-          <svg width="26" height="26" viewBox="0 0 28 28" fill="none" className="text-line dark:text-line-dark">
+          <svg width="26" height="26" viewBox="0 0 28 28" fill="none" className={kidMode ? "text-kid-pink dark:text-kid-yellow" : "text-line dark:text-line-dark"}>
             <circle cx="14" cy="14" r="11" stroke="currentColor" strokeWidth="1.5" />
             <line x1="14" y1="1" x2="14" y2="7" stroke="currentColor" strokeWidth="1.5" />
             <line x1="14" y1="21" x2="14" y2="27" stroke="currentColor" strokeWidth="1.5" />
@@ -111,10 +116,12 @@ function App() {
             <line x1="21" y1="14" x2="27" y2="14" stroke="currentColor" strokeWidth="1.5" />
             <circle cx="14" cy="14" r="2.5" fill="currentColor" />
           </svg>
-          <h1 className="font-display text-3xl font-semibold tracking-tight">Curioo</h1>
+          <h1 className={`text-3xl font-semibold tracking-tight transition-all duration-300 ${kidMode ? "font-kid" : "font-display"}`}>
+            Curioo
+          </h1>
         </div>
         <p className="font-body italic text-ink/60 dark:text-paper-dark/60">
-          understand how anything really works
+          {kidMode ? "let's find out how things work! ✨" : "understand how anything really works"}
         </p>
         <p className="font-display text-xs text-ink/40 dark:text-paper-dark/40 mt-2">
           📊 {log.length} explored · {thisWeekCount} this week
@@ -134,11 +141,17 @@ function App() {
         />
       ) : (
         <>
-          <div className="max-w-xl mx-auto bg-panel dark:bg-blueprint-panel border border-line/20 dark:border-line-dark/20 rounded-md p-5">
+          <div
+            className={`max-w-xl mx-auto p-5 transition-all duration-300 ${
+              kidMode
+                ? "rounded-3xl border-2 border-kid-pink/40 bg-panel dark:bg-blueprint-panel"
+                : "rounded-md border border-line/20 dark:border-line-dark/20 bg-panel dark:bg-blueprint-panel"
+            }`}
+          >
             <div className="flex justify-end mb-3">
               <SurpriseButton onPick={(picked) => { setTopic(picked); handleExplain(picked) }} />
             </div>
-            <SearchBar topic={topic} setTopic={setTopic} onExplain={() => handleExplain()} loading={loading} />
+            <SearchBar topic={topic} setTopic={setTopic} onExplain={() => handleExplain()} loading={loading} kidMode={kidMode} />
             <ToneToggle tone={tone} setTone={setTone} />
           </div>
 
@@ -157,6 +170,7 @@ function App() {
               onRelatedClick={(picked) => { setTopic(picked); handleExplain(picked) }}
               onQuiz={handleQuiz}
               quizLoading={quizLoading}
+              kidMode={kidMode}
             />
           )}
 

@@ -1,6 +1,6 @@
 import { useState } from "react"
 
-function ResultCard({ text, onFavorite, isFavorite, onRegenerate, regenerating, relatedTopics, onRelatedClick, onQuiz, quizLoading }) {
+function ResultCard({ text, onFavorite, isFavorite, onRegenerate, regenerating, relatedTopics, onRelatedClick, onQuiz, quizLoading, kidMode }) {
   const [copied, setCopied] = useState(false)
 
   const handleCopy = async () => {
@@ -26,7 +26,11 @@ function ResultCard({ text, onFavorite, isFavorite, onRegenerate, regenerating, 
   }
 
   return (
-    <div className="animate-fade-in-up max-w-xl mx-auto mt-8 bg-panel dark:bg-blueprint-panel border border-line/20 dark:border-line-dark/20 rounded-md p-6">
+    <div
+      className={`animate-fade-in-up max-w-xl mx-auto mt-8 bg-panel dark:bg-blueprint-panel p-6 transition-all duration-300 ${
+        kidMode ? "rounded-3xl border-2 border-kid-pink/40" : "rounded-md border border-line/20 dark:border-line-dark/20"
+      }`}
+    >
       <div className="flex justify-end gap-3 pb-3 mb-4 border-b border-dashed border-line/25 dark:border-line-dark/25">
         <button onClick={handleShare} className="text-lg transition-transform duration-150 hover:scale-125 active:scale-90" aria-label="Share">
           📤

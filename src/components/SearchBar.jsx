@@ -1,6 +1,6 @@
 import { useState } from "react"
 
-function SearchBar({ topic, setTopic, onExplain, loading }) {
+function SearchBar({ topic, setTopic, onExplain, loading, kidMode }) {
   const [listening, setListening] = useState(false)
 
   const handleVoiceInput = () => {
@@ -41,7 +41,11 @@ function SearchBar({ topic, setTopic, onExplain, loading }) {
           onChange={(e) => setTopic(e.target.value)}
           onKeyDown={handleKeyDown}
           placeholder="e.g. how does WiFi work"
-          className="font-body w-full border border-line/30 dark:border-line-dark/30 bg-paper dark:bg-blueprint text-ink dark:text-paper-dark rounded-sm pl-4 pr-11 py-2 focus:outline-none focus:ring-2 focus:ring-amber transition-shadow duration-200"
+          className={`font-body w-full pl-4 pr-11 py-2 focus:outline-none focus:ring-2 transition-all duration-200 border ${
+            kidMode
+              ? "rounded-full border-kid-pink/40 bg-paper dark:bg-blueprint text-ink dark:text-paper-dark focus:ring-kid-teal"
+              : "rounded-sm border-line/30 dark:border-line-dark/30 bg-paper dark:bg-blueprint text-ink dark:text-paper-dark focus:ring-amber"
+          }`}
         />
         <button
           onClick={handleVoiceInput}
@@ -59,7 +63,11 @@ function SearchBar({ topic, setTopic, onExplain, loading }) {
       <button
         onClick={onExplain}
         disabled={loading || !topic.trim()}
-        className="font-display font-medium bg-line dark:bg-amber text-paper dark:text-blueprint px-5 py-2 rounded-sm hover:opacity-90 disabled:opacity-40 transition-transform duration-150 hover:scale-105 active:scale-95"
+        className={`font-display font-medium px-5 py-2 hover:opacity-90 disabled:opacity-40 transition-transform duration-150 hover:scale-105 active:scale-95 ${
+          kidMode
+            ? "rounded-full bg-kid-pink dark:bg-kid-teal text-white"
+            : "rounded-sm bg-line dark:bg-amber text-paper dark:text-blueprint"
+        }`}
       >
         {loading ? "Thinking…" : "Explain"}
       </button>

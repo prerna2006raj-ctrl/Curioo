@@ -5,7 +5,7 @@ function ToneToggle({ tone, setTone }) {
         onClick={() => setTone("kid")}
         className={`flex-1 py-1.5 flex items-center justify-center gap-1.5 transition-colors duration-200 ${
           tone === "kid"
-            ? "bg-line dark:bg-amber text-paper dark:text-blueprint"
+            ? "bg-kid-pink text-white"
             : "bg-transparent text-ink/70 dark:text-paper-dark/70 hover:bg-line/5 dark:hover:bg-line-dark/10"
         }`}
       >

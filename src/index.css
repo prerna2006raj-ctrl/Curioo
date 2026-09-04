@@ -4,6 +4,7 @@
 @theme {
   --font-display: "Space Grotesk", sans-serif;
   --font-body: "Lora", Georgia, serif;
+  --font-kid: "Baloo 2", "Space Grotesk", sans-serif;
 
   --color-paper: #faf8f2;
   --color-panel: #ffffff;
@@ -17,6 +18,10 @@
 
   --color-amber: #d98829;
   --color-amber-light: #f0a94a;
+
+  --color-kid-pink: #ff6fa5;
+  --color-kid-teal: #2ec4b6;
+  --color-kid-yellow: #ffd23f;
 }
 
 @layer base {
@@ -35,6 +40,14 @@
   background-image:
     linear-gradient(rgba(142, 202, 230, 0.12) 1px, transparent 1px),
     linear-gradient(90deg, rgba(142, 202, 230, 0.12) 1px, transparent 1px);
+}
+
+.dot-paper {
+  background-image: radial-gradient(rgba(255, 111, 165, 0.35) 3px, transparent 3px);
+  background-size: 24px 24px;
+}
+.dark .dot-paper {
+  background-image: radial-gradient(rgba(255, 210, 63, 0.3) 3px, transparent 3px);
 }
 
 @keyframes fade-in-up {
