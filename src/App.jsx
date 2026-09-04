@@ -22,6 +22,10 @@ function App() {
   const [relatedTopics, setRelatedTopics] = useState([])
   const [quiz, setQuiz] = useState(null)
   const [quizLoading, setQuizLoading] = useState(false)
+  const [log, setLog] = useState(() => {
+    const saved = localStorage.getItem("curioo-log")
+    return saved ? JSON.parse(saved) : []
+  })
   const [favorites, setFavorites] = useState(() => {
     const saved = localStorage.getItem("curioo-favorites")
     return saved ? JSON.parse(saved) : []
@@ -39,6 +43,10 @@ function App() {
     localStorage.setItem("curioo-theme", dark ? "dark" : "light")
   }, [dark])
 
+  useEffect(() => {
+    localStorage.setItem("curioo-log", JSON.stringify(log))
+  }, [log])
+
   const handleExplain = async (customTopic) => {
     const searchTopic = customTopic || topic
     setLoading(true)
@@ -51,6 +59,7 @@ function App() {
       setResult(text)
       setRelatedTopics(related)
       setHistory((prev) => [{ topic: searchTopic, text, id: Date.now() }, ...prev])
+      setLog((prev) => [...prev, { topic: searchTopic, timestamp: Date.now() }])
     } catch (err) {
       setError("Couldn't get an explanation. Check your connection and try again.")
     } finally {
@@ -78,6 +87,9 @@ function App() {
     }
   }
 
+  const oneWeekAgo = Date.now() - 7 * 24 * 60 * 60 * 1000
+  const thisWeekCount = log.filter((entry) => entry.timestamp > oneWeekAgo).length
+
   return (
     <div className="grid-paper min-h-screen bg-paper dark:bg-blueprint text-ink dark:text-paper-dark px-4 py-10 transition-colors duration-300">
       <ThemeToggle dark={dark} setDark={setDark} />
@@ -103,6 +115,9 @@ function App() {
         </div>
         <p className="font-body italic text-ink/60 dark:text-paper-dark/60">
           understand how anything really works
+        </p>
+        <p className="font-display text-xs text-ink/40 dark:text-paper-dark/40 mt-2">
+          📊 {log.length} explored · {thisWeekCount} this week
         </p>
       </header>
 
