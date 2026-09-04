@@ -8,6 +8,7 @@ import SurpriseButton from "./components/SurpriseButton"
 import CategoryBrowser from "./components/CategoryBrowser"
 import ThemeToggle from "./components/ThemeToggle"
 import FavoritesPage from "./components/FavoritesPage"
+import AuthPage from "./components/AuthPage"
 import { getExplanation, getQuiz } from "./services/gemini"
 import QuizCard from "./components/QuizCard"
 
@@ -32,6 +33,10 @@ function App() {
   })
   const [dark, setDark] = useState(() => {
     return localStorage.getItem("curioo-theme") === "dark"
+  })
+  const [currentUser, setCurrentUser] = useState(() => {
+    const saved = localStorage.getItem("curioo-current-user")
+    return saved ? JSON.parse(saved) : null
   })
 
   useEffect(() => {
@@ -91,6 +96,25 @@ function App() {
   const thisWeekCount = log.filter((entry) => entry.timestamp > oneWeekAgo).length
   const kidMode = tone === "kid"
 
+  const handleAuth = (user) => {
+    setCurrentUser(user)
+    localStorage.setItem("curioo-current-user", JSON.stringify(user))
+  }
+
+  const handleLogout = () => {
+    setCurrentUser(null)
+    localStorage.removeItem("curioo-current-user")
+  }
+
+  if (!currentUser) {
+    return (
+      <div className="grid-paper min-h-screen bg-paper dark:bg-blueprint px-4 py-10 flex items-center justify-center transition-colors duration-300">
+        <ThemeToggle dark={dark} setDark={setDark} />
+        <AuthPage onAuth={handleAuth} />
+      </div>
+    )
+  }
+
   return (
     <div
       className={`min-h-screen px-4 py-10 transition-colors duration-300 text-ink dark:text-paper-dark ${
@@ -107,6 +131,15 @@ function App() {
       </button>
 
       <header className="flex flex-col items-center mb-10">
+        <div className="font-display text-xs text-ink/50 dark:text-paper-dark/50 mb-3 flex items-center gap-2">
+          <span>hi, {currentUser.name} 👋</span>
+          <button
+            onClick={handleLogout}
+            className="underline hover:text-amber transition-colors duration-150"
+          >
+            log out
+          </button>
+        </div>
         <div className="flex items-center gap-2 mb-1">
           <svg width="26" height="26" viewBox="0 0 28 28" fill="none" className={kidMode ? "text-kid-pink dark:text-kid-yellow" : "text-line dark:text-line-dark"}>
             <circle cx="14" cy="14" r="11" stroke="currentColor" strokeWidth="1.5" />
