@@ -1,12 +1,35 @@
 function FavoritesPage({ favorites, onBack, onRemove, onSelect }) {
+  const handleExport = () => {
+    const content = favorites
+      .map((item) => `${item.topic}\n${"-".repeat(item.topic.length)}\n${item.text}\n`)
+      .join("\n\n")
+    const blob = new Blob([content], { type: "text/plain" })
+    const url = URL.createObjectURL(blob)
+    const link = document.createElement("a")
+    link.href = url
+    link.download = "curioo-favorites.txt"
+    link.click()
+    URL.revokeObjectURL(url)
+  }
+
   return (
     <div className="max-w-xl mx-auto animate-fade-in-up">
-      <button
-        onClick={onBack}
-        className="font-display text-sm mb-6 text-line dark:text-line-dark hover:text-amber transition-colors duration-150"
-      >
-        ← back
-      </button>
+      <div className="flex items-center justify-between mb-6">
+        <button
+          onClick={onBack}
+          className="font-display text-sm text-line dark:text-line-dark hover:text-amber transition-colors duration-150"
+        >
+          ← back
+        </button>
+        {favorites.length > 0 && (
+          <button
+            onClick={handleExport}
+            className="font-display text-xs px-3 py-1.5 rounded-sm border border-line/30 dark:border-line-dark/30 text-ink/70 dark:text-paper-dark/70 hover:border-amber hover:text-amber transition-colors duration-150"
+          >
+            ⬇ export as .txt
+          </button>
+        )}
+      </div>
       <h2 className="font-display text-2xl font-semibold mb-6">your favorites</h2>
 
       {favorites.length === 0 ? (

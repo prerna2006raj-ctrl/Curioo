@@ -185,7 +185,7 @@ function App() {
             <div className="flex justify-end mb-3">
               <SurpriseButton onPick={(picked) => { setTopic(picked); handleExplain(picked) }} />
             </div>
-            <SearchBar topic={topic} setTopic={setTopic} onExplain={() => handleExplain()} loading={loading} kidMode={kidMode} />
+            <SearchBar topic={topic} setTopic={setTopic} onExplain={() => handleExplain()} loading={loading} kidMode={kidMode} history={history} />
             <ToneToggle tone={tone} setTone={setTone} />
           </div>
 

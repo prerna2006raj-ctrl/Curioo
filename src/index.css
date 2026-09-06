@@ -19,7 +19,7 @@
   --color-amber: #d98829;
   --color-amber-light: #f0a94a;
 
-  --color-kid-pink: #ff6fa5;
+  --color-kid-pink: #5eb8ff;
   --color-kid-teal: #2ec4b6;
   --color-kid-yellow: #ffd23f;
 }
@@ -43,11 +43,10 @@
 }
 
 .dot-paper {
-  background-image: radial-gradient(rgba(255, 111, 165, 0.35) 3px, transparent 3px);
-  background-size: 24px 24px;
+  background-image: radial-gradient(rgba(111, 154, 255, 0.303) 3px, transparent 3px);
 }
 .dark .dot-paper {
-  background-image: radial-gradient(rgba(255, 210, 63, 0.3) 3px, transparent 3px);
+  background-image: radial-gradient(rgba(255, 111, 63, 0.582) 3px, transparent 3px);
 }
 
 @keyframes fade-in-up {

@@ -9,7 +9,7 @@ function ToneToggle({ tone, setTone }) {
             : "bg-transparent text-ink/70 dark:text-paper-dark/70 hover:bg-line/5 dark:hover:bg-line-dark/10"
         }`}
       >
-        <span>🧒</span> like I'm 5
+        <span></span> like I'm 5
       </button>
       <button
         onClick={() => setTone("engineer")}
@@ -19,7 +19,7 @@ function ToneToggle({ tone, setTone }) {
             : "bg-transparent text-ink/70 dark:text-paper-dark/70 hover:bg-line/5 dark:hover:bg-line-dark/10"
         }`}
       >
-        <span>⚙️</span> like an engineer
+        <span></span> like an engineer
       </button>
     </div>
   )

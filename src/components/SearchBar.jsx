@@ -1,7 +1,8 @@
 import { useState } from "react"
 
-function SearchBar({ topic, setTopic, onExplain, loading, kidMode }) {
+function SearchBar({ topic, setTopic, onExplain, loading, kidMode, history }) {
   const [listening, setListening] = useState(false)
+  const [showSuggestions, setShowSuggestions] = useState(false)
 
   const handleVoiceInput = () => {
     const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition
@@ -28,9 +29,19 @@ function SearchBar({ topic, setTopic, onExplain, loading, kidMode }) {
 
   const handleKeyDown = (e) => {
     if (e.key === "Enter" && topic.trim() && !loading) {
+      setShowSuggestions(false)
       onExplain()
     }
+    if (e.key === "Escape") {
+      setShowSuggestions(false)
+    }
   }
+
+  const matches = topic.trim()
+    ? [...new Set(history.map((h) => h.topic))]
+        .filter((t) => t.toLowerCase().includes(topic.toLowerCase()) && t.toLowerCase() !== topic.toLowerCase())
+        .slice(0, 4)
+    : []
 
   return (
     <div className="flex flex-col sm:flex-row gap-3 w-full">
@@ -38,7 +49,12 @@ function SearchBar({ topic, setTopic, onExplain, loading, kidMode }) {
         <input
           type="text"
           value={topic}
-          onChange={(e) => setTopic(e.target.value)}
+          onChange={(e) => {
+            setTopic(e.target.value)
+            setShowSuggestions(true)
+          }}
+          onFocus={() => setShowSuggestions(true)}
+          onBlur={() => setTimeout(() => setShowSuggestions(false), 150)}
           onKeyDown={handleKeyDown}
           placeholder="e.g. how does WiFi work"
           className={`font-body w-full pl-4 pr-11 py-2 focus:outline-none focus:ring-2 transition-all duration-200 border ${
@@ -59,6 +75,23 @@ function SearchBar({ topic, setTopic, onExplain, loading, kidMode }) {
         >
           🎤
         </button>
+
+        {showSuggestions && matches.length > 0 && (
+          <div className="absolute left-0 right-0 mt-1 bg-panel dark:bg-blueprint-panel border border-line/20 dark:border-line-dark/20 rounded-sm shadow-md z-10 overflow-hidden">
+            {matches.map((m) => (
+              <button
+                key={m}
+                onMouseDown={() => {
+                  setTopic(m)
+                  setShowSuggestions(false)
+                }}
+                className="font-body block w-full text-left px-4 py-2 text-sm hover:bg-line/5 dark:hover:bg-line-dark/10 text-ink dark:text-paper-dark"
+              >
+                {m}
+              </button>
+            ))}
+          </div>
+        )}
       </div>
       <button
         onClick={onExplain}
