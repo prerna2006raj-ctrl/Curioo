@@ -1,7 +1,14 @@
-import { useState } from "react"
+import { useState, useEffect } from "react"
 
 function ResultCard({ text, onFavorite, isFavorite, onRegenerate, regenerating, relatedTopics, onRelatedClick, onQuiz, quizLoading, kidMode }) {
   const [copied, setCopied] = useState(false)
+  const [speaking, setSpeaking] = useState(false)
+
+  useEffect(() => {
+    return () => {
+      window.speechSynthesis.cancel()
+    }
+  }, [text])
 
   const handleCopy = async () => {
     try {
@@ -25,6 +32,19 @@ function ResultCard({ text, onFavorite, isFavorite, onRegenerate, regenerating, 
     }
   }
 
+  const handleReadAloud = () => {
+    if (speaking) {
+      window.speechSynthesis.cancel()
+      setSpeaking(false)
+      return
+    }
+    const utterance = new SpeechSynthesisUtterance(text)
+    utterance.rate = 0.95
+    utterance.onend = () => setSpeaking(false)
+    window.speechSynthesis.speak(utterance)
+    setSpeaking(true)
+  }
+
   return (
     <div
       className={`animate-fade-in-up max-w-xl mx-auto mt-8 bg-panel dark:bg-blueprint-panel p-6 transition-all duration-300 ${
@@ -32,6 +52,13 @@ function ResultCard({ text, onFavorite, isFavorite, onRegenerate, regenerating, 
       }`}
     >
       <div className="flex justify-end gap-3 pb-3 mb-4 border-b border-dashed border-line/25 dark:border-line-dark/25">
+        <button
+          onClick={handleReadAloud}
+          className={`text-lg transition-transform duration-150 hover:scale-125 active:scale-90 ${speaking ? "animate-pulse" : ""}`}
+          aria-label="Read aloud"
+        >
+          {speaking ? "⏹️" : "🔊"}
+        </button>
         <button onClick={handleShare} className="text-lg transition-transform duration-150 hover:scale-125 active:scale-90" aria-label="Share">
           📤
         </button>

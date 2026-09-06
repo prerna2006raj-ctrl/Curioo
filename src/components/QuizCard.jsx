@@ -1,15 +1,22 @@
 import { useState } from "react"
+import Confetti from "./Confetti"
 
 function QuizCard({ quiz, onClose }) {
   const [selected, setSelected] = useState(null)
+  const [showConfetti, setShowConfetti] = useState(false)
 
   const handleSelect = (index) => {
     if (selected !== null) return
     setSelected(index)
+    if (index === quiz.answerIndex) {
+      setShowConfetti(true)
+      setTimeout(() => setShowConfetti(false), 2000)
+    }
   }
 
   return (
     <div className="animate-pop-in max-w-xl mx-auto mt-6 bg-panel dark:bg-blueprint-panel border border-amber/40 rounded-md p-6">
+      {showConfetti && <Confetti />}
       <div className="flex items-center justify-between mb-4">
         <h3 className="font-display text-sm tracking-wide text-amber">🧩 quick quiz</h3>
         <button

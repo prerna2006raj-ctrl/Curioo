@@ -9,6 +9,7 @@ import CategoryBrowser from "./components/CategoryBrowser"
 import ThemeToggle from "./components/ThemeToggle"
 import FavoritesPage from "./components/FavoritesPage"
 import AuthPage from "./components/AuthPage"
+import TopicOfDay from "./components/TopicOfDay"
 import { getExplanation, getQuiz } from "./services/gemini"
 import QuizCard from "./components/QuizCard"
 
@@ -189,6 +190,10 @@ function App() {
           </div>
 
           <CategoryBrowser onPick={(picked) => { setTopic(picked); handleExplain(picked) }} />
+
+          {!result && !loading && (
+            <TopicOfDay onExplore={(picked) => { setTopic(picked); handleExplain(picked) }} />
+          )}
 
           {loading && <Loader />}
           {error && <p className="font-body text-red-500 text-center mt-4">{error}</p>}
