@@ -54,18 +54,19 @@ function ResultCard({ text, onFavorite, isFavorite, onRegenerate, regenerating, 
       <div className="flex justify-end gap-3 pb-3 mb-4 border-b border-dashed border-line/25 dark:border-line-dark/25">
         <button
           onClick={handleReadAloud}
+          title="Read explanation aloud"
           className={`text-lg transition-transform duration-150 hover:scale-125 active:scale-90 ${speaking ? "animate-pulse" : ""}`}
           aria-label="Read aloud"
         >
           {speaking ? "⏹️" : "🔊"}
         </button>
-        <button onClick={handleShare} className="text-lg transition-transform duration-150 hover:scale-125 active:scale-90" aria-label="Share">
+        <button onClick={handleShare} title="Share" className="text-lg transition-transform duration-150 hover:scale-125 active:scale-90" aria-label="Share">
           📤
         </button>
-        <button onClick={handleCopy} className="text-lg transition-transform duration-150 hover:scale-125 active:scale-90" aria-label="Copy">
+        <button onClick={handleCopy} title="Copy to clipboard" className="text-lg transition-transform duration-150 hover:scale-125 active:scale-90" aria-label="Copy">
           {copied ? "✅" : "📋"}
         </button>
-        <button onClick={onFavorite} className="text-xl transition-transform duration-150 hover:scale-125 active:scale-90" aria-label="Favorite">
+        <button onClick={onFavorite} title="Save to favorites" className="text-xl transition-transform duration-150 hover:scale-125 active:scale-90" aria-label="Favorite">
           {isFavorite ? "⭐" : "☆"}
         </button>
       </div>
