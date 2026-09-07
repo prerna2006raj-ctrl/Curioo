@@ -3,7 +3,6 @@ import SearchBar from "./components/SearchBar"
 import ResultCard from "./components/ResultCard"
 import Loader from "./components/Loader"
 import ToneToggle from "./components/ToneToggle"
-import History from "./components/History"
 import SurpriseButton from "./components/SurpriseButton"
 import CategoryBrowser from "./components/CategoryBrowser"
 import ThemeToggle from "./components/ThemeToggle"
@@ -26,28 +25,44 @@ function App() {
   const [quiz, setQuiz] = useState(null)
   const [quizLoading, setQuizLoading] = useState(false)
 
+  // =========================
+  // LOG
+  // =========================
+
   const [log, setLog] = useState(() => {
     const saved = localStorage.getItem("curioo-log")
     return saved ? JSON.parse(saved) : []
   })
+
+  // =========================
+  // FAVORITES
+  // =========================
 
   const [favorites, setFavorites] = useState(() => {
     const saved = localStorage.getItem("curioo-favorites")
     return saved ? JSON.parse(saved) : []
   })
 
+  // =========================
+  // DARK MODE
+  // =========================
+
   const [dark, setDark] = useState(() => {
     return localStorage.getItem("curioo-theme") === "dark"
   })
+
+  // =========================
+  // CURRENT USER
+  // =========================
 
   const [currentUser, setCurrentUser] = useState(() => {
     const saved = localStorage.getItem("curioo-current-user")
     return saved ? JSON.parse(saved) : null
   })
 
-  // ==========================================
-  // QUIZ PROGRESS STATE
-  // ==========================================
+  // =========================
+  // QUIZ PROGRESS
+  // =========================
 
   const [progress, setProgress] = useState(() => {
     const saved = localStorage.getItem("curioo-progress")
@@ -62,9 +77,9 @@ function App() {
         }
   })
 
-  // ==========================================
+  // =========================
   // SAVE FAVORITES
-  // ==========================================
+  // =========================
 
   useEffect(() => {
     localStorage.setItem(
@@ -73,9 +88,9 @@ function App() {
     )
   }, [favorites])
 
-  // ==========================================
+  // =========================
   // SAVE THEME
-  // ==========================================
+  // =========================
 
   useEffect(() => {
     document.documentElement.classList.toggle("dark", dark)
@@ -86,9 +101,9 @@ function App() {
     )
   }, [dark])
 
-  // ==========================================
-  // SAVE EXPLORATION LOG
-  // ==========================================
+  // =========================
+  // SAVE LOG
+  // =========================
 
   useEffect(() => {
     localStorage.setItem(
@@ -97,9 +112,9 @@ function App() {
     )
   }, [log])
 
-  // ==========================================
-  // SAVE QUIZ PROGRESS AUTOMATICALLY
-  // ==========================================
+  // =========================
+  // SAVE QUIZ PROGRESS
+  // =========================
 
   useEffect(() => {
     localStorage.setItem(
@@ -108,12 +123,16 @@ function App() {
     )
   }, [progress])
 
-  // ==========================================
+  // =========================
   // EXPLAIN TOPIC
-  // ==========================================
+  // =========================
 
   const handleExplain = async (customTopic) => {
     const searchTopic = customTopic || topic
+
+    if (!searchTopic.trim()) {
+      return
+    }
 
     setLoading(true)
     setError("")
@@ -130,15 +149,19 @@ function App() {
       setResult(text)
       setRelatedTopics(related)
 
+      // Add to recent history
       setHistory((prev) => [
         {
           topic: searchTopic,
           text,
           id: Date.now()
         },
-        ...prev
+        ...prev.filter(
+          (item) => item.topic !== searchTopic
+        )
       ])
 
+      // Add to exploration log
       setLog((prev) => [
         ...prev,
         {
@@ -147,6 +170,8 @@ function App() {
         }
       ])
     } catch (err) {
+      console.error(err)
+
       setError(
         "Couldn't get an explanation. Check your connection and try again."
       )
@@ -155,9 +180,9 @@ function App() {
     }
   }
 
-  // ==========================================
+  // =========================
   // FAVORITES
-  // ==========================================
+  // =========================
 
   const toggleFavorite = (item) => {
     setFavorites((prev) => {
@@ -175,11 +200,15 @@ function App() {
     })
   }
 
-  // ==========================================
-  // LOAD QUIZ
-  // ==========================================
+  // =========================
+  // GENERATE QUIZ
+  // =========================
 
   const handleQuiz = async () => {
+    if (!topic.trim()) {
+      return
+    }
+
     setQuizLoading(true)
 
     try {
@@ -187,6 +216,8 @@ function App() {
 
       setQuiz(q)
     } catch (err) {
+      console.error(err)
+
       alert(
         "Couldn't load a quiz right now, try again."
       )
@@ -195,9 +226,9 @@ function App() {
     }
   }
 
-  // ==========================================
-  // RECORD QUIZ RESULT
-  // ==========================================
+  // =========================
+  // QUIZ COMPLETED
+  // =========================
 
   const handleQuizComplete = (
     isCorrect,
@@ -213,7 +244,8 @@ function App() {
       return {
         ...prev,
 
-        total: prev.total + 1,
+        total:
+          prev.total + 1,
 
         correct:
           prev.correct +
@@ -239,9 +271,9 @@ function App() {
     })
   }
 
-  // ==========================================
-  // WEEKLY EXPLORATION COUNT
-  // ==========================================
+  // =========================
+  // WEEKLY EXPLORATION
+  // =========================
 
   const oneWeekAgo =
     Date.now() -
@@ -252,11 +284,15 @@ function App() {
       entry.timestamp > oneWeekAgo
   ).length
 
+  // =========================
+  // KID MODE
+  // =========================
+
   const kidMode = tone === "kid"
 
-  // ==========================================
+  // =========================
   // AUTH
-  // ==========================================
+  // =========================
 
   const handleAuth = (user) => {
     setCurrentUser(user)
@@ -275,9 +311,9 @@ function App() {
     )
   }
 
-  // ==========================================
+  // =========================
   // LOGIN PAGE
-  // ==========================================
+  // =========================
 
   if (!currentUser) {
     return (
@@ -294,54 +330,184 @@ function App() {
     )
   }
 
-  // ==========================================
+  // =========================
   // MAIN APP
-  // ==========================================
+  // =========================
 
   return (
     <div
-      className={`min-h-screen px-4 py-10 transition-colors duration-300 text-ink dark:text-paper-dark ${
+      className={`min-h-screen ml-64 px-4 py-10 transition-colors duration-300 text-ink dark:text-paper-dark ${
         kidMode
           ? "dot-paper bg-paper dark:bg-blueprint"
           : "grid-paper bg-paper dark:bg-blueprint"
       }`}
     >
 
-      {/* Theme Toggle */}
+      {/* =========================
+          LEFT SIDEBAR
+          ========================= */}
+
+      <aside className="fixed left-0 top-0 bottom-0 w-64 bg-panel dark:bg-blueprint-panel border-r border-line/20 dark:border-line-dark/20 z-30 flex flex-col">
+
+        {/* Sidebar Header */}
+
+        <div className="p-5 border-b border-line/20 dark:border-line-dark/20">
+
+          <button
+            onClick={() => setView("home")}
+            className={`font-semibold hover:opacity-70 transition ${
+              kidMode
+                ? "font-kid text-xl"
+                : "font-display text-xl"
+            }`}
+          >
+            Curioo
+          </button>
+
+        </div>
+
+        {/* =========================
+            NAVIGATION
+            ========================= */}
+
+        <div className="p-4 space-y-2">
+
+          {/* Favorites */}
+
+          <button
+            onClick={() => setView("favorites")}
+            className={`w-full flex items-center justify-between px-4 py-3 rounded-xl transition text-left ${
+              view === "favorites"
+                ? "bg-black/5 dark:bg-white/10"
+                : "hover:bg-black/5 dark:hover:bg-white/5"
+            }`}
+          >
+
+            <span className="font-display text-sm">
+              ⭐ Favorites
+            </span>
+
+            <span className="text-xs opacity-60">
+              {favorites.length}
+            </span>
+
+          </button>
+
+          {/* Progress */}
+
+          <button
+            onClick={() => setView("progress")}
+            className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl transition text-left ${
+              view === "progress"
+                ? "bg-black/5 dark:bg-white/10"
+                : "hover:bg-black/5 dark:hover:bg-white/5"
+            }`}
+          >
+
+            <span>
+              📈
+            </span>
+
+            <span className="font-display text-sm">
+              Progress
+            </span>
+
+          </button>
+
+        </div>
+
+        {/* =========================
+            RECENT
+            ========================= */}
+
+        <div className="flex-1 overflow-y-auto px-4 pb-5">
+
+          <p className="font-display text-xs text-ink/50 dark:text-paper-dark/50 px-4 py-3 uppercase tracking-wider">
+            Recent
+          </p>
+
+          <div className="space-y-1">
+
+            {history.length === 0 ? (
+
+              <p className="px-4 py-3 text-sm text-ink/40 dark:text-paper-dark/40">
+                No recent topics
+              </p>
+
+            ) : (
+
+              history.map((item) => (
+
+                <button
+                  key={item.id}
+                  onClick={() => {
+                    setTopic(item.topic)
+                    setResult(item.text)
+                    setView("home")
+                    setQuiz(null)
+                  }}
+                  className="w-full text-left px-4 py-3 rounded-xl hover:bg-black/5 dark:hover:bg-white/5 transition"
+                >
+
+                  <p className="font-body text-sm truncate">
+                    {item.topic}
+                  </p>
+
+                </button>
+
+              ))
+
+            )}
+
+          </div>
+
+        </div>
+
+        {/* =========================
+            USER SECTION
+            ========================= */}
+
+        <div className="p-4 border-t border-line/20 dark:border-line-dark/20">
+
+          <div className="flex items-center justify-between gap-2">
+
+            <div className="min-w-0">
+
+              <p className="font-display text-sm truncate">
+                {currentUser.name}
+              </p>
+
+              <p className="font-body text-xs opacity-50">
+                Curioo explorer
+              </p>
+
+            </div>
+
+            <button
+              onClick={handleLogout}
+              className="text-xs underline opacity-60 hover:opacity-100 transition"
+            >
+              logout
+            </button>
+
+          </div>
+
+        </div>
+
+      </aside>
+
+      {/* =========================
+          THEME TOGGLE
+          ========================= */}
+
       <ThemeToggle
         dark={dark}
         setDark={setDark}
       />
 
-      {/* ======================================
-          LEFT SIDE BUTTONS
-          ====================================== */}
-
-      <div className="fixed top-5 left-5 flex items-center gap-2 z-20">
-
-        {/* Favorites */}
-        <button
-          onClick={() => setView("favorites")}
-          className="flex items-center gap-1 px-3 py-2 rounded-full border border-line/30 dark:border-line-dark/30 bg-panel dark:bg-blueprint-panel hover:scale-105 transition-transform duration-200 font-display text-sm"
-          title="Favorites"
-        >
-          ⭐ {favorites.length}
-        </button>
-
-        {/* Progress */}
-        <button
-          onClick={() => setView("progress")}
-          className="flex items-center gap-1 px-3 py-2 rounded-full border border-line/30 dark:border-line-dark/30 bg-panel dark:bg-blueprint-panel hover:scale-105 transition-transform duration-200 font-display text-sm"
-          title="Quiz Progress"
-        >
-          📈
-        </button>
-
-      </div>
-
-      {/* ======================================
+      {/* =========================
           HEADER
-          ====================================== */}
+          ========================= */}
 
       <header className="flex flex-col items-center mb-10">
 
@@ -440,25 +606,21 @@ function App() {
         </div>
 
         <p className="font-body italic text-ink/60 dark:text-paper-dark/60">
-
           {kidMode
             ? "let's find out how things work! ✨"
             : "understand how anything really works"}
-
         </p>
 
         <p className="font-display text-xs text-ink/40 dark:text-paper-dark/40 mt-2">
-
           📊 {log.length} explored ·{" "}
           {thisWeekCount} this week
-
         </p>
 
       </header>
 
-      {/* ======================================
-          FAVORITES PAGE
-          ====================================== */}
+      {/* =========================
+          PAGE CONTENT
+          ========================= */}
 
       {view === "favorites" ? (
 
@@ -467,19 +629,14 @@ function App() {
           onBack={() => setView("home")}
           onRemove={toggleFavorite}
           onSelect={(item) => {
-
             setTopic(item.topic)
             setResult(item.text)
             setView("home")
-
+            setQuiz(null)
           }}
         />
 
       ) : view === "progress" ? (
-
-        /* ====================================
-           PROGRESS PAGE
-           ==================================== */
 
         <ProgressPage
           progress={progress}
@@ -488,13 +645,12 @@ function App() {
 
       ) : (
 
-        /* ====================================
-           HOME PAGE
-           ==================================== */
-
         <>
 
-          {/* Search Panel */}
+          {/* =========================
+              SEARCH CARD
+              ========================= */}
+
           <div
             className={`max-w-xl mx-auto p-5 transition-all duration-300 ${
               kidMode
@@ -530,7 +686,10 @@ function App() {
 
           </div>
 
-          {/* Categories */}
+          {/* =========================
+              CATEGORY BROWSER
+              ========================= */}
+
           <CategoryBrowser
             onPick={(picked) => {
               setTopic(picked)
@@ -538,7 +697,10 @@ function App() {
             }}
           />
 
-          {/* Topic of the Day */}
+          {/* =========================
+              TOPIC OF THE DAY
+              ========================= */}
+
           {!result && !loading && (
 
             <TopicOfDay
@@ -550,19 +712,27 @@ function App() {
 
           )}
 
-          {/* Loading */}
+          {/* =========================
+              LOADING
+              ========================= */}
+
           {loading && <Loader />}
 
-          {/* Error */}
+          {/* =========================
+              ERROR
+              ========================= */}
+
           {error && (
+
             <p className="font-body text-red-500 text-center mt-4">
               {error}
             </p>
+
           )}
 
-          {/* =================================
-              EXPLANATION RESULT
-              ================================= */}
+          {/* =========================
+              RESULT
+              ========================= */}
 
           {result && (
 
@@ -602,9 +772,9 @@ function App() {
 
           )}
 
-          {/* =================================
+          {/* =========================
               QUIZ
-              ================================= */}
+              ========================= */}
 
           {quiz && (
 
@@ -616,18 +786,6 @@ function App() {
             />
 
           )}
-
-          {/* =================================
-              HISTORY
-              ================================= */}
-
-          <History
-            items={history}
-            onSelect={(item) => {
-              setTopic(item.topic)
-              setResult(item.text)
-            }}
-          />
 
         </>
 
