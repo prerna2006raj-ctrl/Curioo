@@ -12,6 +12,7 @@ import AuthPage from "./components/AuthPage"
 import TopicOfDay from "./components/TopicOfDay"
 import { getExplanation, getQuiz } from "./services/gemini"
 import QuizCard from "./components/QuizCard"
+import ProgressPage from "./components/ProgressPage"
 
 function App() {
   const [topic, setTopic] = useState("")
@@ -24,157 +25,476 @@ function App() {
   const [relatedTopics, setRelatedTopics] = useState([])
   const [quiz, setQuiz] = useState(null)
   const [quizLoading, setQuizLoading] = useState(false)
+
   const [log, setLog] = useState(() => {
     const saved = localStorage.getItem("curioo-log")
     return saved ? JSON.parse(saved) : []
   })
+
   const [favorites, setFavorites] = useState(() => {
     const saved = localStorage.getItem("curioo-favorites")
     return saved ? JSON.parse(saved) : []
   })
+
   const [dark, setDark] = useState(() => {
     return localStorage.getItem("curioo-theme") === "dark"
   })
+
   const [currentUser, setCurrentUser] = useState(() => {
     const saved = localStorage.getItem("curioo-current-user")
     return saved ? JSON.parse(saved) : null
   })
 
+  // ==========================================
+  // QUIZ PROGRESS STATE
+  // ==========================================
+
+  const [progress, setProgress] = useState(() => {
+    const saved = localStorage.getItem("curioo-progress")
+
+    return saved
+      ? JSON.parse(saved)
+      : {
+          total: 0,
+          correct: 0,
+          timedOut: 0,
+          byTopic: {}
+        }
+  })
+
+  // ==========================================
+  // SAVE FAVORITES
+  // ==========================================
+
   useEffect(() => {
-    localStorage.setItem("curioo-favorites", JSON.stringify(favorites))
+    localStorage.setItem(
+      "curioo-favorites",
+      JSON.stringify(favorites)
+    )
   }, [favorites])
+
+  // ==========================================
+  // SAVE THEME
+  // ==========================================
 
   useEffect(() => {
     document.documentElement.classList.toggle("dark", dark)
-    localStorage.setItem("curioo-theme", dark ? "dark" : "light")
+
+    localStorage.setItem(
+      "curioo-theme",
+      dark ? "dark" : "light"
+    )
   }, [dark])
 
+  // ==========================================
+  // SAVE EXPLORATION LOG
+  // ==========================================
+
   useEffect(() => {
-    localStorage.setItem("curioo-log", JSON.stringify(log))
+    localStorage.setItem(
+      "curioo-log",
+      JSON.stringify(log)
+    )
   }, [log])
+
+  // ==========================================
+  // SAVE QUIZ PROGRESS AUTOMATICALLY
+  // ==========================================
+
+  useEffect(() => {
+    localStorage.setItem(
+      "curioo-progress",
+      JSON.stringify(progress)
+    )
+  }, [progress])
+
+  // ==========================================
+  // EXPLAIN TOPIC
+  // ==========================================
 
   const handleExplain = async (customTopic) => {
     const searchTopic = customTopic || topic
+
     setLoading(true)
     setError("")
     setResult("")
     setRelatedTopics([])
     setQuiz(null)
+
     try {
-      const { text, related } = await getExplanation(searchTopic, tone)
+      const { text, related } = await getExplanation(
+        searchTopic,
+        tone
+      )
+
       setResult(text)
       setRelatedTopics(related)
-      setHistory((prev) => [{ topic: searchTopic, text, id: Date.now() }, ...prev])
-      setLog((prev) => [...prev, { topic: searchTopic, timestamp: Date.now() }])
+
+      setHistory((prev) => [
+        {
+          topic: searchTopic,
+          text,
+          id: Date.now()
+        },
+        ...prev
+      ])
+
+      setLog((prev) => [
+        ...prev,
+        {
+          topic: searchTopic,
+          timestamp: Date.now()
+        }
+      ])
     } catch (err) {
-      setError("Couldn't get an explanation. Check your connection and try again.")
+      setError(
+        "Couldn't get an explanation. Check your connection and try again."
+      )
     } finally {
       setLoading(false)
     }
   }
 
+  // ==========================================
+  // FAVORITES
+  // ==========================================
+
   const toggleFavorite = (item) => {
     setFavorites((prev) => {
-      const exists = prev.find((f) => f.topic === item.topic)
-      if (exists) return prev.filter((f) => f.topic !== item.topic)
+      const exists = prev.find(
+        (f) => f.topic === item.topic
+      )
+
+      if (exists) {
+        return prev.filter(
+          (f) => f.topic !== item.topic
+        )
+      }
+
       return [item, ...prev]
     })
   }
 
+  // ==========================================
+  // LOAD QUIZ
+  // ==========================================
+
   const handleQuiz = async () => {
     setQuizLoading(true)
+
     try {
       const q = await getQuiz(topic)
+
       setQuiz(q)
     } catch (err) {
-      alert("Couldn't load a quiz right now, try again.")
+      alert(
+        "Couldn't load a quiz right now, try again."
+      )
     } finally {
       setQuizLoading(false)
     }
   }
 
-  const oneWeekAgo = Date.now() - 7 * 24 * 60 * 60 * 1000
-  const thisWeekCount = log.filter((entry) => entry.timestamp > oneWeekAgo).length
+  // ==========================================
+  // RECORD QUIZ RESULT
+  // ==========================================
+
+  const handleQuizComplete = (
+    isCorrect,
+    didTimeOut
+  ) => {
+    setProgress((prev) => {
+      const previousTopic =
+        prev.byTopic[topic] || {
+          attempts: 0,
+          correct: 0
+        }
+
+      return {
+        ...prev,
+
+        total: prev.total + 1,
+
+        correct:
+          prev.correct +
+          (isCorrect ? 1 : 0),
+
+        timedOut:
+          prev.timedOut +
+          (didTimeOut ? 1 : 0),
+
+        byTopic: {
+          ...prev.byTopic,
+
+          [topic]: {
+            attempts:
+              previousTopic.attempts + 1,
+
+            correct:
+              previousTopic.correct +
+              (isCorrect ? 1 : 0)
+          }
+        }
+      }
+    })
+  }
+
+  // ==========================================
+  // WEEKLY EXPLORATION COUNT
+  // ==========================================
+
+  const oneWeekAgo =
+    Date.now() -
+    7 * 24 * 60 * 60 * 1000
+
+  const thisWeekCount = log.filter(
+    (entry) =>
+      entry.timestamp > oneWeekAgo
+  ).length
+
   const kidMode = tone === "kid"
+
+  // ==========================================
+  // AUTH
+  // ==========================================
 
   const handleAuth = (user) => {
     setCurrentUser(user)
-    localStorage.setItem("curioo-current-user", JSON.stringify(user))
+
+    localStorage.setItem(
+      "curioo-current-user",
+      JSON.stringify(user)
+    )
   }
 
   const handleLogout = () => {
     setCurrentUser(null)
-    localStorage.removeItem("curioo-current-user")
+
+    localStorage.removeItem(
+      "curioo-current-user"
+    )
   }
+
+  // ==========================================
+  // LOGIN PAGE
+  // ==========================================
 
   if (!currentUser) {
     return (
       <div className="grid-paper min-h-screen bg-paper dark:bg-blueprint px-4 py-10 flex items-center justify-center transition-colors duration-300">
-        <ThemeToggle dark={dark} setDark={setDark} />
+
+        <ThemeToggle
+          dark={dark}
+          setDark={setDark}
+        />
+
         <AuthPage onAuth={handleAuth} />
+
       </div>
     )
   }
 
+  // ==========================================
+  // MAIN APP
+  // ==========================================
+
   return (
     <div
       className={`min-h-screen px-4 py-10 transition-colors duration-300 text-ink dark:text-paper-dark ${
-        kidMode ? "dot-paper bg-paper dark:bg-blueprint" : "grid-paper bg-paper dark:bg-blueprint"
+        kidMode
+          ? "dot-paper bg-paper dark:bg-blueprint"
+          : "grid-paper bg-paper dark:bg-blueprint"
       }`}
     >
-      <ThemeToggle dark={dark} setDark={setDark} />
 
-      <button
-        onClick={() => setView("favorites")}
-        className="fixed top-5 left-5 flex items-center gap-1 px-3 py-2 rounded-full border border-line/30 dark:border-line-dark/30 bg-panel dark:bg-blueprint-panel hover:scale-105 transition-transform duration-200 font-display text-sm"
-      >
-        ⭐ {favorites.length}
-      </button>
+      {/* Theme Toggle */}
+      <ThemeToggle
+        dark={dark}
+        setDark={setDark}
+      />
+
+      {/* ======================================
+          LEFT SIDE BUTTONS
+          ====================================== */}
+
+      <div className="fixed top-5 left-5 flex items-center gap-2 z-20">
+
+        {/* Favorites */}
+        <button
+          onClick={() => setView("favorites")}
+          className="flex items-center gap-1 px-3 py-2 rounded-full border border-line/30 dark:border-line-dark/30 bg-panel dark:bg-blueprint-panel hover:scale-105 transition-transform duration-200 font-display text-sm"
+          title="Favorites"
+        >
+          ⭐ {favorites.length}
+        </button>
+
+        {/* Progress */}
+        <button
+          onClick={() => setView("progress")}
+          className="flex items-center gap-1 px-3 py-2 rounded-full border border-line/30 dark:border-line-dark/30 bg-panel dark:bg-blueprint-panel hover:scale-105 transition-transform duration-200 font-display text-sm"
+          title="Quiz Progress"
+        >
+          📈
+        </button>
+
+      </div>
+
+      {/* ======================================
+          HEADER
+          ====================================== */}
 
       <header className="flex flex-col items-center mb-10">
+
         <div className="font-display text-xs text-ink/50 dark:text-paper-dark/50 mb-3 flex items-center gap-2">
-          <span>hi, {currentUser.name} 👋</span>
+
+          <span>
+            hi, {currentUser.name} 👋
+          </span>
+
           <button
             onClick={handleLogout}
             className="underline hover:text-amber transition-colors duration-150"
           >
             log out
           </button>
+
         </div>
+
         <div className="flex items-center gap-2 mb-1">
-          <svg width="26" height="26" viewBox="0 0 28 28" fill="none" className={kidMode ? "text-kid-pink dark:text-kid-yellow" : "text-line dark:text-line-dark"}>
-            <circle cx="14" cy="14" r="11" stroke="currentColor" strokeWidth="1.5" />
-            <line x1="14" y1="1" x2="14" y2="7" stroke="currentColor" strokeWidth="1.5" />
-            <line x1="14" y1="21" x2="14" y2="27" stroke="currentColor" strokeWidth="1.5" />
-            <line x1="1" y1="14" x2="7" y2="14" stroke="currentColor" strokeWidth="1.5" />
-            <line x1="21" y1="14" x2="27" y2="14" stroke="currentColor" strokeWidth="1.5" />
-            <circle cx="14" cy="14" r="2.5" fill="currentColor" />
+
+          <svg
+            width="26"
+            height="26"
+            viewBox="0 0 28 28"
+            fill="none"
+            className={
+              kidMode
+                ? "text-kid-pink dark:text-kid-yellow"
+                : "text-line dark:text-line-dark"
+            }
+          >
+
+            <circle
+              cx="14"
+              cy="14"
+              r="11"
+              stroke="currentColor"
+              strokeWidth="1.5"
+            />
+
+            <line
+              x1="14"
+              y1="1"
+              x2="14"
+              y2="7"
+              stroke="currentColor"
+              strokeWidth="1.5"
+            />
+
+            <line
+              x1="14"
+              y1="21"
+              x2="14"
+              y2="27"
+              stroke="currentColor"
+              strokeWidth="1.5"
+            />
+
+            <line
+              x1="1"
+              y1="14"
+              x2="7"
+              y2="14"
+              stroke="currentColor"
+              strokeWidth="1.5"
+            />
+
+            <line
+              x1="21"
+              y1="14"
+              x2="27"
+              y2="14"
+              stroke="currentColor"
+              strokeWidth="1.5"
+            />
+
+            <circle
+              cx="14"
+              cy="14"
+              r="2.5"
+              fill="currentColor"
+            />
+
           </svg>
-          <h1 className={`text-3xl font-semibold tracking-tight transition-all duration-300 ${kidMode ? "font-kid" : "font-display"}`}>
+
+          <h1
+            className={`text-3xl font-semibold tracking-tight transition-all duration-300 ${
+              kidMode
+                ? "font-kid"
+                : "font-display"
+            }`}
+          >
             Curioo
           </h1>
+
         </div>
+
         <p className="font-body italic text-ink/60 dark:text-paper-dark/60">
-          {kidMode ? "let's find out how things work! ✨" : "understand how anything really works"}
+
+          {kidMode
+            ? "let's find out how things work! ✨"
+            : "understand how anything really works"}
+
         </p>
+
         <p className="font-display text-xs text-ink/40 dark:text-paper-dark/40 mt-2">
-          📊 {log.length} explored · {thisWeekCount} this week
+
+          📊 {log.length} explored ·{" "}
+          {thisWeekCount} this week
+
         </p>
+
       </header>
 
+      {/* ======================================
+          FAVORITES PAGE
+          ====================================== */}
+
       {view === "favorites" ? (
+
         <FavoritesPage
           favorites={favorites}
           onBack={() => setView("home")}
           onRemove={toggleFavorite}
           onSelect={(item) => {
+
             setTopic(item.topic)
             setResult(item.text)
             setView("home")
+
           }}
         />
+
+      ) : view === "progress" ? (
+
+        /* ====================================
+           PROGRESS PAGE
+           ==================================== */
+
+        <ProgressPage
+          progress={progress}
+          onBack={() => setView("home")}
+        />
+
       ) : (
+
+        /* ====================================
+           HOME PAGE
+           ==================================== */
+
         <>
+
+          {/* Search Panel */}
           <div
             className={`max-w-xl mx-auto p-5 transition-all duration-300 ${
               kidMode
@@ -182,37 +502,124 @@ function App() {
                 : "rounded-md border border-line/20 dark:border-line-dark/20 bg-panel dark:bg-blueprint-panel"
             }`}
           >
+
             <div className="flex justify-end mb-3">
-              <SurpriseButton onPick={(picked) => { setTopic(picked); handleExplain(picked) }} />
+
+              <SurpriseButton
+                onPick={(picked) => {
+                  setTopic(picked)
+                  handleExplain(picked)
+                }}
+              />
+
             </div>
-            <SearchBar topic={topic} setTopic={setTopic} onExplain={() => handleExplain()} loading={loading} kidMode={kidMode} history={history} />
-            <ToneToggle tone={tone} setTone={setTone} />
+
+            <SearchBar
+              topic={topic}
+              setTopic={setTopic}
+              onExplain={() => handleExplain()}
+              loading={loading}
+              kidMode={kidMode}
+              history={history}
+            />
+
+            <ToneToggle
+              tone={tone}
+              setTone={setTone}
+            />
+
           </div>
 
-          <CategoryBrowser onPick={(picked) => { setTopic(picked); handleExplain(picked) }} />
+          {/* Categories */}
+          <CategoryBrowser
+            onPick={(picked) => {
+              setTopic(picked)
+              handleExplain(picked)
+            }}
+          />
 
+          {/* Topic of the Day */}
           {!result && !loading && (
-            <TopicOfDay onExplore={(picked) => { setTopic(picked); handleExplain(picked) }} />
+
+            <TopicOfDay
+              onExplore={(picked) => {
+                setTopic(picked)
+                handleExplain(picked)
+              }}
+            />
+
           )}
 
+          {/* Loading */}
           {loading && <Loader />}
-          {error && <p className="font-body text-red-500 text-center mt-4">{error}</p>}
+
+          {/* Error */}
+          {error && (
+            <p className="font-body text-red-500 text-center mt-4">
+              {error}
+            </p>
+          )}
+
+          {/* =================================
+              EXPLANATION RESULT
+              ================================= */}
+
           {result && (
+
             <ResultCard
               text={result}
-              onFavorite={() => toggleFavorite({ topic, text: result })}
-              isFavorite={favorites.some((f) => f.topic === topic)}
-              onRegenerate={() => handleExplain(topic)}
+
+              onFavorite={() =>
+                toggleFavorite({
+                  topic,
+                  text: result
+                })
+              }
+
+              isFavorite={favorites.some(
+                (f) => f.topic === topic
+              )}
+
+              onRegenerate={() =>
+                handleExplain(topic)
+              }
+
               regenerating={loading}
+
               relatedTopics={relatedTopics}
-              onRelatedClick={(picked) => { setTopic(picked); handleExplain(picked) }}
+
+              onRelatedClick={(picked) => {
+                setTopic(picked)
+                handleExplain(picked)
+              }}
+
               onQuiz={handleQuiz}
+
               quizLoading={quizLoading}
+
               kidMode={kidMode}
             />
+
           )}
 
-          {quiz && <QuizCard quiz={quiz} onClose={() => setQuiz(null)} />}
+          {/* =================================
+              QUIZ
+              ================================= */}
+
+          {quiz && (
+
+            <QuizCard
+              quiz={quiz}
+              topic={topic}
+              onClose={() => setQuiz(null)}
+              onComplete={handleQuizComplete}
+            />
+
+          )}
+
+          {/* =================================
+              HISTORY
+              ================================= */}
 
           <History
             items={history}
@@ -221,8 +628,11 @@ function App() {
               setResult(item.text)
             }}
           />
+
         </>
+
       )}
+
     </div>
   )
 }
