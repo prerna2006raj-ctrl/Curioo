@@ -14,19 +14,42 @@ import QuizCard from "./components/QuizCard"
 import ProgressPage from "./components/ProgressPage"
 
 function App() {
+  // =========================
+  // BASIC STATES
+  // =========================
+
   const [topic, setTopic] = useState("")
   const [tone, setTone] = useState("kid")
   const [result, setResult] = useState("")
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState("")
-  const [history, setHistory] = useState([])
+
+  // =========================
+  // RECENT HISTORY
+  // =========================
+
+  const [history, setHistory] = useState(() => {
+    const saved = localStorage.getItem("curioo-history")
+    return saved ? JSON.parse(saved) : []
+  })
+
+  // =========================
+  // PAGE VIEW
+  // =========================
+
   const [view, setView] = useState("home")
+
   const [relatedTopics, setRelatedTopics] = useState([])
+
+  // =========================
+  // QUIZ
+  // =========================
+
   const [quiz, setQuiz] = useState(null)
   const [quizLoading, setQuizLoading] = useState(false)
 
   // =========================
-  // LOG
+  // EXPLORATION LOG
   // =========================
 
   const [log, setLog] = useState(() => {
@@ -78,6 +101,17 @@ function App() {
   })
 
   // =========================
+  // SAVE HISTORY
+  // =========================
+
+  useEffect(() => {
+    localStorage.setItem(
+      "curioo-history",
+      JSON.stringify(history)
+    )
+  }, [history])
+
+  // =========================
   // SAVE FAVORITES
   // =========================
 
@@ -93,7 +127,10 @@ function App() {
   // =========================
 
   useEffect(() => {
-    document.documentElement.classList.toggle("dark", dark)
+    document.documentElement.classList.toggle(
+      "dark",
+      dark
+    )
 
     localStorage.setItem(
       "curioo-theme",
@@ -128,9 +165,11 @@ function App() {
   // =========================
 
   const handleExplain = async (customTopic) => {
-    const searchTopic = customTopic || topic
+    const searchTopic = (
+      customTopic || topic
+    ).trim()
 
-    if (!searchTopic.trim()) {
+    if (!searchTopic) {
       return
     }
 
@@ -141,15 +180,16 @@ function App() {
     setQuiz(null)
 
     try {
-      const { text, related } = await getExplanation(
-        searchTopic,
-        tone
-      )
+      const { text, related } =
+        await getExplanation(
+          searchTopic,
+          tone
+        )
 
       setResult(text)
-      setRelatedTopics(related)
+      setRelatedTopics(related || [])
 
-      // Add to recent history
+      // Add topic to recent history
       setHistory((prev) => [
         {
           topic: searchTopic,
@@ -157,7 +197,9 @@ function App() {
           id: Date.now()
         },
         ...prev.filter(
-          (item) => item.topic !== searchTopic
+          (item) =>
+            item.topic.toLowerCase() !==
+            searchTopic.toLowerCase()
         )
       ])
 
@@ -201,7 +243,7 @@ function App() {
   }
 
   // =========================
-  // GENERATE QUIZ
+  // QUIZ GENERATION
   // =========================
 
   const handleQuiz = async () => {
@@ -227,16 +269,17 @@ function App() {
   }
 
   // =========================
-  // QUIZ COMPLETED
+  // QUIZ COMPLETION
   // =========================
 
   const handleQuizComplete = (
     isCorrect,
-    didTimeOut
+    didTimeOut,
+    quizTopic
   ) => {
     setProgress((prev) => {
       const previousTopic =
-        prev.byTopic[topic] || {
+        prev.byTopic[quizTopic] || {
           attempts: 0,
           correct: 0
         }
@@ -258,7 +301,7 @@ function App() {
         byTopic: {
           ...prev.byTopic,
 
-          [topic]: {
+          [quizTopic]: {
             attempts:
               previousTopic.attempts + 1,
 
@@ -272,7 +315,7 @@ function App() {
   }
 
   // =========================
-  // WEEKLY EXPLORATION
+  // WEEKLY COUNT
   // =========================
 
   const oneWeekAgo =
@@ -312,7 +355,7 @@ function App() {
   }
 
   // =========================
-  // LOGIN PAGE
+  // LOGIN SCREEN
   // =========================
 
   if (!currentUser) {
@@ -336,126 +379,206 @@ function App() {
 
   return (
     <div
-      className={`min-h-screen ml-64 px-4 py-10 transition-colors duration-300 text-ink dark:text-paper-dark ${
+      className={`min-h-screen ml-72 px-4 py-10 transition-colors duration-300 text-ink dark:text-paper-dark ${
         kidMode
           ? "dot-paper bg-paper dark:bg-blueprint"
           : "grid-paper bg-paper dark:bg-blueprint"
       }`}
     >
 
-      {/* =========================
-          LEFT SIDEBAR
-          ========================= */}
+      {/* =================================
+          ADVANCED SIDEBAR
+          ================================= */}
 
-      <aside className="fixed left-0 top-0 bottom-0 w-64 bg-panel dark:bg-blueprint-panel border-r border-line/20 dark:border-line-dark/20 z-30 flex flex-col">
+      <aside className="curioo-sidebar">
 
-        {/* Sidebar Header */}
+        {/* BRAND */}
 
-        <div className="p-5 border-b border-line/20 dark:border-line-dark/20">
+        <div className="sidebar-brand">
 
           <button
             onClick={() => setView("home")}
-            className={`font-semibold hover:opacity-70 transition ${
-              kidMode
-                ? "font-kid text-xl"
-                : "font-display text-xl"
-            }`}
+            className="sidebar-logo-button"
           >
-            Curioo
+
+            <span className="sidebar-logo">
+              ✦
+            </span>
+
+            <span className="sidebar-brand-name">
+              Curioo
+            </span>
+
           </button>
+
+          <span className="sidebar-live-dot" />
 
         </div>
 
-        {/* =========================
-            NAVIGATION
-            ========================= */}
 
-        <div className="p-4 space-y-2">
+        {/* NAVIGATION */}
 
-          {/* Favorites */}
+        <div className="sidebar-navigation">
+
+          <p className="sidebar-section-title">
+            Workspace
+          </p>
+
+
+          {/* FAVORITES */}
 
           <button
-            onClick={() => setView("favorites")}
-            className={`w-full flex items-center justify-between px-4 py-3 rounded-xl transition text-left ${
+            onClick={() =>
+              setView("favorites")
+            }
+            className={`sidebar-nav-item ${
               view === "favorites"
-                ? "bg-black/5 dark:bg-white/10"
-                : "hover:bg-black/5 dark:hover:bg-white/5"
+                ? "sidebar-nav-active"
+                : ""
             }`}
           >
 
-            <span className="font-display text-sm">
-              ⭐ Favorites
+            {view === "favorites" && (
+              <span className="sidebar-active-line" />
+            )}
+
+            <span className="sidebar-nav-icon favorites-icon">
+              ⭐
             </span>
 
-            <span className="text-xs opacity-60">
+            <div className="sidebar-nav-text">
+
+              <span>
+                Favorites
+              </span>
+
+              <small>
+                Saved discoveries
+              </small>
+
+            </div>
+
+            <span className="sidebar-count">
               {favorites.length}
             </span>
 
           </button>
 
-          {/* Progress */}
+
+          {/* PROGRESS */}
 
           <button
-            onClick={() => setView("progress")}
-            className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl transition text-left ${
+            onClick={() =>
+              setView("progress")
+            }
+            className={`sidebar-nav-item ${
               view === "progress"
-                ? "bg-black/5 dark:bg-white/10"
-                : "hover:bg-black/5 dark:hover:bg-white/5"
+                ? "sidebar-nav-active"
+                : ""
             }`}
           >
 
-            <span>
+            {view === "progress" && (
+              <span className="sidebar-active-line" />
+            )}
+
+            <span className="sidebar-nav-icon progress-icon">
               📈
             </span>
 
-            <span className="font-display text-sm">
-              Progress
-            </span>
+            <div className="sidebar-nav-text">
+
+              <span>
+                Progress
+              </span>
+
+              <small>
+                Track your learning
+              </small>
+
+            </div>
 
           </button>
 
         </div>
 
-        {/* =========================
-            RECENT
-            ========================= */}
 
-        <div className="flex-1 overflow-y-auto px-4 pb-5">
+        {/* RECENT */}
 
-          <p className="font-display text-xs text-ink/50 dark:text-paper-dark/50 px-4 py-3 uppercase tracking-wider">
-            Recent
-          </p>
+        <div className="sidebar-recent">
 
-          <div className="space-y-1">
+          <div className="sidebar-recent-header">
+
+            <p className="sidebar-section-title">
+              Recent
+            </p>
+
+            {history.length > 0 && (
+              <span className="sidebar-recent-count">
+                {history.length}
+              </span>
+            )}
+
+          </div>
+
+
+          <div className="sidebar-recent-list">
 
             {history.length === 0 ? (
 
-              <p className="px-4 py-3 text-sm text-ink/40 dark:text-paper-dark/40">
-                No recent topics
-              </p>
+              <div className="sidebar-empty">
+
+                <span>
+                  🧠
+                </span>
+
+                <p>
+                  Your discoveries
+                  will appear here
+                </p>
+
+              </div>
 
             ) : (
 
-              history.map((item) => (
+              history.map(
+                (item, index) => (
 
-                <button
-                  key={item.id}
-                  onClick={() => {
-                    setTopic(item.topic)
-                    setResult(item.text)
-                    setView("home")
-                    setQuiz(null)
-                  }}
-                  className="w-full text-left px-4 py-3 rounded-xl hover:bg-black/5 dark:hover:bg-white/5 transition"
-                >
+                  <button
+                    key={item.id}
+                    onClick={() => {
+                      setTopic(item.topic)
+                      setResult(item.text)
+                      setView("home")
+                      setQuiz(null)
+                    }}
+                    className="sidebar-recent-item"
+                  >
 
-                  <p className="font-body text-sm truncate">
-                    {item.topic}
-                  </p>
+                    <span className="recent-dot" />
 
-                </button>
+                    <div className="recent-topic-container">
 
-              ))
+                      <span className="recent-topic">
+                        {item.topic}
+                      </span>
+
+                      {index === 0 && (
+                        <span className="recent-latest">
+                          latest
+                        </span>
+                      )}
+
+                    </div>
+
+                    <span className="recent-arrow">
+                      →
+                    </span>
+
+                  </button>
+
+                )
+              )
 
             )}
 
@@ -463,31 +586,39 @@ function App() {
 
         </div>
 
-        {/* =========================
-            USER SECTION
-            ========================= */}
 
-        <div className="p-4 border-t border-line/20 dark:border-line-dark/20">
+        {/* USER */}
 
-          <div className="flex items-center justify-between gap-2">
+        <div className="sidebar-user-section">
 
-            <div className="min-w-0">
+          <div className="sidebar-user-card">
 
-              <p className="font-display text-sm truncate">
+            <div className="sidebar-avatar">
+              {currentUser.name
+                ? currentUser.name
+                    .charAt(0)
+                    .toUpperCase()
+                : "U"}
+            </div>
+
+            <div className="sidebar-user-info">
+
+              <p>
                 {currentUser.name}
               </p>
 
-              <p className="font-body text-xs opacity-50">
-                Curioo explorer
-              </p>
+              <small>
+                Curious explorer ✨
+              </small>
 
             </div>
 
             <button
               onClick={handleLogout}
-              className="text-xs underline opacity-60 hover:opacity-100 transition"
+              className="sidebar-logout"
+              title="Log out"
             >
-              logout
+              ↪
             </button>
 
           </div>
@@ -496,35 +627,22 @@ function App() {
 
       </aside>
 
-      {/* =========================
+
+      {/* =================================
           THEME TOGGLE
-          ========================= */}
+          ================================= */}
 
       <ThemeToggle
         dark={dark}
         setDark={setDark}
       />
 
-      {/* =========================
+
+      {/* =================================
           HEADER
-          ========================= */}
+          ================================= */}
 
       <header className="flex flex-col items-center mb-10">
-
-        <div className="font-display text-xs text-ink/50 dark:text-paper-dark/50 mb-3 flex items-center gap-2">
-
-          <span>
-            hi, {currentUser.name} 👋
-          </span>
-
-          <button
-            onClick={handleLogout}
-            className="underline hover:text-amber transition-colors duration-150"
-          >
-            log out
-          </button>
-
-        </div>
 
         <div className="flex items-center gap-2 mb-1">
 
@@ -593,8 +711,9 @@ function App() {
 
           </svg>
 
+
           <h1
-            className={`text-3xl font-semibold tracking-tight transition-all duration-300 ${
+            className={`text-3xl font-semibold tracking-tight ${
               kidMode
                 ? "font-kid"
                 : "font-display"
@@ -605,28 +724,37 @@ function App() {
 
         </div>
 
+
         <p className="font-body italic text-ink/60 dark:text-paper-dark/60">
+
           {kidMode
             ? "let's find out how things work! ✨"
             : "understand how anything really works"}
+
         </p>
 
+
         <p className="font-display text-xs text-ink/40 dark:text-paper-dark/40 mt-2">
+
           📊 {log.length} explored ·{" "}
           {thisWeekCount} this week
+
         </p>
 
       </header>
 
-      {/* =========================
-          PAGE CONTENT
-          ========================= */}
+
+      {/* =================================
+          FAVORITES PAGE
+          ================================= */}
 
       {view === "favorites" ? (
 
         <FavoritesPage
           favorites={favorites}
-          onBack={() => setView("home")}
+          onBack={() =>
+            setView("home")
+          }
           onRemove={toggleFavorite}
           onSelect={(item) => {
             setTopic(item.topic)
@@ -638,18 +766,26 @@ function App() {
 
       ) : view === "progress" ? (
 
+        /* =================================
+           PROGRESS PAGE
+           ================================= */
+
         <ProgressPage
           progress={progress}
-          onBack={() => setView("home")}
+          onBack={() =>
+            setView("home")
+          }
         />
 
       ) : (
 
+        /* =================================
+           HOME
+           ================================= */
+
         <>
 
-          {/* =========================
-              SEARCH CARD
-              ========================= */}
+          {/* SEARCH */}
 
           <div
             className={`max-w-xl mx-auto p-5 transition-all duration-300 ${
@@ -670,14 +806,18 @@ function App() {
 
             </div>
 
+
             <SearchBar
               topic={topic}
               setTopic={setTopic}
-              onExplain={() => handleExplain()}
+              onExplain={() =>
+                handleExplain()
+              }
               loading={loading}
               kidMode={kidMode}
               history={history}
             />
+
 
             <ToneToggle
               tone={tone}
@@ -686,9 +826,8 @@ function App() {
 
           </div>
 
-          {/* =========================
-              CATEGORY BROWSER
-              ========================= */}
+
+          {/* CATEGORIES */}
 
           <CategoryBrowser
             onPick={(picked) => {
@@ -697,9 +836,8 @@ function App() {
             }}
           />
 
-          {/* =========================
-              TOPIC OF THE DAY
-              ========================= */}
+
+          {/* TOPIC OF DAY */}
 
           {!result && !loading && (
 
@@ -712,15 +850,13 @@ function App() {
 
           )}
 
-          {/* =========================
-              LOADING
-              ========================= */}
+
+          {/* LOADING */}
 
           {loading && <Loader />}
 
-          {/* =========================
-              ERROR
-              ========================= */}
+
+          {/* ERROR */}
 
           {error && (
 
@@ -730,9 +866,8 @@ function App() {
 
           )}
 
-          {/* =========================
-              RESULT
-              ========================= */}
+
+          {/* RESULT */}
 
           {result && (
 
@@ -747,7 +882,8 @@ function App() {
               }
 
               isFavorite={favorites.some(
-                (f) => f.topic === topic
+                (f) =>
+                  f.topic === topic
               )}
 
               onRegenerate={() =>
@@ -772,17 +908,27 @@ function App() {
 
           )}
 
-          {/* =========================
-              QUIZ
-              ========================= */}
+
+          {/* QUIZ */}
 
           {quiz && (
 
             <QuizCard
               quiz={quiz}
               topic={topic}
-              onClose={() => setQuiz(null)}
-              onComplete={handleQuizComplete}
+              onClose={() =>
+                setQuiz(null)
+              }
+              onComplete={(
+                isCorrect,
+                didTimeOut
+              ) =>
+                handleQuizComplete(
+                  isCorrect,
+                  didTimeOut,
+                  topic
+                )
+              }
             />
 
           )}

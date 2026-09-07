@@ -1,115 +1,389 @@
-function ProgressPage({ progress, onBack }) {
+function ProgressPage({
+  progress,
+  onBack
+}) {
+  const total =
+    progress?.total || 0
+
+  const correct =
+    progress?.correct || 0
+
+  const timedOut =
+    progress?.timedOut || 0
 
   const accuracy =
-    progress.total > 0
-      ? Math.round((progress.correct / progress.total) * 100)
+    total > 0
+      ? Math.round(
+          (correct / total) * 100
+        )
       : 0
 
-  const topicEntries = Object.entries(progress.byTopic)
-    .sort((a, b) => b[1].attempts - a[1].attempts)
+  const topics = Object.entries(
+    progress?.byTopic || {}
+  )
 
   return (
 
-    <div className="animate-fade-in-up max-w-xl mx-auto">
+    <div
+      className="
+        max-w-3xl
+        mx-auto
+        animate-fade-in-up
+      "
+    >
 
-      {/* Header */}
-      <div className="flex items-center justify-between mb-6">
+      {/* HEADER */}
+
+      <div
+        className="
+          flex
+          items-center
+          justify-between
+          mb-6
+        "
+      >
 
         <div>
 
-          <h2 className="font-display text-2xl font-semibold">
-            your progress
-          </h2>
-
-          <p className="font-body text-sm text-ink/60 dark:text-paper-dark/60">
-            Keep learning, one quiz at a time.
+          <p
+            className="
+              font-display
+              text-xs
+              uppercase
+              tracking-widest
+              text-ink/40
+              dark:text-paper-dark/40
+            "
+          >
+            Your learning
           </p>
 
+          <h2
+            className="
+              font-display
+              text-2xl
+              font-semibold
+              mt-1
+            "
+          >
+            📈 Quiz Progress
+          </h2>
+
         </div>
+
 
         <button
           onClick={onBack}
           className="
-            font-display text-xs px-3 py-2 rounded-sm
-            border border-line/30 dark:border-line-dark/30
-            hover:border-amber hover:text-amber
-            transition-colors
+            px-4
+            py-2
+
+            rounded-xl
+
+            border
+            border-line/20
+            dark:border-line-dark/20
+
+            bg-panel
+            dark:bg-blueprint-panel
+
+            font-display
+            text-xs
+
+            hover:border-amber
+            hover:text-amber
+
+            transition-all
           "
         >
-          ← back
+          ← Back
         </button>
 
       </div>
 
-      {/* Statistics */}
-      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
 
-        {[
-          ["🧩", "quizzes", progress.total],
-          ["✅", "correct", progress.correct],
-          ["🎯", "accuracy", `${accuracy}%`],
-          ["⏱️", "timed out", progress.timedOut],
-        ].map(([icon, label, value]) => (
+      {/* STAT CARDS */}
 
-          <div
-            key={label}
+      <div
+        className="
+          grid
+          grid-cols-2
+          md:grid-cols-4
+          gap-3
+          mb-6
+        "
+      >
+
+        {/* TOTAL */}
+
+        <div
+          className="
+            p-4
+            rounded-2xl
+
+            bg-panel
+            dark:bg-blueprint-panel
+
+            border
+            border-line/10
+            dark:border-line-dark/10
+          "
+        >
+
+          <span className="text-xl">
+            🧩
+          </span>
+
+          <p
             className="
-              bg-panel dark:bg-blueprint-panel
-              border border-line/20 dark:border-line-dark/20
-              rounded-md p-4 text-center
+              font-display
+              text-2xl
+              font-semibold
+              mt-2
             "
           >
+            {total}
+          </p>
 
-            <div className="text-xl">
-              {icon}
-            </div>
+          <p
+            className="
+              text-xs
+              text-ink/50
+              dark:text-paper-dark/50
+            "
+          >
+            Quizzes
+          </p>
 
-            <div className="font-display text-xl font-semibold mt-1">
-              {value}
-            </div>
+        </div>
 
-            <div className="
-              font-display text-[10px]
-              uppercase tracking-wide
-              text-ink/50 dark:text-paper-dark/50
-            ">
-              {label}
-            </div>
 
-          </div>
+        {/* CORRECT */}
 
-        ))}
+        <div
+          className="
+            p-4
+            rounded-2xl
+
+            bg-panel
+            dark:bg-blueprint-panel
+
+            border
+            border-line/10
+            dark:border-line-dark/10
+          "
+        >
+
+          <span className="text-xl">
+            ✅
+          </span>
+
+          <p
+            className="
+              font-display
+              text-2xl
+              font-semibold
+              mt-2
+            "
+          >
+            {correct}
+          </p>
+
+          <p
+            className="
+              text-xs
+              text-ink/50
+              dark:text-paper-dark/50
+            "
+          >
+            Correct
+          </p>
+
+        </div>
+
+
+        {/* ACCURACY */}
+
+        <div
+          className="
+            p-4
+            rounded-2xl
+
+            bg-panel
+            dark:bg-blueprint-panel
+
+            border
+            border-line/10
+            dark:border-line-dark/10
+          "
+        >
+
+          <span className="text-xl">
+            🎯
+          </span>
+
+          <p
+            className="
+              font-display
+              text-2xl
+              font-semibold
+              mt-2
+            "
+          >
+            {accuracy}%
+          </p>
+
+          <p
+            className="
+              text-xs
+              text-ink/50
+              dark:text-paper-dark/50
+            "
+          >
+            Accuracy
+          </p>
+
+        </div>
+
+
+        {/* TIMEOUT */}
+
+        <div
+          className="
+            p-4
+            rounded-2xl
+
+            bg-panel
+            dark:bg-blueprint-panel
+
+            border
+            border-line/10
+            dark:border-line-dark/10
+          "
+        >
+
+          <span className="text-xl">
+            ⏰
+          </span>
+
+          <p
+            className="
+              font-display
+              text-2xl
+              font-semibold
+              mt-2
+            "
+          >
+            {timedOut}
+          </p>
+
+          <p
+            className="
+              text-xs
+              text-ink/50
+              dark:text-paper-dark/50
+            "
+          >
+            Timed out
+          </p>
+
+        </div>
 
       </div>
 
-      {/* Overall accuracy */}
-      <div className="
-        mt-5
-        bg-panel dark:bg-blueprint-panel
-        border border-line/20 dark:border-line-dark/20
-        rounded-md p-5
-      ">
 
-        <div className="flex items-center justify-between mb-2">
+      {/* OVERALL PROGRESS */}
 
-          <h3 className="font-display text-sm">
-            overall quiz accuracy
-          </h3>
+      <div
+        className="
+          p-6
 
-          <span className="font-display text-sm text-amber">
+          rounded-3xl
+
+          bg-panel
+          dark:bg-blueprint-panel
+
+          border
+          border-kid-pink/20
+
+          mb-6
+        "
+      >
+
+        <div
+          className="
+            flex
+            items-center
+            justify-between
+            mb-3
+          "
+        >
+
+          <div>
+
+            <h3
+              className="
+                font-display
+                font-medium
+              "
+            >
+              Overall accuracy
+            </h3>
+
+            <p
+              className="
+                text-xs
+                text-ink/40
+                dark:text-paper-dark/40
+                mt-1
+              "
+            >
+              Keep exploring and
+              learning!
+            </p>
+
+          </div>
+
+          <span
+            className="
+              font-display
+              font-semibold
+              text-amber
+            "
+          >
             {accuracy}%
           </span>
 
         </div>
 
-        <div className="
-          h-3 rounded-full
-          bg-line/10 dark:bg-line-dark/10
-          overflow-hidden
-        ">
+
+        <div
+          className="
+            w-full
+            h-3
+
+            rounded-full
+
+            bg-gray-200
+            dark:bg-white/10
+
+            overflow-hidden
+          "
+        >
 
           <div
-            className="h-full bg-amber transition-all duration-500"
+            className="
+              h-full
+
+              rounded-full
+
+              bg-gradient-to-r
+              from-pink-400
+              to-amber-400
+
+              transition-all
+              duration-700
+            "
             style={{
               width: `${accuracy}%`
             }}
@@ -117,114 +391,212 @@ function ProgressPage({ progress, onBack }) {
 
         </div>
 
-        <p className="
-          font-body text-xs
-          text-ink/50 dark:text-paper-dark/50
-          mt-2
-        ">
-          {progress.correct} correct out of {progress.total} completed quizzes.
-        </p>
-
       </div>
 
-      {/* Topic progress */}
-      {topicEntries.length > 0 ? (
 
-        <div className="
-          mt-5
-          bg-panel dark:bg-blueprint-panel
-          border border-line/20 dark:border-line-dark/20
-          rounded-md p-5
-        ">
+      {/* TOPIC PROGRESS */}
 
-          <h3 className="font-display text-sm mb-4">
-            topics you've practiced
+      <div
+        className="
+          p-6
+
+          rounded-3xl
+
+          bg-panel
+          dark:bg-blueprint-panel
+
+          border
+          border-line/10
+          dark:border-line-dark/10
+        "
+      >
+
+        <div className="mb-5">
+
+          <h3
+            className="
+              font-display
+              font-medium
+            "
+          >
+            Topic progress
           </h3>
 
-          <div className="flex flex-col gap-4">
+          <p
+            className="
+              text-xs
+              text-ink/40
+              dark:text-paper-dark/40
+              mt-1
+            "
+          >
+            See where you're getting
+            stronger.
+          </p>
 
-            {topicEntries.map(([topic, stats]) => {
+        </div>
 
-              const topicAccuracy =
-                stats.attempts > 0
-                  ? Math.round(
-                      (stats.correct / stats.attempts) * 100
-                    )
-                  : 0
 
-              return (
+        {topics.length === 0 ? (
 
-                <div key={topic}>
+          <div
+            className="
+              py-10
+              text-center
+            "
+          >
 
-                  <div className="flex items-center justify-between gap-3 mb-1">
+            <div className="text-3xl mb-3">
+              🚀
+            </div>
 
-                    <span className="font-body text-sm truncate">
-                      {topic}
-                    </span>
+            <p
+              className="
+                font-display
+                text-sm
+              "
+            >
+              No quiz progress yet
+            </p>
 
-                    <span className="
-                      font-display text-xs
-                      text-ink/50 dark:text-paper-dark/50
-                      whitespace-nowrap
-                    ">
-                      {stats.correct}/{stats.attempts} · {topicAccuracy}%
-                    </span>
+            <p
+              className="
+                font-body
+                text-xs
+                text-ink/40
+                dark:text-paper-dark/40
+                mt-1
+              "
+            >
+              Take your first quiz
+              to start tracking!
+            </p>
 
-                  </div>
+          </div>
 
-                  <div className="
-                    h-2 rounded-full
-                    bg-line/10 dark:bg-line-dark/10
-                    overflow-hidden
-                  ">
+        ) : (
+
+          <div className="space-y-5">
+
+            {topics.map(
+              ([topic, data]) => {
+
+                const attempts =
+                  data.attempts || 0
+
+                const topicCorrect =
+                  data.correct || 0
+
+                const topicAccuracy =
+                  attempts > 0
+                    ? Math.round(
+                        (topicCorrect /
+                          attempts) *
+                          100
+                      )
+                    : 0
+
+                return (
+
+                  <div
+                    key={topic}
+                  >
 
                     <div
-                      className="h-full bg-kid-teal transition-all duration-500"
-                      style={{
-                        width: `${topicAccuracy}%`
-                      }}
-                    />
+                      className="
+                        flex
+                        items-center
+                        justify-between
+                        mb-2
+                      "
+                    >
+
+                      <div className="min-w-0">
+
+                        <p
+                          className="
+                            font-body
+                            text-sm
+                            truncate
+                          "
+                        >
+                          {topic}
+                        </p>
+
+                        <p
+                          className="
+                            text-[10px]
+                            text-ink/40
+                            dark:text-paper-dark/40
+                          "
+                        >
+                          {topicCorrect}
+                          {" "}
+                          correct out of{" "}
+                          {attempts}
+                        </p>
+
+                      </div>
+
+                      <span
+                        className="
+                          font-display
+                          text-xs
+                          text-amber
+                        "
+                      >
+                        {topicAccuracy}%
+                      </span>
+
+                    </div>
+
+
+                    <div
+                      className="
+                        w-full
+                        h-2
+
+                        rounded-full
+
+                        bg-gray-200
+                        dark:bg-white/10
+
+                        overflow-hidden
+                      "
+                    >
+
+                      <div
+                        className="
+                          h-full
+
+                          rounded-full
+
+                          bg-gradient-to-r
+                          from-pink-400
+                          to-amber-400
+
+                          transition-all
+                          duration-700
+                        "
+                        style={{
+                          width:
+                            `${topicAccuracy}%`
+                        }}
+                      />
+
+                    </div>
 
                   </div>
 
-                </div>
-
-              )
-            })}
+                )
+              }
+            )}
 
           </div>
 
-        </div>
+        )}
 
-      ) : (
-
-        <div className="
-          mt-5
-          bg-panel dark:bg-blueprint-panel
-          border border-dashed
-          border-line/20 dark:border-line-dark/20
-          rounded-md p-8 text-center
-        ">
-
-          <div className="text-3xl mb-2">
-            📚
-          </div>
-
-          <p className="font-display text-sm">
-            no quiz progress yet
-          </p>
-
-          <p className="
-            font-body text-xs
-            text-ink/50 dark:text-paper-dark/50
-            mt-1
-          ">
-            Take your first quiz and your progress will appear here.
-          </p>
-
-        </div>
-
-      )}
+      </div>
 
     </div>
   )
