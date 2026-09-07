@@ -3,18 +3,36 @@ import { signUp, logIn } from "../services/auth"
 
 function AuthPage({ onAuth }) {
   const [mode, setMode] = useState("signup")
-  const [name, setName] = useState("")
-  const [email, setEmail] = useState("")
-  const [password, setPassword] = useState("")
-  const [error, setError] = useState("")
+
+  const [name, setName] =
+    useState("")
+
+  const [email, setEmail] =
+    useState("")
+
+  const [password, setPassword] =
+    useState("")
+
+  const [error, setError] =
+    useState("")
 
   const handleSubmit = (e) => {
     e.preventDefault()
     setError("")
+
     try {
-      const user = mode === "signup"
-        ? signUp({ name, email, password })
-        : logIn({ email, password })
+      const user =
+        mode === "signup"
+          ? signUp({
+              name,
+              email,
+              password,
+            })
+          : logIn({
+              email,
+              password,
+            })
+
       onAuth(user)
     } catch (err) {
       setError(err.message)
@@ -22,60 +40,209 @@ function AuthPage({ onAuth }) {
   }
 
   return (
-    <div className="max-w-sm w-full animate-fade-in-up bg-panel dark:bg-blueprint-panel border border-line/20 dark:border-line-dark/20 rounded-md p-6">
-      <h2 className="font-display text-xl font-semibold mb-1 text-center">
-        {mode === "signup" ? "create your account" : "welcome back"}
-      </h2>
-      <p className="font-body text-sm text-center text-ink/60 dark:text-paper-dark/60 mb-6">
-        {mode === "signup" ? "saved locally on this device" : "log in to continue"}
-      </p>
+    <div className="auth-container">
+      {/* Decorative side text */}
 
-      <form onSubmit={handleSubmit} className="flex flex-col gap-3">
-        {mode === "signup" && (
-          <input
-            type="text"
-            placeholder="your name"
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-            required
-            className="font-body border border-line/30 dark:border-line-dark/30 bg-paper dark:bg-blueprint text-ink dark:text-paper-dark rounded-sm px-4 py-2 focus:outline-none focus:ring-2 focus:ring-amber"
-          />
-        )}
-        <input
-          type="email"
-          placeholder="email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          required
-          className="font-body border border-line/30 dark:border-line-dark/30 bg-paper dark:bg-blueprint text-ink dark:text-paper-dark rounded-sm px-4 py-2 focus:outline-none focus:ring-2 focus:ring-amber"
-        />
-        <input
-          type="password"
-          placeholder="password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          required
-          minLength={4}
-          className="font-body border border-line/30 dark:border-line-dark/30 bg-paper dark:bg-blueprint text-ink dark:text-paper-dark rounded-sm px-4 py-2 focus:outline-none focus:ring-2 focus:ring-amber"
-        />
+      <div className="auth-side-decoration auth-side-left">
+        <span>01</span>
+        <div />
+        <span>curiosity</span>
+      </div>
 
-        {error && <p className="font-body text-red-500 text-sm">{error}</p>}
+      <div className="auth-side-decoration auth-side-right">
+        <span>explore</span>
+        <div />
+        <span>∞</span>
+      </div>
 
-        <button
-          type="submit"
-          className="font-display font-medium bg-line dark:bg-amber text-paper dark:text-blueprint px-5 py-2 rounded-sm hover:opacity-90 transition-transform duration-150 hover:scale-105 active:scale-95 mt-1"
+      {/* Main card */}
+
+      <div className="auth-card">
+        {/* Brand */}
+
+        <div className="auth-brand">
+          <div className="auth-brand-icon">
+            <span />
+            <span />
+            <span />
+          </div>
+
+          <h1>Curioo</h1>
+        </div>
+
+        <div className="auth-brand-subtitle">
+          understand how anything really works
+        </div>
+
+        {/* Header */}
+
+        <div className="auth-heading">
+          <span className="auth-eyebrow">
+            {mode === "signup"
+              ? "START EXPLORING"
+              : "WELCOME BACK"}
+          </span>
+
+          <h2>
+            {mode === "signup"
+              ? "Create your account"
+              : "Good to see you again"}
+          </h2>
+
+          <p>
+            {mode === "signup"
+              ? "Save your discoveries, favorites and quiz progress."
+              : "Continue your journey of curiosity."}
+          </p>
+        </div>
+
+        {/* Form */}
+
+        <form
+          onSubmit={handleSubmit}
+          className="auth-form"
         >
-          {mode === "signup" ? "sign up" : "log in"}
-        </button>
-      </form>
+          {mode === "signup" && (
+            <div className="auth-field">
+              <label htmlFor="name">
+                YOUR NAME
+              </label>
 
-      <button
-        onClick={() => { setMode(mode === "signup" ? "login" : "signup"); setError("") }}
-        className="font-body text-sm text-center w-full mt-4 text-line dark:text-line-dark hover:text-amber transition-colors duration-150"
-      >
-        {mode === "signup" ? "already have an account? log in" : "new here? sign up"}
-      </button>
+              <div className="auth-input-wrapper">
+                <span className="auth-input-icon">
+                  ◎
+                </span>
+
+                <input
+                  id="name"
+                  type="text"
+                  placeholder="what should we call you?"
+                  value={name}
+                  onChange={(e) =>
+                    setName(
+                      e.target.value
+                    )
+                  }
+                  required
+                />
+              </div>
+            </div>
+          )}
+
+          <div className="auth-field">
+            <label htmlFor="email">
+              EMAIL
+            </label>
+
+            <div className="auth-input-wrapper">
+              <span className="auth-input-icon">
+                @
+              </span>
+
+              <input
+                id="email"
+                type="email"
+                placeholder="you@example.com"
+                value={email}
+                onChange={(e) =>
+                  setEmail(
+                    e.target.value
+                  )
+                }
+                required
+              />
+            </div>
+          </div>
+
+          <div className="auth-field">
+            <label htmlFor="password">
+              PASSWORD
+            </label>
+
+            <div className="auth-input-wrapper">
+              <span className="auth-input-icon">
+                ◆
+              </span>
+
+              <input
+                id="password"
+                type="password"
+                placeholder="minimum 4 characters"
+                value={password}
+                onChange={(e) =>
+                  setPassword(
+                    e.target.value
+                  )
+                }
+                required
+                minLength={4}
+              />
+            </div>
+          </div>
+
+          {error && (
+            <div className="auth-error">
+              <span>!</span>
+              {error}
+            </div>
+          )}
+
+          <button
+            type="submit"
+            className="auth-submit"
+          >
+            <span>
+              {mode === "signup"
+                ? "Create account"
+                : "Log in"}
+            </span>
+
+            <span className="auth-submit-arrow">
+              →
+            </span>
+          </button>
+        </form>
+
+        {/* Switch mode */}
+
+        <div className="auth-switch">
+          <span>
+            {mode === "signup"
+              ? "Already have an account?"
+              : "New to Curioo?"}
+          </span>
+
+          <button
+            type="button"
+            onClick={() => {
+              setMode(
+                mode === "signup"
+                  ? "login"
+                  : "signup"
+              )
+
+              setError("")
+            }}
+          >
+            {mode === "signup"
+              ? "Log in"
+              : "Create account"}
+          </button>
+        </div>
+
+        {/* Footer */}
+
+        <div className="auth-footer">
+          <span>✦</span>
+
+          Your data stays saved locally
+          on this device.
+
+          <span>✦</span>
+        </div>
+      </div>
     </div>
   )
 }
+
 export default AuthPage

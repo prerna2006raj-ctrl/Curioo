@@ -452,9 +452,7 @@ function App() {
                 Favorites
               </span>
 
-              <small>
-                Saved discoveries
-              </small>
+              
 
             </div>
 
@@ -492,9 +490,7 @@ function App() {
                 Progress
               </span>
 
-              <small>
-                Track your learning
-              </small>
+              
 
             </div>
 
