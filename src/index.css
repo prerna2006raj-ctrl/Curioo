@@ -104,10 +104,10 @@
 }
 
 .dot-paper {
-  background-color: #ce80aa;
+  background-color: #f2f2f0fc;
 
   background-image: radial-gradient(
-    rgba(255, 111, 165, 0.34) 3px,
+    rgba(235, 147, 226, 0.34) 3px,
     transparent 3px
   );
 
