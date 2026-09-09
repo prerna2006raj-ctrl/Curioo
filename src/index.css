@@ -1955,3 +1955,713 @@
     display: none;
   }
 }
+/* =====================================================
+   CURIOO API EXPERIENCE
+===================================================== */
+
+
+/* =====================================================
+   LOADING
+===================================================== */
+
+.api-loader-wrapper {
+  max-width: 520px;
+  margin: 32px auto 0;
+  padding: 0 12px;
+}
+
+.api-loader-card {
+  position: relative;
+
+  display: flex;
+  align-items: center;
+  gap: 20px;
+
+  padding: 24px;
+
+  overflow: hidden;
+
+  border-radius: 22px;
+
+  border: 1px solid rgba(31, 78, 95, 0.14);
+
+  background:
+    linear-gradient(
+      135deg,
+      rgba(255,255,255,0.94),
+      rgba(245,249,250,0.88)
+    );
+
+  box-shadow:
+    0 18px 45px rgba(31,78,95,0.09),
+    0 4px 12px rgba(31,78,95,0.05);
+
+  backdrop-filter: blur(16px);
+
+  animation:
+    apiLoaderAppear
+    0.4s
+    ease-out;
+}
+
+
+/* subtle shine */
+
+.api-loader-card::before {
+  content: "";
+
+  position: absolute;
+
+  top: 0;
+  left: -100%;
+
+  width: 70%;
+  height: 100%;
+
+  background:
+    linear-gradient(
+      90deg,
+      transparent,
+      rgba(255,255,255,0.6),
+      transparent
+    );
+
+  transform: skewX(-20deg);
+
+  animation:
+    apiShine
+    2.8s
+    ease-in-out
+    infinite;
+}
+
+
+/* =====================================================
+   ORBIT
+===================================================== */
+
+.api-loader-orbit {
+  position: relative;
+
+  width: 58px;
+  height: 58px;
+
+  flex-shrink: 0;
+}
+
+.api-loader-core {
+  position: absolute;
+
+  inset: 10px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 50%;
+
+  background:
+    rgba(31,78,95,0.08);
+
+  font-size: 21px;
+
+  z-index: 2;
+
+  animation:
+    corePulse
+    1.6s
+    ease-in-out
+    infinite;
+}
+
+.api-loader-orbit span {
+  position: absolute;
+
+  inset: 0;
+
+  border-radius: 50%;
+
+  border: 1px solid rgba(31,78,95,0.16);
+
+  animation:
+    orbitSpin
+    2.5s
+    linear
+    infinite;
+}
+
+.api-loader-orbit span:nth-child(2) {
+  transform: rotate(60deg);
+}
+
+.api-loader-orbit span:nth-child(3) {
+  transform: rotate(120deg);
+}
+
+.api-loader-orbit span:nth-child(4) {
+  transform: rotate(180deg);
+}
+
+
+/* =====================================================
+   LOADING CONTENT
+===================================================== */
+
+.api-loader-content {
+  position: relative;
+
+  flex: 1;
+
+  z-index: 2;
+}
+
+.api-loader-content h3 {
+  margin: 0;
+
+  font-family:
+    Georgia,
+    serif;
+
+  font-size: 18px;
+
+  font-weight: 600;
+
+  color: #17324d;
+}
+
+.api-loader-content p {
+  margin: 5px 0 13px;
+
+  font-size: 13px;
+
+  color: rgba(23,50,77,0.58);
+}
+
+
+/* =====================================================
+   PROGRESS
+===================================================== */
+
+.api-loader-track {
+  width: 100%;
+
+  height: 5px;
+
+  overflow: hidden;
+
+  border-radius: 999px;
+
+  background:
+    rgba(31,78,95,0.08);
+}
+
+.api-loader-progress {
+  width: 35%;
+  height: 100%;
+
+  border-radius: inherit;
+
+  background:
+    linear-gradient(
+      90deg,
+      #6f8794,
+      #c99352,
+      #6f8794
+    );
+
+  animation:
+    apiProgress
+    1.7s
+    ease-in-out
+    infinite;
+}
+
+
+/* =====================================================
+   STATUS
+===================================================== */
+
+.api-loader-status {
+  display: flex;
+
+  align-items: center;
+
+  gap: 7px;
+
+  margin-top: 8px;
+
+  font-size: 10px;
+
+  text-transform: uppercase;
+
+  letter-spacing: 0.08em;
+
+  color:
+    rgba(23,50,77,0.4);
+}
+
+.api-status-dot {
+  width: 6px;
+  height: 6px;
+
+  border-radius: 50%;
+
+  background: #c99352;
+
+  box-shadow:
+    0 0 0 4px
+    rgba(201,147,82,0.12);
+
+  animation:
+    statusPulse
+    1.2s
+    ease-in-out
+    infinite;
+}
+
+
+/* =====================================================
+   ERROR
+===================================================== */
+
+.api-error-card {
+  max-width: 520px;
+
+  margin: 26px auto 0;
+
+  display: flex;
+  align-items: center;
+
+  gap: 14px;
+
+  padding: 18px 20px;
+
+  border-radius: 18px;
+
+  border:
+    1px solid
+    rgba(175,76,61,0.16);
+
+  background:
+    rgba(255,248,246,0.92);
+
+  box-shadow:
+    0 12px 30px
+    rgba(100,45,35,0.07);
+
+  animation:
+    apiLoaderAppear
+    0.3s
+    ease-out;
+}
+
+.api-error-icon {
+  width: 44px;
+  height: 44px;
+
+  flex-shrink: 0;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 13px;
+
+  background:
+    rgba(175,76,61,0.09);
+
+  font-size: 20px;
+}
+
+.api-error-content {
+  flex: 1;
+}
+
+.api-error-content h3 {
+  margin: 0 0 3px;
+
+  font-size: 15px;
+
+  font-weight: 600;
+
+  color: #79372e;
+}
+
+.api-error-content p {
+  margin: 0;
+
+  font-size: 12px;
+
+  line-height: 1.5;
+
+  color:
+    rgba(121,55,46,0.67);
+}
+
+
+/* =====================================================
+   RETRY
+===================================================== */
+
+.api-retry-button {
+  flex-shrink: 0;
+
+  padding: 9px 13px;
+
+  border-radius: 10px;
+
+  border:
+    1px solid
+    rgba(121,55,46,0.16);
+
+  background:
+    rgba(255,255,255,0.8);
+
+  color: #79372e;
+
+  font-size: 12px;
+
+  font-weight: 600;
+
+  cursor: pointer;
+
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease,
+    background 0.2s ease;
+}
+
+.api-retry-button:hover {
+  transform:
+    translateY(-2px);
+
+  background:
+    white;
+
+  box-shadow:
+    0 7px 18px
+    rgba(121,55,46,0.1);
+}
+
+
+/* =====================================================
+   SAVE BUTTONS
+===================================================== */
+
+.curioo-save-button {
+  padding: 10px 15px;
+
+  border-radius: 11px;
+
+  border:
+    1px solid
+    rgba(31,78,95,0.16);
+
+  background:
+    rgba(255,255,255,0.45);
+
+  color: inherit;
+
+  font-size: 12px;
+
+  font-weight: 600;
+
+  cursor: pointer;
+
+  transition:
+    transform 0.2s ease,
+    background 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.curioo-save-button:hover {
+  transform:
+    translateY(-2px);
+
+  background:
+    rgba(31,78,95,0.06);
+
+  box-shadow:
+    0 5px 15px
+    rgba(31,78,95,0.07);
+}
+
+
+/* =====================================================
+   COLLECTION BUTTONS
+===================================================== */
+
+.curioo-collection-button {
+  padding: 8px 12px;
+
+  border-radius: 9px;
+
+  border:
+    1px solid
+    rgba(31,78,95,0.13);
+
+  background:
+    rgba(255,255,255,0.38);
+
+  color: inherit;
+
+  font-size: 11px;
+
+  cursor: pointer;
+
+  transition:
+    transform 0.2s ease,
+    background 0.2s ease;
+}
+
+.curioo-collection-button:hover {
+  transform:
+    translateY(-2px);
+
+  background:
+    rgba(31,78,95,0.06);
+}
+
+.curioo-collection-button:disabled {
+  opacity: 0.5;
+
+  cursor: default;
+
+  transform: none;
+}
+
+
+/* =====================================================
+   DARK MODE
+===================================================== */
+
+.dark .api-loader-card {
+  border-color:
+    rgba(220,235,245,0.1);
+
+  background:
+    linear-gradient(
+      135deg,
+      rgba(18,32,43,0.94),
+      rgba(15,28,38,0.9)
+    );
+
+  box-shadow:
+    0 18px 45px
+    rgba(0,0,0,0.3);
+}
+
+.dark .api-loader-content h3 {
+  color: #e5edf2;
+}
+
+.dark .api-loader-content p {
+  color:
+    rgba(229,237,242,0.55);
+}
+
+.dark .api-loader-status {
+  color:
+    rgba(229,237,242,0.4);
+}
+
+.dark .api-loader-track {
+  background:
+    rgba(220,235,245,0.09);
+}
+
+.dark .api-loader-core {
+  background:
+    rgba(220,235,245,0.07);
+}
+
+.dark .api-loader-orbit span {
+  border-color:
+    rgba(220,235,245,0.12);
+}
+
+
+.dark .api-error-card {
+  border-color:
+    rgba(255,130,110,0.13);
+
+  background:
+    rgba(54,29,27,0.8);
+}
+
+.dark .api-error-content h3 {
+  color: #ffb2a5;
+}
+
+.dark .api-error-content p {
+  color:
+    rgba(255,210,202,0.64);
+}
+
+.dark .api-retry-button {
+  border-color:
+    rgba(255,170,155,0.18);
+
+  background:
+    rgba(255,255,255,0.05);
+
+  color: #ffb2a5;
+}
+
+.dark .curioo-save-button,
+.dark .curioo-collection-button {
+  border-color:
+    rgba(220,235,245,0.12);
+
+  background:
+    rgba(255,255,255,0.035);
+}
+
+
+/* =====================================================
+   ANIMATIONS
+===================================================== */
+
+@keyframes apiLoaderAppear {
+
+  from {
+    opacity: 0;
+
+    transform:
+      translateY(10px);
+  }
+
+  to {
+    opacity: 1;
+
+    transform:
+      translateY(0);
+  }
+
+}
+
+
+@keyframes apiProgress {
+
+  0% {
+    transform:
+      translateX(-130%);
+  }
+
+  50% {
+    transform:
+      translateX(100%);
+  }
+
+  100% {
+    transform:
+      translateX(300%);
+  }
+
+}
+
+
+@keyframes orbitSpin {
+
+  from {
+    transform:
+      rotate(0deg);
+  }
+
+  to {
+    transform:
+      rotate(360deg);
+  }
+
+}
+
+
+@keyframes corePulse {
+
+  0%,
+  100% {
+    transform:
+      scale(1);
+  }
+
+  50% {
+    transform:
+      scale(1.08);
+  }
+
+}
+
+
+@keyframes statusPulse {
+
+  0%,
+  100% {
+    opacity: 0.45;
+  }
+
+  50% {
+    opacity: 1;
+  }
+
+}
+
+
+@keyframes apiShine {
+
+  0% {
+    left: -100%;
+  }
+
+  45%,
+  100% {
+    left: 160%;
+  }
+
+}
+
+
+/* =====================================================
+   MOBILE
+===================================================== */
+
+@media (max-width: 640px) {
+
+  .api-loader-card {
+    padding: 19px;
+
+    gap: 14px;
+
+    border-radius: 18px;
+  }
+
+  .api-loader-orbit {
+    width: 48px;
+    height: 48px;
+  }
+
+  .api-loader-core {
+    inset: 8px;
+
+    font-size: 18px;
+  }
+
+  .api-loader-content h3 {
+    font-size: 16px;
+  }
+
+  .api-loader-content p {
+    font-size: 12px;
+  }
+
+  .api-error-card {
+    margin-left: 12px;
+    margin-right: 12px;
+
+    flex-wrap: wrap;
+  }
+
+  .api-retry-button {
+    margin-left: 58px;
+  }
+
+}

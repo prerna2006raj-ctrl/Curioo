@@ -1,8 +1,10 @@
-import { useState, useEffect } from "react"
+import {
+  useState,
+  useEffect
+} from "react"
 
 import SearchBar from "./components/SearchBar"
 import ResultCard from "./components/ResultCard"
-import Loader from "./components/Loader"
 import ToneToggle from "./components/ToneToggle"
 import SurpriseButton from "./components/SurpriseButton"
 import CategoryBrowser from "./components/CategoryBrowser"
@@ -13,6 +15,8 @@ import TopicOfDay from "./components/TopicOfDay"
 import QuizCard from "./components/QuizCard"
 import ProgressPage from "./components/ProgressPage"
 import LearningLibrary from "./components/LearningLibrary"
+import ApiLoader from "./components/ApiLoader"
+import ApiError from "./components/ApiError"
 
 import {
   getExplanation,
@@ -23,35 +27,50 @@ import {
 function App() {
 
   // =====================================================
-  // BASIC STATES
+  // BASIC
   // =====================================================
 
-  const [topic, setTopic] = useState("")
-  const [tone, setTone] = useState("kid")
-  const [result, setResult] = useState("")
-  const [loading, setLoading] = useState(false)
-  const [error, setError] = useState("")
+  const [topic, setTopic] =
+    useState("")
+
+  const [tone, setTone] =
+    useState("kid")
+
+  const [result, setResult] =
+    useState("")
+
+  const [loading, setLoading] =
+    useState(false)
+
+  const [error, setError] =
+    useState("")
 
 
   // =====================================================
   // HISTORY
   // =====================================================
 
-  const [history, setHistory] = useState(() => {
-    const saved =
-      localStorage.getItem("curioo-history")
+  const [history, setHistory] =
+    useState(() => {
 
-    return saved
-      ? JSON.parse(saved)
-      : []
-  })
+      const saved =
+        localStorage.getItem(
+          "curioo-history"
+        )
+
+      return saved
+        ? JSON.parse(saved)
+        : []
+    })
 
 
   // =====================================================
   // VIEW
   // =====================================================
 
-  const [view, setView] = useState("home")
+  const [view, setView] =
+    useState("home")
+
 
   const [relatedTopics, setRelatedTopics] =
     useState([])
@@ -61,7 +80,8 @@ function App() {
   // QUIZ
   // =====================================================
 
-  const [quiz, setQuiz] = useState(null)
+  const [quiz, setQuiz] =
+    useState(null)
 
   const [quizLoading, setQuizLoading] =
     useState(false)
@@ -71,14 +91,18 @@ function App() {
   // LOG
   // =====================================================
 
-  const [log, setLog] = useState(() => {
-    const saved =
-      localStorage.getItem("curioo-log")
+  const [log, setLog] =
+    useState(() => {
 
-    return saved
-      ? JSON.parse(saved)
-      : []
-  })
+      const saved =
+        localStorage.getItem(
+          "curioo-log"
+        )
+
+      return saved
+        ? JSON.parse(saved)
+        : []
+    })
 
 
   // =====================================================
@@ -100,20 +124,23 @@ function App() {
 
 
   // =====================================================
-  // DARK MODE
+  // THEME
   // =====================================================
 
-  const [dark, setDark] = useState(() => {
-    return (
-      localStorage.getItem(
-        "curioo-theme"
-      ) === "dark"
-    )
-  })
+  const [dark, setDark] =
+    useState(() => {
+
+      return (
+        localStorage.getItem(
+          "curioo-theme"
+        ) === "dark"
+      )
+
+    })
 
 
   // =====================================================
-  // CURRENT USER
+  // USER
   // =====================================================
 
   const [currentUser, setCurrentUser] =
@@ -131,7 +158,7 @@ function App() {
 
 
   // =====================================================
-  // QUIZ PROGRESS
+  // PROGRESS
   // =====================================================
 
   const [progress, setProgress] =
@@ -150,6 +177,7 @@ function App() {
             timedOut: 0,
             byTopic: {}
           }
+
     })
 
 
@@ -191,6 +219,7 @@ function App() {
           items: []
         }
       ]
+
     })
 
 
@@ -231,7 +260,7 @@ function App() {
 
 
   // =====================================================
-  // SAVE HISTORY
+  // LOCAL STORAGE
   // =====================================================
 
   useEffect(() => {
@@ -244,10 +273,6 @@ function App() {
   }, [history])
 
 
-  // =====================================================
-  // SAVE FAVORITES
-  // =====================================================
-
   useEffect(() => {
 
     localStorage.setItem(
@@ -258,10 +283,6 @@ function App() {
   }, [favorites])
 
 
-  // =====================================================
-  // SAVE THEME
-  // =====================================================
-
   useEffect(() => {
 
     document.documentElement.classList.toggle(
@@ -271,15 +292,13 @@ function App() {
 
     localStorage.setItem(
       "curioo-theme",
-      dark ? "dark" : "light"
+      dark
+        ? "dark"
+        : "light"
     )
 
   }, [dark])
 
-
-  // =====================================================
-  // SAVE LOG
-  // =====================================================
 
   useEffect(() => {
 
@@ -291,10 +310,6 @@ function App() {
   }, [log])
 
 
-  // =====================================================
-  // SAVE QUIZ PROGRESS
-  // =====================================================
-
   useEffect(() => {
 
     localStorage.setItem(
@@ -304,10 +319,6 @@ function App() {
 
   }, [progress])
 
-
-  // =====================================================
-  // SAVE COLLECTIONS
-  // =====================================================
 
   useEffect(() => {
 
@@ -319,10 +330,6 @@ function App() {
   }, [collections])
 
 
-  // =====================================================
-  // SAVE BOOKMARKS
-  // =====================================================
-
   useEffect(() => {
 
     localStorage.setItem(
@@ -332,10 +339,6 @@ function App() {
 
   }, [bookmarks])
 
-
-  // =====================================================
-  // SAVE LEARN LATER
-  // =====================================================
 
   useEffect(() => {
 
@@ -351,400 +354,622 @@ function App() {
   // EXPLAIN
   // =====================================================
 
-  const handleExplain = async (
-    customTopic
-  ) => {
+  const handleExplain =
+    async (
+      customTopic
+    ) => {
 
-    const searchTopic = (
-      customTopic || topic
-    ).trim()
-
-    if (!searchTopic) {
-      return
-    }
-
-    setLoading(true)
-    setError("")
-    setResult("")
-    setRelatedTopics([])
-    setQuiz(null)
-
-    try {
-
-      const {
-        text,
-        related
-      } = await getExplanation(
-        searchTopic,
-        tone
-      )
-
-      setResult(text)
-
-      setRelatedTopics(
-        related || []
-      )
+      const searchTopic =
+        (
+          customTopic ||
+          topic
+        ).trim()
 
 
-      // HISTORY
+      if (!searchTopic) {
 
-      setHistory((prev) => [
-
-        {
-          topic: searchTopic,
-          text,
-          id: Date.now()
-        },
-
-        ...prev.filter(
-          (item) =>
-            item.topic.toLowerCase() !==
-            searchTopic.toLowerCase()
+        setError(
+          "Please enter a topic first."
         )
 
-      ])
+        return
+      }
 
 
-      // LOG
+      // Prevent duplicate requests
 
-      setLog((prev) => [
+      if (loading) {
+        return
+      }
 
-        ...prev,
 
-        {
-          topic: searchTopic,
-          timestamp: Date.now()
+      setLoading(true)
+
+      setError("")
+
+      setRelatedTopics([])
+
+      setQuiz(null)
+
+
+      try {
+
+        const {
+          text,
+          related
+        } =
+          await getExplanation(
+            searchTopic,
+            tone
+          )
+
+
+        setTopic(
+          searchTopic
+        )
+
+        setResult(
+          text
+        )
+
+        setRelatedTopics(
+          related || []
+        )
+
+
+        // HISTORY
+
+        setHistory(
+          (prev) => [
+
+            {
+              topic:
+                searchTopic,
+
+              text,
+
+              id:
+                Date.now()
+            },
+
+            ...prev.filter(
+              (item) =>
+                item.topic.toLowerCase() !==
+                searchTopic.toLowerCase()
+            )
+
+          ]
+        )
+
+
+        // LOG
+
+        setLog(
+          (prev) => [
+
+            ...prev,
+
+            {
+              topic:
+                searchTopic,
+
+              timestamp:
+                Date.now()
+            }
+
+          ]
+        )
+
+
+      } catch (err) {
+
+        console.error(
+          "Curioo API error:",
+          err
+        )
+
+
+        if (
+          err.message ===
+          "TIMEOUT"
+        ) {
+
+          setError(
+            "The AI is taking longer than expected. Please try again."
+          )
+
+        } else if (
+          err.message ===
+          "RATE_LIMIT"
+        ) {
+
+          setError(
+            "Too many requests right now. Please wait a little and try again."
+          )
+
+        } else if (
+          err.message ===
+          "API_KEY_MISSING"
+        ) {
+
+          setError(
+            "Gemini API key is missing. Check your .env file."
+          )
+
+        } else if (
+          err.message ===
+          "API_AUTH"
+        ) {
+
+          setError(
+            "Your Gemini API key is invalid or not authorized."
+          )
+
+        } else if (
+          err.message ===
+          "SERVER_ERROR"
+        ) {
+
+          setError(
+            "The AI service is temporarily unavailable. Please try again."
+          )
+
+        } else {
+
+          setError(
+            "Couldn't get an explanation right now. Please try again."
+          )
+
         }
 
-      ])
+      } finally {
 
-    } catch (err) {
+        setLoading(false)
 
-      console.error(err)
-
-      setError(
-        "Couldn't get an explanation. Check your connection and try again."
-      )
-
-    } finally {
-
-      setLoading(false)
+      }
 
     }
-  }
+
+
+  // =====================================================
+  // RETRY
+  // =====================================================
+
+  const handleRetry =
+    () => {
+
+      if (!topic.trim()) {
+        return
+      }
+
+      handleExplain(
+        topic
+      )
+
+    }
 
 
   // =====================================================
   // FAVORITE
   // =====================================================
 
-  const toggleFavorite = (item) => {
+  const toggleFavorite =
+    (item) => {
 
-    setFavorites((prev) => {
+      setFavorites(
+        (prev) => {
 
-      const exists = prev.find(
-        (f) =>
-          f.topic === item.topic
+          const exists =
+            prev.find(
+              (f) =>
+                f.topic ===
+                item.topic
+            )
+
+
+          if (exists) {
+
+            return prev.filter(
+              (f) =>
+                f.topic !==
+                item.topic
+            )
+
+          }
+
+
+          return [
+            {
+              ...item,
+              id:
+                item.id ||
+                Date.now()
+            },
+
+            ...prev
+          ]
+
+        }
       )
 
-      if (exists) {
-
-        return prev.filter(
-          (f) =>
-            f.topic !== item.topic
-        )
-
-      }
-
-      return [
-        {
-          ...item,
-          id: item.id || Date.now()
-        },
-        ...prev
-      ]
-
-    })
-  }
+    }
 
 
   // =====================================================
   // BOOKMARK
   // =====================================================
 
-  const toggleBookmark = () => {
+  const toggleBookmark =
+    () => {
 
-    if (!topic.trim() || !result) {
-      return
-    }
-
-    setBookmarks((prev) => {
-
-      const exists = prev.find(
-        (item) =>
-          item.topic.toLowerCase() ===
-          topic.toLowerCase()
-      )
-
-      if (exists) {
-
-        return prev.filter(
-          (item) =>
-            item.topic.toLowerCase() !==
-            topic.toLowerCase()
-        )
-
+      if (
+        !topic.trim() ||
+        !result
+      ) {
+        return
       }
 
-      return [
-        {
-          id: Date.now(),
-          topic,
-          text: result,
-          savedAt: Date.now()
-        },
-        ...prev
-      ]
 
-    })
-  }
+      setBookmarks(
+        (prev) => {
+
+          const exists =
+            prev.find(
+              (item) =>
+                item.topic.toLowerCase() ===
+                topic.toLowerCase()
+            )
+
+
+          if (exists) {
+
+            return prev.filter(
+              (item) =>
+                item.topic.toLowerCase() !==
+                topic.toLowerCase()
+            )
+
+          }
+
+
+          return [
+            {
+              id:
+                Date.now(),
+
+              topic,
+
+              text:
+                result,
+
+              savedAt:
+                Date.now()
+            },
+
+            ...prev
+          ]
+
+        }
+      )
+
+    }
 
 
   // =====================================================
   // LEARN LATER
   // =====================================================
 
-  const toggleLearnLater = () => {
+  const toggleLearnLater =
+    () => {
 
-    if (!topic.trim() || !result) {
-      return
-    }
-
-    setLearnLater((prev) => {
-
-      const exists = prev.find(
-        (item) =>
-          item.topic.toLowerCase() ===
-          topic.toLowerCase()
-      )
-
-      if (exists) {
-
-        return prev.filter(
-          (item) =>
-            item.topic.toLowerCase() !==
-            topic.toLowerCase()
-        )
-
+      if (
+        !topic.trim() ||
+        !result
+      ) {
+        return
       }
 
-      return [
-        {
-          id: Date.now(),
-          topic,
-          text: result,
-          savedAt: Date.now()
-        },
-        ...prev
-      ]
 
-    })
-  }
-
-
-  // =====================================================
-  // SAVE CURRENT EXPLANATION TO COLLECTION
-  // =====================================================
-
-  const saveToCollection = (
-    collectionId
-  ) => {
-
-    if (!topic.trim() || !result) {
-      return
-    }
-
-    setCollections((prev) => {
-
-      return prev.map(
-        (collection) => {
-
-          if (
-            collection.id !==
-            collectionId
-          ) {
-            return collection
-          }
+      setLearnLater(
+        (prev) => {
 
           const exists =
-            collection.items.some(
+            prev.find(
               (item) =>
                 item.topic.toLowerCase() ===
                 topic.toLowerCase()
             )
 
+
           if (exists) {
-            return collection
+
+            return prev.filter(
+              (item) =>
+                item.topic.toLowerCase() !==
+                topic.toLowerCase()
+            )
+
           }
 
-          return {
-            ...collection,
 
-            items: [
-              {
-                id: Date.now(),
-                topic,
-                text: result,
-                savedAt: Date.now()
-              },
+          return [
+            {
+              id:
+                Date.now(),
 
-              ...collection.items
-            ]
-          }
+              topic,
+
+              text:
+                result,
+
+              savedAt:
+                Date.now()
+            },
+
+            ...prev
+          ]
 
         }
       )
 
-    })
+    }
 
-  }
+
+  // =====================================================
+  // COLLECTION
+  // =====================================================
+
+  const saveToCollection =
+    (collectionId) => {
+
+      if (
+        !topic.trim() ||
+        !result
+      ) {
+        return
+      }
+
+
+      setCollections(
+        (prev) =>
+
+          prev.map(
+            (collection) => {
+
+              if (
+                collection.id !==
+                collectionId
+              ) {
+                return collection
+              }
+
+
+              const exists =
+                collection.items.some(
+                  (item) =>
+                    item.topic.toLowerCase() ===
+                    topic.toLowerCase()
+                )
+
+
+              if (exists) {
+                return collection
+              }
+
+
+              return {
+                ...collection,
+
+                items: [
+
+                  {
+                    id:
+                      Date.now(),
+
+                    topic,
+
+                    text:
+                      result,
+
+                    savedAt:
+                      Date.now()
+                  },
+
+                  ...collection.items
+
+                ]
+              }
+
+            }
+          )
+      )
+
+    }
 
 
   // =====================================================
   // QUIZ
   // =====================================================
 
-  const handleQuiz = async () => {
+  const handleQuiz =
+    async () => {
 
-    if (!topic.trim()) {
-      return
-    }
+      if (
+        !topic.trim() ||
+        quizLoading
+      ) {
+        return
+      }
 
-    setQuizLoading(true)
 
-    try {
-
-      const q =
-        await getQuiz(topic)
-
-      setQuiz(q)
-
-    } catch (err) {
-
-      console.error(err)
-
-      alert(
-        "Couldn't load a quiz right now, try again."
+      setQuizLoading(
+        true
       )
 
-    } finally {
 
-      setQuizLoading(false)
+      try {
+
+        const q =
+          await getQuiz(
+            topic
+          )
+
+
+        setQuiz(q)
+
+      } catch (err) {
+
+        console.error(
+          "Quiz error:",
+          err
+        )
+
+        alert(
+          err.message ===
+          "RATE_LIMIT"
+            ? "Too many requests. Please wait and try again."
+            : "Couldn't load the quiz. Please try again."
+        )
+
+      } finally {
+
+        setQuizLoading(
+          false
+        )
+
+      }
 
     }
-  }
 
 
   // =====================================================
-  // QUIZ COMPLETION
+  // QUIZ COMPLETE
   // =====================================================
 
-  const handleQuizComplete = (
-    isCorrect,
-    didTimeOut,
-    quizTopic
-  ) => {
+  const handleQuizComplete =
+    (
+      isCorrect,
+      didTimeOut,
+      quizTopic
+    ) => {
 
-    setProgress((prev) => {
+      setProgress(
+        (prev) => {
 
-      const previousTopic =
-        prev.byTopic[quizTopic] || {
-          attempts: 0,
-          correct: 0
-        }
+          const previousTopic =
+            prev.byTopic[
+              quizTopic
+            ] || {
+              attempts: 0,
+              correct: 0
+            }
 
-      return {
 
-        ...prev,
+          return {
 
-        total:
-          prev.total + 1,
+            ...prev,
 
-        correct:
-          prev.correct +
-          (isCorrect ? 1 : 0),
-
-        timedOut:
-          prev.timedOut +
-          (didTimeOut ? 1 : 0),
-
-        byTopic: {
-
-          ...prev.byTopic,
-
-          [quizTopic]: {
-
-            attempts:
-              previousTopic.attempts + 1,
+            total:
+              prev.total + 1,
 
             correct:
-              previousTopic.correct +
-              (isCorrect ? 1 : 0)
+              prev.correct +
+              (
+                isCorrect
+                  ? 1
+                  : 0
+              ),
+
+            timedOut:
+              prev.timedOut +
+              (
+                didTimeOut
+                  ? 1
+                  : 0
+              ),
+
+            byTopic: {
+
+              ...prev.byTopic,
+
+              [quizTopic]: {
+
+                attempts:
+                  previousTopic.attempts +
+                  1,
+
+                correct:
+                  previousTopic.correct +
+                  (
+                    isCorrect
+                      ? 1
+                      : 0
+                  )
+
+              }
+
+            }
 
           }
 
         }
+      )
 
-      }
-
-    })
-
-  }
+    }
 
 
   // =====================================================
   // STREAK
   // =====================================================
 
-  const getDateKey = (
-    timestamp
-  ) => {
+  const getDateKey =
+    (timestamp) => {
 
-    const date =
-      new Date(timestamp)
+      const date =
+        new Date(timestamp)
 
-    return `${date.getFullYear()}-${String(
-      date.getMonth() + 1
-    ).padStart(2, "0")}-${String(
-      date.getDate()
-    ).padStart(2, "0")}`
-
-  }
-
-
-  const learningDays = [
-    ...new Set(
-      log.map(
-        (item) =>
-          getDateKey(
-            item.timestamp
-          )
+      return (
+        `${date.getFullYear()}-` +
+        `${String(
+          date.getMonth() + 1
+        ).padStart(2, "0")}-` +
+        `${String(
+          date.getDate()
+        ).padStart(2, "0")}`
       )
-    )
-  ]
+
+    }
+
+
+  const learningDays =
+    [
+      ...new Set(
+        log.map(
+          (item) =>
+            getDateKey(
+              item.timestamp
+            )
+        )
+      )
+    ]
 
 
   const calculateCurrentStreak =
     () => {
 
       if (
-        learningDays.length === 0
+        learningDays.length ===
+        0
       ) {
         return 0
       }
 
+
       const dates =
-        new Set(learningDays)
+        new Set(
+          learningDays
+        )
+
 
       const today =
         new Date()
@@ -756,39 +981,58 @@ function App() {
         0
       )
 
+
       const todayKey =
         getDateKey(
           today.getTime()
         )
 
+
       const yesterday =
         new Date(today)
 
       yesterday.setDate(
-        yesterday.getDate() - 1
+        yesterday.getDate() -
+        1
       )
+
 
       const yesterdayKey =
         getDateKey(
           yesterday.getTime()
         )
 
+
       let currentDate
 
+
       if (
-        dates.has(todayKey)
+        dates.has(
+          todayKey
+        )
       ) {
-        currentDate = today
+
+        currentDate =
+          today
+
       } else if (
-        dates.has(yesterdayKey)
+        dates.has(
+          yesterdayKey
+        )
       ) {
+
         currentDate =
           yesterday
+
       } else {
+
         return 0
+
       }
 
+
       let streak = 0
+
 
       while (true) {
 
@@ -797,24 +1041,37 @@ function App() {
             currentDate.getTime()
           )
 
-        if (!dates.has(key)) {
+
+        if (
+          !dates.has(key)
+        ) {
           break
         }
 
+
         streak++
 
+
         const previous =
-          new Date(currentDate)
+          new Date(
+            currentDate
+          )
+
 
         previous.setDate(
-          previous.getDate() - 1
+          previous.getDate() -
+          1
         )
+
 
         currentDate =
           previous
+
       }
 
+
       return streak
+
     }
 
 
@@ -823,12 +1080,17 @@ function App() {
 
 
   // =====================================================
-  // WEEKLY COUNT
+  // WEEKLY
   // =====================================================
 
   const oneWeekAgo =
     Date.now() -
-    7 * 24 * 60 * 60 * 1000
+    7 *
+      24 *
+      60 *
+      60 *
+      1000
+
 
   const thisWeekCount =
     log.filter(
@@ -838,10 +1100,6 @@ function App() {
     ).length
 
 
-  // =====================================================
-  // MODE
-  // =====================================================
-
   const kidMode =
     tone === "kid"
 
@@ -850,44 +1108,67 @@ function App() {
   // AUTH
   // =====================================================
 
-  const handleAuth = (user) => {
+  const handleAuth =
+    (user) => {
 
-    setCurrentUser(user)
+      setCurrentUser(
+        user
+      )
 
-    localStorage.setItem(
-      "curioo-current-user",
-      JSON.stringify(user)
-    )
+      localStorage.setItem(
+        "curioo-current-user",
+        JSON.stringify(user)
+      )
 
-  }
+    }
 
 
-  const handleLogout = () => {
+  const handleLogout =
+    () => {
 
-    setCurrentUser(null)
+      setCurrentUser(
+        null
+      )
 
-    localStorage.removeItem(
-      "curioo-current-user"
-    )
+      localStorage.removeItem(
+        "curioo-current-user"
+      )
 
-  }
+    }
 
 
   // =====================================================
-  // OPEN LIBRARY ITEM
+  // OPEN SAVED ITEM
   // =====================================================
 
-  const openLibraryItem = (
-    item
-  ) => {
+  const openLibraryItem =
+    (item) => {
 
-    setTopic(item.topic)
-    setResult(item.text)
-    setRelatedTopics([])
-    setQuiz(null)
-    setView("home")
+      setTopic(
+        item.topic
+      )
 
-  }
+      setResult(
+        item.text
+      )
+
+      setRelatedTopics(
+        []
+      )
+
+      setQuiz(
+        null
+      )
+
+      setError(
+        ""
+      )
+
+      setView(
+        "home"
+      )
+
+    }
 
 
   // =====================================================
@@ -898,7 +1179,7 @@ function App() {
 
     return (
 
-      <div className="grid-paper min-h-screen bg-paper dark:bg-blueprint px-4 py-10 flex items-center justify-center transition-colors duration-300">
+      <div className="grid-paper min-h-screen bg-paper dark:bg-blueprint px-4 py-10 flex items-center justify-center">
 
         <ThemeToggle
           dark={dark}
@@ -917,7 +1198,7 @@ function App() {
 
 
   // =====================================================
-  // MAIN APP
+  // MAIN
   // =====================================================
 
   return (
@@ -930,13 +1211,12 @@ function App() {
       }`}
     >
 
+
       {/* =================================================
           SIDEBAR
           ================================================= */}
 
       <aside className="curioo-sidebar">
-
-        {/* BRAND */}
 
         <div className="sidebar-brand">
 
@@ -962,16 +1242,12 @@ function App() {
         </div>
 
 
-        {/* NAVIGATION */}
-
         <div className="sidebar-navigation">
 
           <p className="sidebar-section-title">
             Workspace
           </p>
-
-
-          {/* FAVORITES */}
+          <br />
 
           <button
             onClick={() =>
@@ -1011,8 +1287,6 @@ function App() {
           </button>
 
 
-          {/* PROGRESS */}
-
           <button
             onClick={() =>
               setView("progress")
@@ -1037,7 +1311,7 @@ function App() {
               <span>
                 Progress
               </span>
-              <br />
+            <br/>
               <small>
                 Track your learning
               </small>
@@ -1046,8 +1320,6 @@ function App() {
 
           </button>
 
-
-          {/* LEARNING LIBRARY */}
 
           <button
             onClick={() =>
@@ -1131,7 +1403,10 @@ function App() {
             ) : (
 
               history.map(
-                (item, index) => (
+                (
+                  item,
+                  index
+                ) => (
 
                   <button
                     key={item.id}
@@ -1145,9 +1420,17 @@ function App() {
                         item.text
                       )
 
-                      setView("home")
+                      setView(
+                        "home"
+                      )
 
-                      setQuiz(null)
+                      setQuiz(
+                        null
+                      )
+
+                      setError(
+                        ""
+                      )
 
                     }}
                     className="sidebar-recent-item"
@@ -1193,11 +1476,13 @@ function App() {
 
             <div className="sidebar-avatar">
 
-              {currentUser.name
-                ? currentUser.name
-                    .charAt(0)
-                    .toUpperCase()
-                : "U"}
+              {
+                currentUser.name
+                  ? currentUser.name
+                      .charAt(0)
+                      .toUpperCase()
+                  : "U"
+              }
 
             </div>
 
@@ -1214,7 +1499,9 @@ function App() {
             </div>
 
             <button
-              onClick={handleLogout}
+              onClick={
+                handleLogout
+              }
               className="sidebar-logout"
               title="Log out"
             >
@@ -1244,72 +1531,6 @@ function App() {
 
         <div className="flex items-center gap-2 mb-1">
 
-          <svg
-            width="26"
-            height="26"
-            viewBox="0 0 28 28"
-            fill="none"
-            className={
-              kidMode
-                ? "text-kid-pink dark:text-kid-yellow"
-                : "text-line dark:text-line-dark"
-            }
-          >
-
-            <circle
-              cx="14"
-              cy="14"
-              r="11"
-              stroke="currentColor"
-              strokeWidth="1.5"
-            />
-
-            <line
-              x1="14"
-              y1="1"
-              x2="14"
-              y2="7"
-              stroke="currentColor"
-              strokeWidth="1.5"
-            />
-
-            <line
-              x1="14"
-              y1="21"
-              x2="14"
-              y2="27"
-              stroke="currentColor"
-              strokeWidth="1.5"
-            />
-
-            <line
-              x1="1"
-              y1="14"
-              x2="7"
-              y2="14"
-              stroke="currentColor"
-              strokeWidth="1.5"
-            />
-
-            <line
-              x1="21"
-              y1="14"
-              x2="27"
-              y2="14"
-              stroke="currentColor"
-              strokeWidth="1.5"
-            />
-
-            <circle
-              cx="14"
-              cy="14"
-              r="2.5"
-              fill="currentColor"
-            />
-
-          </svg>
-
-
           <h1
             className={`text-3xl font-semibold tracking-tight ${
               kidMode
@@ -1335,8 +1556,7 @@ function App() {
         <p className="font-display text-xs text-ink/40 dark:text-paper-dark/40 mt-2">
 
           📊 {log.length} explored ·{" "}
-          {thisWeekCount} this week
-          {" · "}
+          {thisWeekCount} this week ·{" "}
           🔥 {currentStreak} day streak
 
         </p>
@@ -1345,26 +1565,41 @@ function App() {
 
 
       {/* =================================================
-          FAVORITES
+          VIEWS
           ================================================= */}
 
       {view === "favorites" ? (
 
         <FavoritesPage
-          favorites={favorites}
+          favorites={
+            favorites
+          }
+
           onBack={() =>
             setView("home")
           }
-          onRemove={toggleFavorite}
+
+          onRemove={
+            toggleFavorite
+          }
+
           onSelect={(item) => {
 
-            setTopic(item.topic)
+            setTopic(
+              item.topic
+            )
 
-            setResult(item.text)
+            setResult(
+              item.text
+            )
 
-            setView("home")
+            setError(
+              ""
+            )
 
-            setQuiz(null)
+            setView(
+              "home"
+            )
 
           }}
         />
@@ -1372,7 +1607,10 @@ function App() {
       ) : view === "progress" ? (
 
         <ProgressPage
-          progress={progress}
+          progress={
+            progress
+          }
+
           onBack={() =>
             setView("home")
           }
@@ -1381,14 +1619,29 @@ function App() {
       ) : view === "library" ? (
 
         <LearningLibrary
-          collections={collections}
-          setCollections={setCollections}
+          collections={
+            collections
+          }
 
-          bookmarks={bookmarks}
-          setBookmarks={setBookmarks}
+          setCollections={
+            setCollections
+          }
 
-          learnLater={learnLater}
-          setLearnLater={setLearnLater}
+          bookmarks={
+            bookmarks
+          }
+
+          setBookmarks={
+            setBookmarks
+          }
+
+          learnLater={
+            learnLater
+          }
+
+          setLearnLater={
+            setLearnLater
+          }
 
           onBack={() =>
             setView("home")
@@ -1402,12 +1655,13 @@ function App() {
       ) : (
 
         <>
+
           {/* =================================================
               SEARCH
               ================================================= */}
 
           <div
-            className={`max-w-xl mx-auto p-5 transition-all duration-300 ${
+            className={`max-w-xl mx-auto p-5 ${
               kidMode
                 ? "rounded-3xl border-2 border-kid-pink/40 bg-panel dark:bg-blueprint-panel"
                 : "rounded-md border border-line/20 dark:border-line-dark/20 bg-panel dark:bg-blueprint-panel"
@@ -1417,9 +1671,13 @@ function App() {
             <div className="flex justify-end mb-3">
 
               <SurpriseButton
-                onPick={(picked) => {
+                onPick={(
+                  picked
+                ) => {
 
-                  setTopic(picked)
+                  setTopic(
+                    picked
+                  )
 
                   handleExplain(
                     picked
@@ -1432,33 +1690,53 @@ function App() {
 
 
             <SearchBar
-              topic={topic}
-              setTopic={setTopic}
+              topic={
+                topic
+              }
+
+              setTopic={
+                setTopic
+              }
+
               onExplain={() =>
                 handleExplain()
               }
-              loading={loading}
-              kidMode={kidMode}
-              history={history}
+
+              loading={
+                loading
+              }
+
+              kidMode={
+                kidMode
+              }
+
+              history={
+                history
+              }
             />
 
 
             <ToneToggle
-              tone={tone}
-              setTone={setTone}
+              tone={
+                tone
+              }
+
+              setTone={
+                setTone
+              }
             />
 
           </div>
 
 
-          {/* =================================================
-              CATEGORIES
-              ================================================= */}
-
           <CategoryBrowser
-            onPick={(picked) => {
+            onPick={(
+              picked
+            ) => {
 
-              setTopic(picked)
+              setTopic(
+                picked
+              )
 
               handleExplain(
                 picked
@@ -1468,43 +1746,54 @@ function App() {
           />
 
 
+          {!result &&
+            !loading && (
+
+              <TopicOfDay
+                onExplore={(
+                  picked
+                ) => {
+
+                  setTopic(
+                    picked
+                  )
+
+                  handleExplain(
+                    picked
+                  )
+
+                }}
+              />
+
+            )}
+
+
           {/* =================================================
-              TOPIC OF DAY
+              API LOADING
               ================================================= */}
 
-          {!result && !loading && (
+          {loading && (
 
-            <TopicOfDay
-              onExplore={(picked) => {
-
-                setTopic(picked)
-
-                handleExplain(
-                  picked
-                )
-
-              }}
-            />
+            <ApiLoader />
 
           )}
 
 
           {/* =================================================
-              LOADING
+              API ERROR
               ================================================= */}
 
-          {loading && <Loader />}
+          {error && !loading && (
 
+            <ApiError
+              message={
+                error
+              }
 
-          {/* =================================================
-              ERROR
-              ================================================= */}
-
-          {error && (
-
-            <p className="font-body text-red-500 text-center mt-4">
-              {error}
-            </p>
+              onRetry={
+                handleRetry
+              }
+            />
 
           )}
 
@@ -1513,38 +1802,53 @@ function App() {
               RESULT
               ================================================= */}
 
-          {result && (
+          {result && !loading && (
 
             <div className="max-w-xl mx-auto">
 
               <ResultCard
-                text={result}
+
+                text={
+                  result
+                }
 
                 onFavorite={() =>
                   toggleFavorite({
                     topic,
-                    text: result
+                    text:
+                      result
                   })
                 }
 
-                isFavorite={favorites.some(
-                  (f) =>
-                    f.topic === topic
-                )}
-
-                onRegenerate={() =>
-                  handleExplain(topic)
+                isFavorite={
+                  favorites.some(
+                    (f) =>
+                      f.topic ===
+                      topic
+                  )
                 }
 
-                regenerating={loading}
+                onRegenerate={() =>
+                  handleExplain(
+                    topic
+                  )
+                }
+
+                regenerating={
+                  loading
+                }
 
                 relatedTopics={
                   relatedTopics
                 }
 
-                onRelatedClick={(picked) => {
+                onRelatedClick={(
+                  picked
+                ) => {
 
-                  setTopic(picked)
+                  setTopic(
+                    picked
+                  )
 
                   handleExplain(
                     picked
@@ -1552,13 +1856,18 @@ function App() {
 
                 }}
 
-                onQuiz={handleQuiz}
+                onQuiz={
+                  handleQuiz
+                }
 
                 quizLoading={
                   quizLoading
                 }
 
-                kidMode={kidMode}
+                kidMode={
+                  kidMode
+                }
+
               />
 
 
@@ -1576,22 +1885,18 @@ function App() {
                     onClick={() =>
                       toggleFavorite({
                         topic,
-                        text: result
+                        text:
+                          result
                       })
                     }
-                    className={`px-4 py-2.5 rounded-xl border text-sm transition-all ${
-                      favorites.some(
-                        (f) =>
-                          f.topic === topic
-                      )
-                        ? "bg-amber-100 dark:bg-amber-950/30 border-amber-300"
-                        : "border-line/30 dark:border-line-dark/30 hover:-translate-y-0.5"
-                    }`}
+
+                    className="curioo-save-button"
                   >
                     ⭐{" "}
                     {favorites.some(
                       (f) =>
-                        f.topic === topic
+                        f.topic ===
+                        topic
                     )
                       ? "Favorited"
                       : "Favorite"}
@@ -1604,15 +1909,8 @@ function App() {
                     onClick={
                       toggleBookmark
                     }
-                    className={`px-4 py-2.5 rounded-xl border text-sm transition-all ${
-                      bookmarks.some(
-                        (item) =>
-                          item.topic.toLowerCase() ===
-                          topic.toLowerCase()
-                      )
-                        ? "bg-blue-100 dark:bg-blue-950/30 border-blue-300"
-                        : "border-line/30 dark:border-line-dark/30 hover:-translate-y-0.5"
-                    }`}
+
+                    className="curioo-save-button"
                   >
                     🔖{" "}
                     {bookmarks.some(
@@ -1631,15 +1929,8 @@ function App() {
                     onClick={
                       toggleLearnLater
                     }
-                    className={`px-4 py-2.5 rounded-xl border text-sm transition-all ${
-                      learnLater.some(
-                        (item) =>
-                          item.topic.toLowerCase() ===
-                          topic.toLowerCase()
-                      )
-                        ? "bg-orange-100 dark:bg-orange-950/30 border-orange-300"
-                        : "border-line/30 dark:border-line-dark/30 hover:-translate-y-0.5"
-                    }`}
+
+                    className="curioo-save-button"
                   >
                     🕐{" "}
                     {learnLater.some(
@@ -1654,7 +1945,7 @@ function App() {
                 </div>
 
 
-                {/* COLLECTIONS */}
+                {/* COLLECTION */}
 
                 <div className="mt-4 pt-4 border-t border-line/10 dark:border-line-dark/10">
 
@@ -1662,10 +1953,13 @@ function App() {
                     Save to collection
                   </p>
 
+
                   <div className="flex flex-wrap gap-2">
 
                     {collections.map(
-                      (collection) => {
+                      (
+                        collection
+                      ) => {
 
                         const alreadySaved =
                           collection.items.some(
@@ -1674,29 +1968,31 @@ function App() {
                               topic.toLowerCase()
                           )
 
+
                         return (
 
                           <button
                             key={
                               collection.id
                             }
+
                             onClick={() =>
                               saveToCollection(
                                 collection.id
                               )
                             }
+
                             disabled={
                               alreadySaved
                             }
-                            className={`px-3 py-2 rounded-lg text-xs border transition-all ${
-                              alreadySaved
-                                ? "opacity-50 cursor-default bg-black/5 dark:bg-white/5"
-                                : "border-line/20 dark:border-line-dark/20 hover:-translate-y-0.5"
-                            }`}
+
+                            className="curioo-collection-button"
                           >
 
                             📚{" "}
-                            {collection.name}
+                            {
+                              collection.name
+                            }
 
                             {alreadySaved &&
                               " ✓"}
@@ -1708,13 +2004,17 @@ function App() {
                       }
                     )}
 
+
                     <button
                       onClick={() =>
-                        setView("library")
+                        setView(
+                          "library"
+                        )
                       }
-                      className="px-3 py-2 rounded-lg text-xs border border-dashed border-line/30 dark:border-line-dark/30 hover:-translate-y-0.5"
+
+                      className="curioo-collection-button"
                     >
-                      + Manage collections
+                      + Manage
                     </button>
 
                   </div>
@@ -1735,11 +2035,18 @@ function App() {
           {quiz && (
 
             <QuizCard
-              quiz={quiz}
-              topic={topic}
+              quiz={
+                quiz
+              }
+
+              topic={
+                topic
+              }
 
               onClose={() =>
-                setQuiz(null)
+                setQuiz(
+                  null
+                )
               }
 
               onComplete={(
@@ -1755,13 +2062,6 @@ function App() {
             />
 
           )}
-
-
-          {/* =================================================
-              HISTORY
-              ================================================= */}
-
-          {/* Existing sidebar handles recent history */}
 
         </>
 
