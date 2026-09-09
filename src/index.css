@@ -2887,3 +2887,222 @@ body {
     padding-right: 6px !important;
   }
 }
+/* =========================================================
+   SIDEBAR RECENT - SCROLL ONLY RECENT LIST
+   ========================================================= */
+
+.sidebar-recent {
+  width: 100%;
+  min-width: 0;
+
+  /* Important: don't let this section create page overflow */
+  overflow: hidden;
+}
+
+
+/* Recent heading */
+
+.sidebar-recent .sidebar-section-title {
+  flex-shrink: 0;
+  margin-bottom: 8px;
+}
+
+
+/* =========================================================
+   SCROLLABLE RECENT LIST
+   ========================================================= */
+
+.sidebar-recent-list {
+  width: 100%;
+  min-width: 0;
+
+  /*
+     Maximum visible height.
+     Increase/decrease this number if required.
+  */
+  max-height: 330px;
+
+  overflow-y: auto;
+  overflow-x: hidden;
+
+  padding-right: 5px;
+
+  /*
+     Smooth scrolling
+  */
+  scroll-behavior: smooth;
+
+  /*
+     Firefox
+  */
+  scrollbar-width: thin;
+  scrollbar-color: rgba(120, 120, 120, 0.35) transparent;
+}
+
+
+/* =========================================================
+   CHROME / EDGE SCROLLBAR
+   ========================================================= */
+
+.sidebar-recent-list::-webkit-scrollbar {
+  width: 5px;
+}
+
+.sidebar-recent-list::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.sidebar-recent-list::-webkit-scrollbar-thumb {
+  background: rgba(120, 120, 120, 0.30);
+  border-radius: 20px;
+}
+
+.sidebar-recent-list::-webkit-scrollbar-thumb:hover {
+  background: rgba(120, 120, 120, 0.55);
+}
+
+
+/* =========================================================
+   RECENT ITEM
+   ========================================================= */
+
+.sidebar-recent-item {
+  width: 100%;
+  min-width: 0;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  gap: 8px;
+
+  border: 0;
+  background: transparent;
+
+  padding: 9px 5px;
+
+  margin: 0;
+
+  text-align: left;
+
+  cursor: pointer;
+
+  border-radius: 9px;
+
+  transition:
+    background 0.2s ease,
+    transform 0.2s ease;
+}
+
+
+/* Hover */
+
+.sidebar-recent-item:hover {
+  background: rgba(255, 255, 255, 0.65);
+  transform: translateX(2px);
+}
+
+
+/* =========================================================
+   TOPIC TEXT
+   ========================================================= */
+
+.sidebar-recent-topic {
+  flex: 1;
+  min-width: 0;
+
+  /*
+     Long questions don't break the sidebar.
+  */
+  overflow: hidden;
+
+  /*
+     Show maximum 2 lines.
+  */
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+
+  line-height: 1.45;
+
+  overflow-wrap: anywhere;
+}
+
+
+/* =========================================================
+   ARROW
+   ========================================================= */
+
+.sidebar-recent-arrow {
+  flex-shrink: 0;
+
+  font-size: 18px;
+  line-height: 1;
+
+  opacity: 0.65;
+
+  transition:
+    transform 0.2s ease,
+    opacity 0.2s ease;
+}
+
+
+.sidebar-recent-item:hover .sidebar-recent-arrow {
+  transform: translateX(3px);
+  opacity: 1;
+}
+
+
+/* =========================================================
+   EMPTY STATE
+   ========================================================= */
+
+.sidebar-empty {
+  width: 100%;
+  padding: 10px 5px;
+}
+
+.sidebar-empty p {
+  margin: 5px 0 0;
+}
+
+
+/* =========================================================
+   DARK MODE
+   ========================================================= */
+
+.dark .sidebar-recent-item:hover {
+  background: rgba(255, 255, 255, 0.07);
+}
+
+.dark .sidebar-recent-list {
+  scrollbar-color: rgba(255, 255, 255, 0.25) transparent;
+}
+
+.dark .sidebar-recent-list::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.25);
+}
+
+.dark .sidebar-recent-list::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.4);
+}
+
+
+/* =========================================================
+   SMALLER SIDEBAR
+   ========================================================= */
+
+@media (max-height: 750px) {
+
+  .sidebar-recent-list {
+    max-height: 250px;
+  }
+}
+
+
+@media (max-height: 600px) {
+
+  .sidebar-recent-list {
+    max-height: 190px;
+  }
+}
