@@ -2665,3 +2665,225 @@
   }
 
 }
+/* =========================================================
+   CURIOO - FINAL SMALL WINDOW / SIDEBAR FIX
+   ========================================================= */
+
+/* Make every layout element shrink correctly */
+html,
+body,
+#root {
+  width: 100% !important;
+  max-width: 100% !important;
+  min-width: 0 !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  overflow-x: hidden !important;
+}
+
+body {
+  overflow-x: hidden !important;
+}
+
+
+/* =========================================================
+   DESKTOP SIDEBAR
+   ========================================================= */
+
+.sidebar {
+  position: fixed;
+  left: 0;
+  top: 0;
+  width: 280px;
+  height: 100vh;
+  z-index: 1000;
+}
+
+
+/* =========================================================
+   IMPORTANT:
+   REMOVE SIDEBAR SPACE ON SMALL WINDOWS
+   ========================================================= */
+
+@media (max-width: 900px) {
+
+  /* Hide the sidebar */
+  .sidebar {
+    display: none !important;
+    transform: translateX(-100%) !important;
+  }
+
+
+  /* -----------------------------------------------
+     REMOVE COMMON TAILWIND SIDEBAR MARGINS
+     ----------------------------------------------- */
+
+  main,
+  [role="main"] {
+    width: 100% !important;
+    max-width: 100% !important;
+
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+
+    padding-left: 12px !important;
+    padding-right: 12px !important;
+  }
+
+
+  /* Tailwind margin-left utilities */
+  main[class*="ml-"],
+  div[class*="ml-"],
+  section[class*="ml-"] {
+    margin-left: 0 !important;
+  }
+
+
+  /* Tailwind padding-left utilities */
+  main[class*="pl-"],
+  div[class*="pl-"],
+  section[class*="pl-"] {
+    padding-left: 12px !important;
+  }
+
+
+  /* -----------------------------------------------
+     COMMON SIDEBAR CONTENT WRAPPERS
+     ----------------------------------------------- */
+
+  .main-content,
+  .content-area,
+  .app-content,
+  .page-content,
+  .content,
+  .main-container,
+  .app-container {
+    width: 100% !important;
+    max-width: 100% !important;
+
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+
+    padding-left: 12px !important;
+    padding-right: 12px !important;
+  }
+
+
+  /* -----------------------------------------------
+     FLEX LAYOUT
+     ----------------------------------------------- */
+
+  .flex-1 {
+    min-width: 0 !important;
+    width: 100% !important;
+  }
+
+
+  /* If parent uses flex */
+  body > div,
+  #root > div {
+    max-width: 100% !important;
+    min-width: 0 !important;
+  }
+
+
+  /* -----------------------------------------------
+     CURIOO CENTER CONTENT
+     ----------------------------------------------- */
+
+  .container {
+    width: 100% !important;
+    max-width: 760px !important;
+
+    margin-left: auto !important;
+    margin-right: auto !important;
+  }
+
+
+  /* -----------------------------------------------
+     SEARCH CARD
+     ----------------------------------------------- */
+
+  .search-container,
+  .search-row {
+    width: 100% !important;
+    max-width: 100% !important;
+    min-width: 0 !important;
+  }
+
+
+  /* -----------------------------------------------
+     EXPLANATION CARD
+     ----------------------------------------------- */
+
+  .result-card,
+  .explanation-card,
+  .quiz-card {
+    width: 100% !important;
+    max-width: 100% !important;
+    min-width: 0 !important;
+  }
+}
+
+
+/* =========================================================
+   VERY SMALL WINDOW
+   ========================================================= */
+
+@media (max-width: 600px) {
+
+  main,
+  [role="main"] {
+    padding-left: 8px !important;
+    padding-right: 8px !important;
+  }
+
+
+  .main-content,
+  .content-area,
+  .app-content,
+  .page-content {
+    padding-left: 8px !important;
+    padding-right: 8px !important;
+  }
+
+
+  /* Search */
+  .search-container,
+  .search-row {
+    display: flex;
+    flex-wrap: wrap;
+  }
+
+
+  input {
+    min-width: 0 !important;
+    max-width: 100% !important;
+  }
+
+
+  button {
+    max-width: 100%;
+  }
+}
+
+
+/* =========================================================
+   EXTRA SMALL
+   ========================================================= */
+
+@media (max-width: 450px) {
+
+  main,
+  [role="main"] {
+    padding-left: 6px !important;
+    padding-right: 6px !important;
+  }
+
+  .main-content,
+  .content-area,
+  .app-content {
+    padding-left: 6px !important;
+    padding-right: 6px !important;
+  }
+}
