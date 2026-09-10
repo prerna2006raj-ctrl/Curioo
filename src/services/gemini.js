@@ -1,274 +1,143 @@
-const API_TIMEOUT = 25000
+export async function getExplanation(topic, tone = "kid") {
+  const toneInstructions = {
+    kid: `
+      Explain the topic in very simple language.
+      Use an easy example or analogy.
+      Keep it friendly and engaging.
+    `,
 
-const API_URL =
-  "https://generativelanguage.googleapis.com/v1beta/models/gemini-3.6-flash:generateContent"
+    simple: `
+      Explain the topic clearly using simple language.
+      Include important concepts and an easy example.
+    `,
 
-
-// =====================================================
-// FETCH WITH TIMEOUT
-// =====================================================
-
-async function fetchWithTimeout(
-  url,
-  options = {},
-  timeout = API_TIMEOUT
-) {
-  const controller = new AbortController()
-
-  const timeoutId = setTimeout(() => {
-    controller.abort()
-  }, timeout)
-
-  try {
-    const response = await fetch(url, {
-      ...options,
-      signal: controller.signal
-    })
-
-    return response
-
-  } catch (error) {
-
-    if (error.name === "AbortError") {
-      throw new Error(
-        "TIMEOUT"
-      )
-    }
-
-    throw error
-
-  } finally {
-
-    clearTimeout(timeoutId)
-
+    detailed: `
+      Give a detailed explanation of the topic.
+      Explain the important concepts, how they work,
+      and provide a useful example.
+    `
   }
-}
-
-
-// =====================================================
-// API REQUEST
-// =====================================================
-
-async function generateContent(prompt) {
-
-  const apiKey =
-    import.meta.env.VITE_GEMINI_API_KEY
-
-  if (!apiKey) {
-    throw new Error(
-      "API_KEY_MISSING"
-    )
-  }
-
-
-  const response =
-    await fetchWithTimeout(
-      `${API_URL}?key=${apiKey}`,
-      {
-        method: "POST",
-
-        headers: {
-          "Content-Type":
-            "application/json"
-        },
-
-        body: JSON.stringify({
-          contents: [
-            {
-              parts: [
-                {
-                  text: prompt
-                }
-              ]
-            }
-          ],
-
-          generationConfig: {
-            temperature: 0.7,
-            maxOutputTokens: 1200
-          }
-        })
-      }
-    )
-
-
-  // ===================================================
-  // HANDLE API ERRORS
-  // ===================================================
-
-  if (!response.ok) {
-
-    let errorData = null
-
-    try {
-      errorData =
-        await response.json()
-    } catch {
-      errorData = null
-    }
-
-
-    const status =
-      response.status
-
-
-    if (status === 429) {
-      throw new Error(
-        "RATE_LIMIT"
-      )
-    }
-
-
-    if (status === 401 ||
-        status === 403) {
-      throw new Error(
-        "API_AUTH"
-      )
-    }
-
-
-    if (status >= 500) {
-      throw new Error(
-        "SERVER_ERROR"
-      )
-    }
-
-
-    console.error(
-      "Gemini API error:",
-      errorData
-    )
-
-    throw new Error(
-      "API_ERROR"
-    )
-  }
-
-
-  const data =
-    await response.json()
-
-
-  const text =
-    data?.candidates?.[0]?.content?.parts
-      ?.map((part) => part.text || "")
-      .join("")
-      .trim()
-
-
-  if (!text) {
-    throw new Error(
-      "EMPTY_RESPONSE"
-    )
-  }
-
-
-  return text
-}
-
-
-// =====================================================
-// EXPLANATION
-// =====================================================
-
-export async function getExplanation(
-  topic,
-  tone = "kid"
-) {
 
   const prompt = `
-You are Curioo, an intelligent learning assistant.
+You are an educational assistant for a learning application called Curioo.
 
-Explain the following topic:
-
-"${topic}"
+Topic: ${topic}
 
 Tone:
-${tone === "kid"
-  ? "Explain simply and clearly so a young learner can understand it."
-  : "Explain clearly and intelligently for a student."}
+${toneInstructions[tone] || toneInstructions.kid}
 
-Requirements:
-- Start with a simple definition.
-- Explain how it works.
-- Give a practical example.
-- Use short sections.
-- Avoid unnecessary complexity.
-- Do not use excessive emojis.
-- End with 3 related topics.
+Explain the topic in a way that helps a student understand it.
 
-Return the explanation followed by:
+Also provide 3 related topics that the student can explore.
 
-RELATED:
-topic 1
-topic 2
-topic 3
+Return ONLY valid JSON in this exact format:
+
+{
+  "text": "explanation here",
+  "related": [
+    "related topic 1",
+    "related topic 2",
+    "related topic 3"
+  ]
+}
+
+Rules:
+
+- Do not include markdown code fences.
+- Do not include unnecessary fields.
+- The explanation must be related to the requested topic.
+- Related topics should be closely connected to the topic.
 `
 
+  const response = await fetch(
+    `https://generativelanguage.googleapis.com/v1beta/models/gemini-3.6-flash:generateContent?key=${import.meta.env.VITE_GEMINI_API_KEY}`,
+    {
+      method: "POST",
 
-  const text =
-    await generateContent(
-      prompt
-    )
+      headers: {
+        "Content-Type": "application/json"
+      },
 
+      body: JSON.stringify({
+        contents: [
+          {
+            parts: [
+              {
+                text: prompt
+              }
+            ]
+          }
+        ]
+      })
+    }
+  )
 
-  let explanation = text
-  let related = []
-
-
-  const relatedIndex =
-    text.indexOf("RELATED:")
-
-
-  if (relatedIndex !== -1) {
-
-    explanation =
-      text
-        .slice(0, relatedIndex)
-        .trim()
-
-    related =
-      text
-        .slice(
-          relatedIndex +
-          "RELATED:".length
-        )
-        .split("\n")
-        .map(
-          (item) =>
-            item
-              .replace(/^[-•*]\s*/, "")
-              .trim()
-        )
-        .filter(Boolean)
-        .slice(0, 3)
-
+  if (!response.ok) {
+    throw new Error("Failed to generate explanation")
   }
 
+  const data = await response.json()
 
-  return {
-    text: explanation,
-    related
+  const text =
+    data?.candidates?.[0]?.content?.parts?.[0]?.text || ""
+
+  const cleaned = text
+    .replace(/```json/g, "")
+    .replace(/```/g, "")
+    .trim()
+
+  try {
+    const parsed = JSON.parse(cleaned)
+
+    return {
+      text: parsed.text || "",
+      related: Array.isArray(parsed.related)
+        ? parsed.related
+        : []
+    }
+  } catch {
+    return {
+      text: cleaned,
+      related: []
+    }
   }
 }
 
 
-// =====================================================
-// QUIZ
-// =====================================================
+export async function getQuiz(topic, difficulty = "Medium") {
+  const difficultyInstructions = {
+    Easy: `
+      Create a beginner-friendly question.
+      Use simple concepts and straightforward options.
+      Avoid tricky wording.
+    `,
 
-export async function getQuiz(
-  topic
-) {
+    Medium: `
+      Create a moderately challenging question.
+      Test understanding and application of the concept.
+      Include plausible distractor options.
+    `,
+
+    Hard: `
+      Create a difficult question.
+      Test deeper understanding, reasoning, edge cases,
+      or application of the concept.
+      Make the incorrect options believable.
+    `
+  }
 
   const prompt = `
-Create a multiple-choice quiz question about:
+You are creating a quiz for a learning application called Curioo.
 
-"${topic}"
+Topic: ${topic}
 
-Return ONLY valid JSON.
+Difficulty: ${difficulty}
 
-Format:
+${difficultyInstructions[difficulty]}
+
+Create exactly ONE multiple-choice question.
+
+Return ONLY valid JSON in this exact format:
 
 {
   "question": "question here",
@@ -278,61 +147,57 @@ Format:
     "option 3",
     "option 4"
   ],
-  "answerIndex": 0
+  "answerIndex": 0,
+  "explanation": "short explanation of the correct answer"
 }
 
 Rules:
-- Exactly 4 options.
-- answerIndex must be 0, 1, 2 or 3.
-- Make only one option correct.
+
+- Exactly 4 options
+- answerIndex must be 0, 1, 2, or 3
+- Only one option can be correct
+- Do not include markdown
+- Do not include code fences
+- The question must be related to the topic
+- Difficulty must match ${difficulty}
 `
 
+  const response = await fetch(
+    `https://generativelanguage.googleapis.com/v1beta/models/gemini-3.6-flash:generateContent?key=${import.meta.env.VITE_GEMINI_API_KEY}`,
+    {
+      method: "POST",
+
+      headers: {
+        "Content-Type": "application/json"
+      },
+
+      body: JSON.stringify({
+        contents: [
+          {
+            parts: [
+              {
+                text: prompt
+              }
+            ]
+          }
+        ]
+      })
+    }
+  )
+
+  if (!response.ok) {
+    throw new Error("Failed to generate quiz")
+  }
+
+  const data = await response.json()
 
   const text =
-    await generateContent(
-      prompt
-    )
+    data?.candidates?.[0]?.content?.parts?.[0]?.text || ""
 
+  const cleaned = text
+    .replace(/```json/g, "")
+    .replace(/```/g, "")
+    .trim()
 
-  try {
-
-    const cleaned =
-      text
-        .replace(/```json/gi, "")
-        .replace(/```/g, "")
-        .trim()
-
-
-    const quiz =
-      JSON.parse(cleaned)
-
-
-    if (
-      !quiz.question ||
-      !Array.isArray(
-        quiz.options
-      ) ||
-      quiz.options.length !== 4 ||
-      typeof quiz.answerIndex !==
-        "number"
-    ) {
-      throw new Error(
-        "INVALID_QUIZ"
-      )
-    }
-
-
-    return quiz
-
-  } catch (error) {
-
-    console.error(
-      "Quiz parsing error:",
-      error
-    )
-
-    throw new Error(
-      "INVALID_QUIZ"
-    )
-  }
+  return JSON.parse(cleaned)
 }
