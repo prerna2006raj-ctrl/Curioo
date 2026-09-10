@@ -984,7 +984,7 @@ function App() {
   return (
 
     <div
-      className={`min-h-screen px-4 py-10 transition-colors duration-300 text-ink dark:text-paper-dark ${
+      className={`min-h-screen ml-[280px] px-4 py-10 transition-colors duration-300 text-ink dark:text-paper-dark ${
         kidMode
           ? "dot-paper bg-paper dark:bg-blueprint"
           : "grid-paper bg-paper dark:bg-blueprint"
