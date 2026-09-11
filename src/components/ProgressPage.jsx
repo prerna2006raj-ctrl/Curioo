@@ -64,33 +64,35 @@ function ProgressPage({
         correct: data.correct || 0,
       }))
   const topicStats =
-    topicEntries.map(
-      ([topic, data]) => {
+        topicEntries.map(
+          ([topic, data]) => {
+      const attempts =
+      data?.attempts || 0
 
-        const attempts =
-          data?.attempts || 0
+    const answered =
+      data?.answered || 0
 
-        const topicCorrect =
-          data?.correct || 0
+    const topicCorrect =
+      data?.correct || 0
 
-        const topicAccuracy =
-          attempts > 0
-            ? Math.round(
-                (topicCorrect /
-                  attempts) *
-                  100
-              )
-            : 0
+    const topicAccuracy =
+      answered > 0
+        ? Math.round(
+            (topicCorrect /
+              answered) *
+              100
+          )
+        : 0
 
-        return {
-          topic,
-          attempts,
-          correct: topicCorrect,
-          accuracy: topicAccuracy
-        }
-      }
-    )
-
+    return {
+      topic,
+      attempts,
+      answered,
+      correct: topicCorrect,
+      accuracy: topicAccuracy
+    }
+ }     
+        )
 
   const sortedTopics =
     [...topicStats].sort(
@@ -285,32 +287,54 @@ function ProgressPage({
           STAT CARDS
           ================================================= */}
 
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-5">
+        {/* Quiz Statistics */}
+<div className="grid grid-cols-2 lg:grid-cols-4 gap-3 mb-4">
 
-        <div className="rounded-2xl border border-line/20 dark:border-line-dark/20 bg-panel dark:bg-blueprint-panel p-4">
+  {/* Quizzes Completed */}
+  <div className="bg-white rounded-2xl border border-blue-200 p-4">
+    <p className="text-sm text-slate-500">
+      🏆 Quizzes completed
+    </p>
 
-          <p className="text-xs opacity-50 font-display">
-            Quizzes completed
-          </p>
+    <p className="text-2xl font-display font-semibold mt-2">
+      {total}
+    </p>
+  </div>
 
-          <p className="text-2xl font-display font-semibold mt-2">
-            {total}
-          </p>
+  {/* Questions Answered */}
+  <div className="bg-white rounded-2xl border border-green-200 p-4">
+    <p className="text-sm text-slate-500">
+      💬 Questions answered
+    </p>
 
-        </div>
+    <p className="text-2xl font-display font-semibold mt-2">
+      {progress.questionsAnswered || 0}
+    </p>
+  </div>
 
+  {/* Correct */}
+  <div className="bg-white rounded-2xl border border-red-200 p-4">
+    <p className="text-sm text-slate-500">
+      ✅ Correct
+    </p>
 
-        <div className="rounded-2xl border border-line/20 dark:border-line-dark/20 bg-panel dark:bg-blueprint-panel p-4">
+    <p className="text-2xl font-display font-semibold mt-2">
+      {correct}
+    </p>
+  </div>
 
-          <p className="text-xs opacity-50 font-display">
-            Questions answered
-          </p>
+  {/* Timed Out */}
+  <div className="bg-white rounded-2xl border border-amber-200 p-4">
+    <p className="text-sm text-slate-500">
+      ⏱️ Timed out
+    </p>
 
-          <p className="text-2xl font-display font-semibold mt-2">
-            {progress.questionsAnswered || 0}
-          </p>
+    <p className="text-2xl font-display font-semibold mt-2">
+      {timedOut}
+    </p>
+  </div>
 
-        </div>
+</div>
 
         <div
           onClick={() => setStreakView("week")}
@@ -327,7 +351,7 @@ function ProgressPage({
 
         </div>
 
-      </div>
+    
 
 
       {/* =================================================
@@ -795,7 +819,7 @@ function ProgressPage({
                     <p className="font-body text-xs opacity-50 mt-1">
 
                       {item.correct} correct out of{" "}
-                      {item.attempts}
+                      {item.answered}
 
                     </p>
 

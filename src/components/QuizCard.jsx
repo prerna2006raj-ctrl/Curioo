@@ -348,8 +348,8 @@ function QuizCard({
 
               </>
 
-            ) : selected ===
-              quiz.answerIndex ? (
+            ) : Number(selected) ===
+                  Number(quiz.answerIndex) ? (
 
               <h3 className="font-display font-semibold text-green-600 dark:text-green-400">
                 ✓ Correct!

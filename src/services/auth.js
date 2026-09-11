@@ -1,6 +1,7 @@
 const USERS_KEY = "curioo-users"
 
 function getUsers() {
+  const USERS_KEY = "curioo-users"
   const saved = localStorage.getItem(USERS_KEY)
   return saved ? JSON.parse(saved) : []
 }

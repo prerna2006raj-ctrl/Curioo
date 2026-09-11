@@ -170,18 +170,37 @@ function App() {
   // PROGRESS
   // =====================================================
 
-  const [progress, setProgress] = useState(() => {
+    const [progress, setProgress] = useState(() => {
   const saved = localStorage.getItem("curioo-progress")
 
-  return saved
-    ? JSON.parse(saved)
-    : {
-        total: 0,
-        questionsAnswered: 0,
-        correct: 0,
-        timedOut: 0,
-        byTopic: {}
-      }
+  if (saved) {
+    const parsed = JSON.parse(saved)
+
+    const total = Number(parsed.total) || 0
+    const correct = Number(parsed.correct) || 0
+    const timedOut = Number(parsed.timedOut) || 0
+
+    return {
+      total,
+      correct,
+      timedOut,
+
+      // Repair old progress data
+      questionsAnswered:
+        parsed.questionsAnswered ??
+        Math.max(0, total - timedOut),
+
+      byTopic: parsed.byTopic || {}
+    }
+  }
+
+  return {
+    total: 0,
+    questionsAnswered: 0,
+    correct: 0,
+    timedOut: 0,
+    byTopic: {}
+  }
 })
     const [dailyGoal, setDailyGoal] = useState(() => {
       const saved = localStorage.getItem("curioo-daily-goal")
@@ -916,33 +935,48 @@ function App() {
   didTimeOut
 ) => {
   setProgress((prev) => {
+
     const previousTopic =
-      prev.byTopic[topic] || {
+      prev.byTopic?.[topic] || {
         attempts: 0,
         correct: 0,
         answered: 0,
         timedOut: 0
       }
 
+    const previousAnswered =
+      Number(prev.questionsAnswered) || 0
+
+    const previousCorrect =
+      Number(prev.correct) || 0
+
+    const previousTotal =
+      Number(prev.total) || 0
+
+    const previousTimedOut =
+      Number(prev.timedOut) || 0
+
     return {
       ...prev,
 
-      // Every quiz that ends counts as completed
-      total: prev.total + 1,
+      // Every finished quiz counts
+      total:
+        previousTotal + 1,
 
-      // Timeout means the question was NOT answered
+      // Selected answer = answered
+      // Timeout = NOT answered
       questionsAnswered:
-        prev.questionsAnswered +
+        previousAnswered +
         (didTimeOut ? 0 : 1),
 
-      // Only a correct selected answer counts
+      // Correct selected answer
       correct:
-        prev.correct +
+        previousCorrect +
         (isCorrect ? 1 : 0),
 
-      // Timeout gets its own count
+      // Timeout count
       timedOut:
-        prev.timedOut +
+        previousTimedOut +
         (didTimeOut ? 1 : 0),
 
       byTopic: {
@@ -950,24 +984,25 @@ function App() {
 
         [topic]: {
           attempts:
-            previousTopic.attempts + 1,
+            (Number(previousTopic.attempts) || 0) + 1,
 
           answered:
-            previousTopic.answered +
+            (Number(previousTopic.answered) || 0) +
             (didTimeOut ? 0 : 1),
 
           correct:
-            previousTopic.correct +
+            (Number(previousTopic.correct) || 0) +
             (isCorrect ? 1 : 0),
 
           timedOut:
-            previousTopic.timedOut +
+            (Number(previousTopic.timedOut) || 0) +
             (didTimeOut ? 1 : 0)
         }
       }
     }
   })
 }
+
 
 
   // =====================================================
@@ -1127,24 +1162,26 @@ function App() {
     }
 
 
-  const currentStreak =
-    calculateCurrentStreak()
+  const currentStreak = calculateCurrentStreak()
 
-    
-    const todayKey = getDateKey(Date.now())
+const todayKey = getDateKey(Date.now())
 
-const todayTopics = [
+const todayTopicNames = [
   ...new Set(
     log
       .filter(
         (item) =>
           getDateKey(item.timestamp) === todayKey
       )
-      .map((item) => item.topic.toLowerCase())
+      .map(
+        (item) =>
+          item.topic.toLowerCase()
+      )
   )
-].length
+]
 
-const todayTopicCount = todayTopics.length
+const todayTopicCount =
+  todayTopicNames.length
   // =====================================================
   // WEEKLY
   // =====================================================
@@ -1687,7 +1724,8 @@ const todayTopicCount = todayTopics.length
             progress={progress}
             log={log}
             dailyGoal={dailyGoal}
-            todayTopicCount={todayTopicCount}
+            todayTopics={todayTopicCount}
+            streak={currentStreak}
             onGoalChange={setDailyGoal}
             onBack={() =>
               setView("home")
@@ -2214,7 +2252,7 @@ const todayTopicCount = todayTopics.length
               topic={
                 topic
               }
-
+              difficulty={difficulty} 
               onClose={() =>
                 setQuiz(
                   null
@@ -2243,5 +2281,4 @@ const todayTopicCount = todayTopics.length
 
   )
 }
-
 export default App
