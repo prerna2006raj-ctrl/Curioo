@@ -257,17 +257,7 @@ function ResultCard({
         </button>
 
 
-        {/* Regenerate */}
-
-        <button
-          onClick={onRegenerate}
-          disabled={regenerating}
-          className="font-display text-xs px-3 py-1.5 rounded-sm border border-line/30 dark:border-line-dark/30 text-ink/70 dark:text-paper-dark/70 hover:border-amber hover:text-amber transition-colors duration-150 disabled:opacity-40"
-        >
-          {regenerating
-            ? "regenerating…"
-            : "🔄 explain differently"}
-        </button>
+        
 
 
         {/* Quiz */}

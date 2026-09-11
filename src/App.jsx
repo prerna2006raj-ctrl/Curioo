@@ -18,9 +18,11 @@ import LearningLibrary from "./components/LearningLibrary"
 import ApiLoader from "./components/ApiLoader"
 import ApiError from "./components/ApiError"
 import WelcomePage from "./components/WelcomePage"
+import LearningMode from "./components/LearningMode"
 import {
   getExplanation,
-  getQuiz
+  getQuiz,
+  getLearningLesson
 } from "./services/gemini"
 
 
@@ -555,32 +557,31 @@ function App() {
 
     }
   const startLearningMode = async () => {
-    if (!topic.trim()) return
+      if (!topic.trim()) return
 
-    setExplainAgainLoading(true)
-    setError("")
+      setExplainAgainLoading(true)
+      setError("")
 
-    try {
-      const { text } = await getExplanation(
-        topic,
-        "step-by-step"
-      )
+      try {
+        const { steps } = await getLearningLesson(
+          topic,
+          tone
+        )
 
-      const steps = text
-        .split(/\n+/)
-        .map((step) => step.replace(/^[-•\d.)]+\s*/, "").trim())
-        .filter(Boolean)
-        .slice(0, 6)
+        const lessonSteps = steps.map(
+          (step) => `${step.title}: ${step.text}`
+        )
 
-      setLesson(steps)
-      setLessonStep(0)
-      setLearningMode(true)
-    } catch (err) {
-      setError("Couldn't start learning mode. Try again.")
-    } finally {
-      setExplainAgainLoading(false)
+        setLesson(lessonSteps)
+        setLessonStep(0)
+        setLearningMode(true)
+      } catch (err) {
+        console.error("Learning Mode error:", err)
+        setError("Couldn't start learning mode. Try again.")
+      } finally {
+        setExplainAgainLoading(false)
+      }
     }
-  }
   const explainAgain = async (style) => {
     if (!topic.trim()) return
 
@@ -1143,7 +1144,7 @@ function App() {
   // =====================================================
   // WEEKLY
   // =====================================================
-
+    
   const oneWeekAgo =
     Date.now() -
     7 *
@@ -1891,9 +1892,9 @@ function App() {
                       result
                   })
                 }
-                onLearningMode={startLearningMode}
+                onLearning={startLearningMode}
+                learningLoading={explainAgainLoading}
                 onExplainAgain={explainAgain}
-                explainAgainLoading={explainAgainLoading}
                 isFavorite={
                   favorites.some(
                     (f) =>
