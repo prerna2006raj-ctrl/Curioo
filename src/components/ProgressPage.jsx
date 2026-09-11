@@ -1,11 +1,16 @@
+import { useState } from "react"
 function ProgressPage({
   progress,
   dailyGoal,
   todayTopics,
   streak,
+  log,
   onGoalChange,
   onBack
 }) {
+
+  const [selectedTopic, setSelectedTopic] = useState(null)
+  const [streakView, setStreakView] = useState(null)
 
   const total =
     progress?.total || 0
@@ -101,7 +106,7 @@ function ProgressPage({
   const goalProgress =
     Math.min(
       safeGoal,
-      todayTopics
+      Number(todayTopics) || 0
     )
 
   const goalPercent =
@@ -126,9 +131,10 @@ function ProgressPage({
     )}%`
 
 
-  return (
+    return (
+      <>
 
-    <section className="max-w-4xl mx-auto">
+      <section className="max-w-4xl mx-auto">
 
       {/* =================================================
           HEADER
@@ -295,7 +301,10 @@ function ProgressPage({
         </div>
 
 
-        <div className="rounded-2xl border border-line/20 dark:border-line-dark/20 bg-panel dark:bg-blueprint-panel p-4">
+        <div
+          onClick={() => setStreakView("week")}
+          className="rounded-2xl border border-line/20 dark:border-line-dark/20 bg-panel dark:bg-blueprint-panel p-4 cursor-pointer hover:border-amber transition"
+        >
 
           <p className="text-xs opacity-50 font-display">
             Learning streak
@@ -318,7 +327,16 @@ function ProgressPage({
 
         {/* BEST */}
 
-        <div className="rounded-3xl border border-green-300/40 bg-green-50 dark:bg-green-900/10 p-5">
+        <div
+          onClick={() =>
+            bestTopic &&
+            setSelectedTopic({
+              ...bestTopic,
+              type: "best"
+            })
+          }
+          className="rounded-3xl border border-green-300/40 bg-green-50 dark:bg-green-900/10 p-5 cursor-pointer hover:scale-[1.01] transition"
+        >
 
           <p className="text-xs uppercase tracking-wider font-display text-green-700 dark:text-green-300">
             🏆 Best Topic
@@ -356,7 +374,16 @@ function ProgressPage({
 
         {/* WEAKEST */}
 
-        <div className="rounded-3xl border border-red-300/40 bg-red-50 dark:bg-red-900/10 p-5">
+        <div
+          onClick={() =>
+            weakestTopic &&
+            setSelectedTopic({
+              ...weakestTopic,
+              type: "weak"
+            })
+          }
+          className="rounded-3xl border border-red-300/40 bg-red-50 dark:bg-red-900/10 p-5 cursor-pointer hover:scale-[1.01] transition"
+        >
 
           <p className="text-xs uppercase tracking-wider font-display text-red-700 dark:text-red-300">
             📚 Needs Practice
@@ -492,6 +519,8 @@ function ProgressPage({
 
                   <div
                     key={item.topic}
+                    onClick={() => setSelectedTopic(item)}
+                    className="cursor-pointer rounded-2xl p-3 -mx-3 hover:bg-ink/5 dark:hover:bg-white/5 transition"
                   >
 
                     <div className="flex justify-between gap-3 mb-2">
@@ -538,8 +567,464 @@ function ProgressPage({
       </div>
 
     </section>
+    {streakView && (
+  <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 px-4">
+
+    <div className="w-full max-w-lg rounded-3xl bg-panel dark:bg-blueprint-panel border border-line/20 dark:border-line-dark/20 p-6 shadow-2xl">
+
+      <div className="flex items-center justify-between mb-5">
+
+        <div>
+          <p className="text-xs uppercase tracking-wider font-display opacity-50">
+            🔥 Learning Streak
+          </p>
+
+          <h3 className="font-display text-2xl font-semibold mt-1">
+            {streak} day streak
+          </h3>
+        </div>
+
+        <button
+          onClick={() => setStreakView(null)}
+          className="text-sm opacity-60 hover:opacity-100"
+        >
+          ✕
+        </button>
+
+      </div>
+
+      {/* RANGE BUTTONS */}
+
+      <div className="flex gap-2 mb-6">
+
+          {["week", "month"].map(
+            (range) => (
+
+              <button
+                key={range}
+                onClick={() =>
+                  setStreakView(range)
+                }
+                className={`px-4 py-2 rounded-xl border font-display text-sm capitalize transition ${
+                  streakView === range
+                    ? "bg-line text-white dark:bg-amber dark:text-blueprint"
+                    : "border-line/20 dark:border-line-dark/20 hover:border-amber"
+                }`}
+              >
+                {range}
+              </button>
+
+            )
+          )}
+
+        </div>
+
+      <StreakCalendar
+        log={log}
+        range={streakView}
+      />
+
+      <button
+        onClick={() => setStreakView(null)}
+        className="w-full mt-6 px-4 py-2 rounded-xl bg-amber text-white"
+      >
+        Close
+      </button>
+
+    </div>
+
+  </div>
+)}
+    {selectedTopic && (
+  <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 px-4">
+
+    <div className="w-full max-w-md rounded-3xl bg-panel dark:bg-blueprint-panel border border-line/20 dark:border-line-dark/20 p-6 shadow-2xl">
+
+      <div className="flex items-center justify-between mb-5">
+
+        <div>
+          <p className="text-xs uppercase tracking-wider font-display opacity-50">
+            📊 Topic Performance
+          </p>
+
+          <h3 className="font-display text-xl font-semibold mt-1">
+            {selectedTopic.topic}
+          </h3>
+        </div>
+
+        <button
+          onClick={() => setSelectedTopic(null)}
+          className="text-sm opacity-60 hover:opacity-100"
+        >
+          ✕
+        </button>
+
+      </div>
+
+      <div className="space-y-4">
+
+        <div className="flex justify-between">
+          <span>Accuracy</span>
+          <strong>{selectedTopic.accuracy}%</strong>
+        </div>
+
+        <div className="h-3 bg-ink/10 dark:bg-white/10 rounded-full overflow-hidden">
+          <div
+            className="h-full bg-amber rounded-full"
+            style={{
+              width: `${selectedTopic.accuracy}%`
+            }}
+          />
+        </div>
+
+        <div className="grid grid-cols-2 gap-3 mt-5">
+
+          <div className="rounded-2xl border border-line/10 p-4">
+            <p className="text-xs opacity-50">
+              Attempts
+            </p>
+            <p className="text-xl font-display font-semibold mt-1">
+              {selectedTopic.attempts}
+            </p>
+          </div>
+
+          <div className="rounded-2xl border border-line/10 p-4">
+            <p className="text-xs opacity-50">
+              Correct
+            </p>
+            <p className="text-xl font-display font-semibold mt-1">
+              {selectedTopic.correct}
+            </p>
+          </div>
+
+        </div>
+
+      </div>
+
+      <button
+        onClick={() => setSelectedTopic(null)}
+        className="w-full mt-6 px-4 py-2 rounded-xl bg-amber text-white"
+      >
+        Close
+      </button>
+
+    </div>
+
+  </div>
+)}
+    </>
   )
 }
-
-
 export default ProgressPage
+function StreakCalendar({ log, range }) {
+
+  const getKey = (date) => {
+    const d = new Date(date)
+
+    return `${d.getFullYear()}-${String(
+      d.getMonth() + 1
+    ).padStart(2, "0")}-${String(
+      d.getDate()
+    ).padStart(2, "0")}`
+  }
+
+
+  const learningDays = new Set(
+    (log || []).map(
+      (item) => getKey(item.timestamp)
+    )
+  )
+
+
+  const today = new Date()
+
+
+  // =====================================================
+  // WEEK VIEW
+  // =====================================================
+
+  if (range === "week") {
+
+    const start = new Date(today)
+
+    start.setDate(
+      today.getDate() -
+      today.getDay() +
+      1
+    )
+
+    const days = []
+
+    for (let i = 0; i < 7; i++) {
+
+      const date = new Date(start)
+
+      date.setDate(
+        start.getDate() + i
+      )
+
+      days.push(date)
+    }
+
+
+    return (
+      <div>
+
+        {/* WEEK RANGE */}
+        <div className="text-center font-semibold text-lg mb-5">
+
+          {days[0].toLocaleDateString(
+            "en-US",
+            {
+              month: "short",
+              day: "numeric"
+            }
+          )}
+
+          {" – "}
+
+          {days[6].toLocaleDateString(
+            "en-US",
+            {
+              month: "short",
+              day: "numeric",
+              year: "numeric"
+            }
+          )}
+
+        </div>
+
+
+        {/* WEEK DAYS */}
+        <div className="grid grid-cols-7 gap-2">
+
+          {days.map((date) => {
+
+            const active =
+              learningDays.has(
+                getKey(date)
+              )
+
+
+            return (
+              <div
+                key={date.toISOString()}
+                className="flex flex-col items-center gap-2"
+              >
+
+                {/* DAY NAME */}
+                <span className="text-xs font-medium opacity-60">
+
+                  {date.toLocaleDateString(
+                    "en-US",
+                    {
+                      weekday: "short"
+                    }
+                  )}
+
+                </span>
+
+
+                {/* DATE */}
+                <span className="text-sm">
+
+                  {date.getDate()}
+
+                </span>
+
+
+                {/* STATUS */}
+                <div
+                  className={`w-10 h-10 rounded-full flex items-center justify-center text-white ${
+                    active
+                      ? "bg-green-500"
+                      : "bg-ink/5 dark:bg-white/10"
+                  }`}
+                >
+
+                  {active && "✓"}
+
+                </div>
+
+              </div>
+            )
+          })}
+
+        </div>
+
+
+        {/* LEGEND */}
+        <div className="flex items-center gap-5 mt-6 text-xs opacity-60">
+
+          <span>
+            ⚪ No learning
+          </span>
+
+          <span>
+            🟢 Learning day
+          </span>
+
+        </div>
+
+      </div>
+    )
+  }
+
+
+  // =====================================================
+  // MONTH VIEW
+  // =====================================================
+
+  const year =
+    today.getFullYear()
+
+  const month =
+    today.getMonth()
+
+  const monthName =
+    today.toLocaleDateString(
+      "en-US",
+      {
+        month: "long",
+        year: "numeric"
+      }
+    )
+
+
+  const firstDay =
+    new Date(
+      year,
+      month,
+      1
+    ).getDay()
+
+
+  const lastDay =
+    new Date(
+      year,
+      month + 1,
+      0
+    ).getDate()
+
+
+  const days = []
+
+
+  // Empty spaces before first day
+  for (
+    let i = 1;
+    i < firstDay;
+    i++
+  ) {
+    days.push(null)
+  }
+
+
+  // Actual dates
+  for (
+    let day = 1;
+    day <= lastDay;
+    day++
+  ) {
+    days.push(
+      new Date(
+        year,
+        month,
+        day
+      )
+    )
+  }
+
+
+  return (
+    <div>
+
+      {/* MONTH NAME */}
+      <div className="text-center font-semibold text-lg mb-5">
+
+        {monthName}
+
+      </div>
+
+
+      {/* WEEK DAYS */}
+      <div className="grid grid-cols-7 gap-2 mb-2">
+
+        {[
+          "Sun",
+          "Mon",
+          "Tue",
+          "Wed",
+          "Thu",
+          "Fri",
+          "Sat"
+        ].map((day) => (
+
+          <div
+            key={day}
+            className="text-center text-xs font-medium opacity-60"
+          >
+            {day}
+          </div>
+
+        ))}
+
+      </div>
+
+
+      {/* DATES */}
+      <div className="grid grid-cols-7 gap-2">
+
+        {days.map((date, index) => {
+
+          if (!date) {
+            return (
+              <div
+                key={`empty-${index}`}
+                className="aspect-square"
+              />
+            )
+          }
+
+
+          const active =
+            learningDays.has(
+              getKey(date)
+            )
+
+
+          return (
+            <div
+              key={date.toISOString()}
+              className={`aspect-square rounded-full flex items-center justify-center text-sm ${
+                active
+                  ? "bg-green-500 text-white"
+                  : "bg-ink/5 dark:bg-white/10"
+              }`}
+            >
+
+              {date.getDate()}
+
+            </div>
+          )
+        })}
+
+      </div>
+
+
+      {/* LEGEND */}
+      <div className="flex items-center gap-5 mt-6 text-xs opacity-60">
+
+        <span>
+          ⚪ No learning
+        </span>
+
+        <span>
+          🟢 Learning day
+        </span>
+
+      </div>
+
+    </div>
+  )
+}

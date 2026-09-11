@@ -188,7 +188,10 @@ function App() {
           }
 
     })
-
+    const [dailyGoal, setDailyGoal] = useState(() => {
+      const saved = localStorage.getItem("curioo-daily-goal")
+      return saved ? Number(saved) : 3
+    })
 
   // =====================================================
   // COLLECTIONS
@@ -327,7 +330,12 @@ function App() {
     )
 
   }, [progress])
-
+  useEffect(() => {
+  localStorage.setItem(
+    "curioo-daily-goal",
+    String(dailyGoal)
+  )
+}, [dailyGoal])
 
   useEffect(() => {
 
@@ -1140,7 +1148,21 @@ function App() {
   const currentStreak =
     calculateCurrentStreak()
 
+    
+    const todayKey = getDateKey(Date.now())
 
+const todayTopics = [
+  ...new Set(
+    log
+      .filter(
+        (item) =>
+          getDateKey(item.timestamp) === todayKey
+      )
+      .map((item) => item.topic.toLowerCase())
+  )
+].length
+
+const todayTopicCount = todayTopics.length
   // =====================================================
   // WEEKLY
   // =====================================================
@@ -1680,14 +1702,15 @@ function App() {
       ) : view === "progress" ? (
 
         <ProgressPage
-          progress={
-            progress
-          }
-
-          onBack={() =>
-            setView("home")
-          }
-        />
+            progress={progress}
+            log={log}
+            dailyGoal={dailyGoal}
+            todayTopicCount={todayTopicCount}
+            onGoalChange={setDailyGoal}
+            onBack={() =>
+              setView("home")
+            }
+          />
 
       ) : view === "library" ? (
 
