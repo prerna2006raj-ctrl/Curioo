@@ -1,4 +1,18 @@
 import { useState } from "react"
+
+import {
+  BarChart,
+  Bar,
+  LineChart,
+  Line,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  ResponsiveContainer,
+} from "recharts"
+
+
 function ProgressPage({
   progress,
   dailyGoal,
@@ -15,19 +29,20 @@ function ProgressPage({
   const total =
     progress?.total || 0
 
+
   const correct =
     progress?.correct || 0
 
   const timedOut =
     progress?.timedOut || 0
 
-  const accuracy =
-    total > 0
-      ? Math.round(
-          (correct / total) * 100
-        )
-      : 0
+  const answered = progress.questionsAnswered || 0
 
+  const accuracy =
+    answered > 0
+      ? Math.round((progress.correct / answered) * 100)
+      : 0 
+    const [chartType, setChartType] = useState("bar")
 
   // =====================================================
   // TOPIC ANALYTICS
@@ -37,7 +52,17 @@ function ProgressPage({
     progress?.byTopic || {}
   )
 
-
+  const chartData = Object.entries(
+        progress?.byTopic || {}
+      ).map(([topic, data]) => ({
+        topic:
+          topic.length > 12
+            ? topic.substring(0, 12) + "..."
+            : topic,
+        fullTopic: topic,
+        attempts: data.attempts || 0,
+        correct: data.correct || 0,
+      }))
   const topicStats =
     topicEntries.map(
       ([topic, data]) => {
@@ -282,24 +307,10 @@ function ProgressPage({
           </p>
 
           <p className="text-2xl font-display font-semibold mt-2">
-            {total}
+            {progress.questionsAnswered || 0}
           </p>
 
         </div>
-
-
-        <div className="rounded-2xl border border-line/20 dark:border-line-dark/20 bg-panel dark:bg-blueprint-panel p-4">
-
-          <p className="text-xs opacity-50 font-display">
-            Average score
-          </p>
-
-          <p className="text-2xl font-display font-semibold mt-2">
-            {averageScore}%
-          </p>
-
-        </div>
-
 
         <div
           onClick={() => setStreakView("week")}
@@ -469,7 +480,240 @@ function ProgressPage({
         </div>
 
       </div>
+            {/* =====================================================
+    QUIZ PERFORMANCE CHART
+===================================================== */}
 
+<div
+  className="
+    rounded-2xl
+    border border-line/20
+    dark:border-line-dark/20
+    bg-panel
+    dark:bg-blueprint-panel
+    p-6
+    mb-8
+  "
+>
+
+  {/* Chart Header */}
+
+  <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
+
+    <div>
+      <h3 className="font-display text-lg font-semibold">
+        Quiz Performance
+      </h3>
+
+      <p className="text-xs opacity-50 mt-1">
+        Compare your attempts and correct answers.
+      </p>
+    </div>
+
+
+    {/* Chart Toggle Buttons */}
+
+    <div
+      className="
+        flex
+        rounded-xl
+        border
+        border-line/20
+        dark:border-line-dark/20
+        bg-black/5
+        dark:bg-white/5
+        p-1
+      "
+    >
+
+      <button
+        onClick={() => setChartType("bar")}
+        className={`
+          px-4
+          py-2
+          rounded-lg
+          text-sm
+          font-display
+          transition-all
+          duration-200
+          ${
+            chartType === "bar"
+              ? "bg-ink text-white dark:bg-paper-dark dark:text-ink shadow-sm"
+              : "opacity-60 hover:opacity-100"
+          }
+        `}
+      >
+        📊 Bar
+      </button>
+
+
+      <button
+        onClick={() => setChartType("line")}
+        className={`
+          px-4
+          py-2
+          rounded-lg
+          text-sm
+          font-display
+          transition-all
+          duration-200
+          ${
+            chartType === "line"
+              ? "bg-ink text-white dark:bg-paper-dark dark:text-ink shadow-sm"
+              : "opacity-60 hover:opacity-100"
+          }
+        `}
+      >
+        📈 Line
+      </button>
+
+    </div>
+
+  </div>
+
+
+  {/* Chart */}
+
+  {chartData.length === 0 ? (
+
+    <div className="h-72 flex items-center justify-center">
+
+      <div className="text-center">
+
+        <div className="text-4xl mb-3">
+          📊
+        </div>
+
+        <p className="font-display">
+          No quiz data yet
+        </p>
+
+        <p className="text-sm opacity-50 mt-1">
+          Complete a quiz to see your chart.
+        </p>
+
+      </div>
+
+    </div>
+
+  ) : (
+
+    <div className="w-full h-80">
+
+      <ResponsiveContainer
+        width="100%"
+        height="100%"
+      >
+
+        {chartType === "bar" ? (
+
+          <BarChart
+            data={chartData}
+            margin={{
+              top: 10,
+              right: 20,
+              left: 0,
+              bottom: 10,
+            }}
+          >
+
+            <CartesianGrid
+              strokeDasharray="3 3"
+              opacity={0.15}
+            />
+
+            <XAxis
+              dataKey="topic"
+              tick={{ fontSize: 11 }}
+            />
+
+            <YAxis
+              allowDecimals={false}
+              tick={{ fontSize: 11 }}
+            />
+
+            <Tooltip
+              labelFormatter={(_, payload) =>
+                payload?.[0]?.payload?.fullTopic || ""
+              }
+            />
+
+            <Bar
+              dataKey="attempts"
+              name="Attempts"
+              radius={[6, 6, 0, 0]}
+            />
+
+            <Bar
+              dataKey="correct"
+              name="Correct"
+              radius={[6, 6, 0, 0]}
+            />
+
+          </BarChart>
+
+        ) : (
+
+          <LineChart
+            data={chartData}
+            margin={{
+              top: 10,
+              right: 20,
+              left: 0,
+              bottom: 10,
+            }}
+          >
+
+            <CartesianGrid
+              strokeDasharray="3 3"
+              opacity={0.15}
+            />
+
+            <XAxis
+              dataKey="topic"
+              tick={{ fontSize: 11 }}
+            />
+
+            <YAxis
+              allowDecimals={false}
+              tick={{ fontSize: 11 }}
+            />
+
+            <Tooltip
+              labelFormatter={(_, payload) =>
+                payload?.[0]?.payload?.fullTopic || ""
+              }
+            />
+
+            <Line
+              type="monotone"
+              dataKey="attempts"
+              name="Attempts"
+              strokeWidth={3}
+              dot={{ r: 4 }}
+              activeDot={{ r: 6 }}
+            />
+
+            <Line
+              type="monotone"
+              dataKey="correct"
+              name="Correct"
+              strokeWidth={3}
+              dot={{ r: 4 }}
+              activeDot={{ r: 6 }}
+            />
+
+          </LineChart>
+
+        )}
+
+      </ResponsiveContainer>
+
+    </div>
+
+  )}
+
+</div>
 
       {/* =================================================
           ACCURACY BY TOPIC

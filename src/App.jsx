@@ -170,24 +170,19 @@ function App() {
   // PROGRESS
   // =====================================================
 
-  const [progress, setProgress] =
-    useState(() => {
+  const [progress, setProgress] = useState(() => {
+  const saved = localStorage.getItem("curioo-progress")
 
-      const saved =
-        localStorage.getItem(
-          "curioo-progress"
-        )
-
-      return saved
-        ? JSON.parse(saved)
-        : {
-            total: 0,
-            correct: 0,
-            timedOut: 0,
-            byTopic: {}
-          }
-
-    })
+  return saved
+    ? JSON.parse(saved)
+    : {
+        total: 0,
+        questionsAnswered: 0,
+        correct: 0,
+        timedOut: 0,
+        byTopic: {}
+      }
+})
     const [dailyGoal, setDailyGoal] = useState(() => {
       const saved = localStorage.getItem("curioo-daily-goal")
       return saved ? Number(saved) : 3
@@ -916,76 +911,63 @@ function App() {
   // QUIZ COMPLETE
   // =====================================================
 
-  const handleQuizComplete =
-    (
-      isCorrect,
-      didTimeOut,
-      quizTopic
-    ) => {
+  const handleQuizComplete = (
+  isCorrect,
+  didTimeOut
+) => {
+  setProgress((prev) => {
+    const previousTopic =
+      prev.byTopic[topic] || {
+        attempts: 0,
+        correct: 0,
+        answered: 0,
+        timedOut: 0
+      }
 
-      setProgress(
-        (prev) => {
+    return {
+      ...prev,
 
-          const previousTopic =
-            prev.byTopic[
-              quizTopic
-            ] || {
-              attempts: 0,
-              correct: 0
-            }
+      // Every quiz that ends counts as completed
+      total: prev.total + 1,
 
+      // Timeout means the question was NOT answered
+      questionsAnswered:
+        prev.questionsAnswered +
+        (didTimeOut ? 0 : 1),
 
-          return {
+      // Only a correct selected answer counts
+      correct:
+        prev.correct +
+        (isCorrect ? 1 : 0),
 
-            ...prev,
+      // Timeout gets its own count
+      timedOut:
+        prev.timedOut +
+        (didTimeOut ? 1 : 0),
 
-            total:
-              prev.total + 1,
+      byTopic: {
+        ...prev.byTopic,
 
-            correct:
-              prev.correct +
-              (
-                isCorrect
-                  ? 1
-                  : 0
-              ),
+        [topic]: {
+          attempts:
+            previousTopic.attempts + 1,
 
-            timedOut:
-              prev.timedOut +
-              (
-                didTimeOut
-                  ? 1
-                  : 0
-              ),
+          answered:
+            previousTopic.answered +
+            (didTimeOut ? 0 : 1),
 
-            byTopic: {
+          correct:
+            previousTopic.correct +
+            (isCorrect ? 1 : 0),
 
-              ...prev.byTopic,
-
-              [quizTopic]: {
-
-                attempts:
-                  previousTopic.attempts +
-                  1,
-
-                correct:
-                  previousTopic.correct +
-                  (
-                    isCorrect
-                      ? 1
-                      : 0
-                  )
-
-              }
-
-            }
-
-          }
-
+          timedOut:
+            previousTopic.timedOut +
+            (didTimeOut ? 1 : 0)
         }
-      )
-
+      }
     }
+  })
+}
 
 
   // =====================================================
