@@ -358,8 +358,8 @@ function ProgressPage({
           BEST / WEAKEST
           ================================================= */}
 
-      <div className="grid md:grid-cols-2 gap-4 mb-5">
-
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-3 mt-5">
+        
         {/* BEST */}
 
         <div
@@ -460,7 +460,7 @@ function ProgressPage({
           OVERALL ACCURACY
           ================================================= */}
 
-      <div className="rounded-3xl border border-line/20 dark:border-line-dark/20 bg-panel dark:bg-blueprint-panel p-6 mb-5">
+      <div className="rounded-3xl border border-line/20 dark:border-line-dark/20 bg-panel dark:bg-blueprint-panel p-6 mb-5 mt-5">
 
         <div className="flex justify-between items-center">
 
