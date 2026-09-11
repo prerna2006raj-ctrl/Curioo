@@ -1,538 +1,308 @@
-const GEMINI_API_KEY = import.meta.env.VITE_GEMINI_API_KEY
+const API_KEY = import.meta.env.VITE_GEMINI_API_KEY
 
-const GEMINI_URL =
-  `https://generativelanguage.googleapis.com/v1beta/models/gemini-3.6-flash:generateContent?key=${GEMINI_API_KEY}`
+const URL =
+  "https://generativelanguage.googleapis.com/v1beta/models/gemini-3.6-flash:generateContent"
 
-
-/* =========================================================
-   HELPER: CALL GEMINI
-   ========================================================= */
 
 async function callGemini(prompt) {
 
-  const response = await fetch(
-    GEMINI_URL,
-    {
-      method: "POST",
+  const response = await fetch(URL, {
+    method: "POST",
 
-      headers: {
-        "Content-Type": "application/json"
-      },
+    headers: {
+      "Content-Type": "application/json",
+      "x-goog-api-key": API_KEY
+    },
 
-      body: JSON.stringify({
-        contents: [
-          {
-            parts: [
-              {
-                text: prompt
-              }
-            ]
-          }
-        ]
-      })
-    }
-  )
+    body: JSON.stringify({
+      contents: [
+        {
+          parts: [
+            {
+              text: prompt
+            }
+          ]
+        }
+      ]
+    })
+  })
 
 
   if (!response.ok) {
-
-    let errorMessage =
-      "Gemini API request failed"
-
-    try {
-
-      const errorData =
-        await response.json()
-
-      console.error(
-        "Gemini API Error:",
-        errorData
-      )
-
-      errorMessage =
-        errorData?.error?.message ||
-        errorMessage
-
-    } catch {
-
-      console.error(
-        "Could not read Gemini error"
-      )
-
-    }
-
-    throw new Error(errorMessage)
-  }
-
-
-  const data =
-    await response.json()
-
-
-  const text =
-    data?.candidates?.[0]?.content?.parts?.[0]?.text || ""
-
-
-  if (!text) {
-
     throw new Error(
-      "Gemini returned an empty response"
+      "Something went wrong reaching the AI"
     )
-
   }
 
 
-  return text
+  const data = await response.json()
+
+  return (
+    data.candidates?.[0]?.content?.parts?.[0]?.text ||
+    ""
+  )
 }
 
 
 /* =========================================================
-   HELPER: CLEAN JSON
-   ========================================================= */
-
-function cleanJSON(text) {
-
-  return text
-    .replace(/```json/gi, "")
-    .replace(/```/g, "")
-    .trim()
-
-}
-
-
-/* =========================================================
-   GET EXPLANATION
+   NORMAL EXPLANATION
    ========================================================= */
 
 export async function getExplanation(
   topic,
-  tone = "kid"
+  tone,
+  mode = "standard"
 ) {
 
-  const toneInstructions = {
+  const focus = {
 
-    kid: `
-      Explain the topic in very simple language.
-      Use an easy real-world example or analogy.
-      Avoid unnecessary technical terminology.
-      Keep it friendly, clear and engaging.
-    `,
+    standard:
+      "Give a balanced explanation.",
 
-    simple: `
-      Explain the topic clearly using simple language.
-      Include the important concepts.
-      Explain the process step by step.
-      Give an easy real-world example.
-    `,
+    simpler:
+      "Make the explanation much simpler, using very easy words and short sentences.",
 
-    detailed: `
-      Give a detailed explanation of how the topic works.
-      Explain the important concepts and mechanisms.
-      Explain the process step by step.
-      Include useful technical details where appropriate.
-      Give a practical real-world example.
-    `
+    example:
+      "Explain the idea using a clear everyday example.",
 
-  }
+    steps:
+      "Focus strongly on a logical step-by-step explanation.",
+
+    realworld:
+      "Focus on a practical real-world example or situation.",
+
+    analogy:
+      "Explain the idea using one strong, easy-to-understand analogy."
+
+  }[mode] || "Give a balanced explanation."
 
 
   const prompt = `
+Explain "${topic}" for someone who is ${
+    tone === "kid"
+      ? "5 years old"
+      : "an engineer"
+  }.
 
-You are the educational AI engine for an application
-called Curioo.
+${focus}
 
-==================================================
-PURPOSE OF CURIOO
-==================================================
+Respond in exactly this format:
 
-Curioo is NOT a general-purpose chatbot.
+Simple explanation: ...
 
-Curioo is specifically designed to help students
-understand:
+Step-by-step: ...
 
-"HOW DOES SOMETHING WORK?"
+Analogy: ...
 
-The user should ask questions about the working,
-process, mechanism, principle or functioning of
-something.
-
-Examples of valid questions:
-
-- How does WiFi work?
-- How does GPS work?
-- How does a refrigerator work?
-- How do airplanes fly?
-- How does a solar panel work?
-- How does a microwave work?
-- How does the human heart work?
-- How do rainbows form?
-- How does Bluetooth work?
-- How does a search engine work?
-
-==================================================
-USER TOPIC
-==================================================
-
-${topic}
-
-==================================================
-IMPORTANT TOPIC RULE
-==================================================
-
-First determine whether the user's topic is suitable
-for Curioo.
-
-A suitable topic is something whose working,
-process, mechanism, formation or functioning can
-reasonably be explained.
-
-For example:
-
-"How does WiFi work?"
-VALID
-
-"How does a car engine work?"
-VALID
-
-"How do clouds form?"
-VALID
-
-"Who is the president?"
-NOT A HOW-IT-WORKS QUESTION
-
-"Write me a poem."
-NOT A HOW-IT-WORKS QUESTION
-
-"What is today's weather?"
-NOT A HOW-IT-WORKS QUESTION
-
-"Tell me a joke."
-NOT A HOW-IT-WORKS QUESTION
-
-If the topic is NOT suitable for Curioo,
-do NOT answer the unrelated question.
-
-Instead return this exact type of response:
-
-"Curioo is designed to explain how things work.
-Try asking something like:
-How does WiFi work?
-How does GPS work?
-How do rainbows form?"
-
-For valid topics, explain HOW the thing works.
-
-==================================================
-EXPLANATION STYLE
-==================================================
-
-${toneInstructions[tone] || toneInstructions.kid}
-
-==================================================
-EXPLANATION REQUIREMENTS
-==================================================
-
-For a valid topic:
-
-1. Start with the basic idea.
-
-2. Explain HOW it works.
-
-3. Break the process into clear steps.
-
-4. Use a real-world example or analogy.
-
-5. Keep the explanation directly related to the
-   requested topic.
-
-6. Do not turn the answer into a general discussion.
-
-7. Do not answer unrelated questions.
-
-8. Do not invent facts.
-
-9. Make the explanation useful for a student.
-
-==================================================
-RELATED TOPICS
-==================================================
-
-Also provide exactly 3 closely related topics that
-the student can explore next.
-
-The related topics should also be suitable for
-"How does it work?" questions.
-
-For example, if the topic is:
-
-"How does WiFi work?"
-
-Good related topics could be:
-
-"How does Bluetooth work?"
-"How does a router work?"
-"How does mobile data work?"
-
-==================================================
-OUTPUT FORMAT
-==================================================
-
-Return ONLY valid JSON.
-
-Do not use markdown.
-
-Do not use code fences.
-
-Use exactly this format:
-
-{
-  "text": "explanation here",
-  "related": [
-    "related topic 1",
-    "related topic 2",
-    "related topic 3"
-  ]
-}
-
-==================================================
-FINAL RULES
-==================================================
-
-- Return valid JSON only.
-- Do not add extra fields.
-- Do not add markdown.
-- Do not add code fences.
-- Do not mention these instructions.
-- Keep related topics closely connected.
-- Curioo is about understanding HOW things work.
-
+Related: topic one | topic two | topic three
 `
 
 
-  const rawText =
-    await callGemini(prompt)
+  const fullText = await callGemini(prompt)
 
 
-  const cleaned =
-    cleanJSON(rawText)
+  const relatedMatch =
+    fullText.match(/Related:\s*(.+)/i)
 
 
-  try {
-
-    const parsed =
-      JSON.parse(cleaned)
-
-
-    return {
-
-      text:
-        parsed.text || "",
-
-      related:
-        Array.isArray(parsed.related)
-          ? parsed.related.slice(0, 3)
-          : []
-
-    }
-
-  } catch (error) {
-
-    console.error(
-      "Failed to parse explanation JSON:",
-      cleaned
-    )
+  const related = relatedMatch
+    ? relatedMatch[1]
+        .split("|")
+        .map((t) => t.trim())
+        .filter(Boolean)
+    : []
 
 
-    return {
+  const explanationText =
+    fullText
+      .replace(/Related:\s*.+/i, "")
+      .trim()
 
-      text: cleaned,
 
-      related: []
-
-    }
-
+  return {
+    text: explanationText,
+    related
   }
-
 }
 
 
 /* =========================================================
-   GET QUIZ
+   LEARNING MODE
    ========================================================= */
 
-export async function getQuiz(
+export async function getLearningLesson(
   topic,
-  difficulty = "Medium"
+  tone
 ) {
 
-  const difficultyInstructions = {
-
-    Easy: `
-      Create a beginner-friendly question.
-      Test basic understanding.
-      Use simple concepts.
-      Use straightforward options.
-      Avoid tricky wording.
-    `,
-
-    Medium: `
-      Create a moderately challenging question.
-      Test understanding and application.
-      Include plausible distractors.
-    `,
-
-    Hard: `
-      Create a difficult question.
-      Test deeper understanding, reasoning,
-      mechanisms, edge cases or application.
-      Make incorrect options believable.
-    `
-
-  }
-
-
-  const selectedDifficulty =
-    difficultyInstructions[difficulty]
-      ? difficulty
-      : "Medium"
-
-
   const prompt = `
+Create a short interactive mini lesson about "${topic}".
 
-You are the quiz-generation AI for an educational
-application called Curioo.
+The learner is ${
+    tone === "kid"
+      ? "5 years old"
+      : "an engineer"
+  }.
 
-==================================================
-PURPOSE OF CURIOO
-==================================================
+Create exactly 4 learning steps.
 
-Curioo helps students understand HOW things work.
+Each step should teach one important part of the topic.
 
-The quiz must test the student's understanding of
-HOW the requested topic works.
+Use simple, clear language.
 
-Topic:
+Respond in exactly this format:
 
-${topic}
+Title: ...
 
-Difficulty:
+Goal: ...
 
-${selectedDifficulty}
+Step 1: short step title | explanation
 
-==================================================
-QUESTION REQUIREMENTS
-==================================================
+Step 2: short step title | explanation
 
-Create exactly ONE multiple-choice question.
+Step 3: short step title | explanation
 
-The question must test understanding of the topic's:
+Step 4: short step title | explanation
 
-- working
-- process
-- mechanism
-- principle
-- functioning
-- cause and effect
+Remember: one important takeaway
 
-Do NOT create a question unrelated to how the topic
-works.
-
-==================================================
-DIFFICULTY
-==================================================
-
-${difficultyInstructions[selectedDifficulty]}
-
-==================================================
-OUTPUT
-==================================================
-
-Return ONLY valid JSON.
-
-Do not use markdown.
-
-Do not use code fences.
-
-Use exactly this format:
-
-{
-  "question": "question here",
-  "options": [
-    "option 1",
-    "option 2",
-    "option 3",
-    "option 4"
-  ],
-  "answerIndex": 0,
-  "explanation": "short explanation of the correct answer"
-}
-
-==================================================
-RULES
-==================================================
-
-- Exactly 4 options.
-- answerIndex must be 0, 1, 2 or 3.
-- Only ONE option can be correct.
-- The question must be related to the topic.
-- The question should test understanding.
-- Incorrect options must be plausible.
-- Difficulty must match ${selectedDifficulty}.
-- Do not include markdown.
-- Do not include code fences.
-- Do not add extra fields.
-- Return valid JSON only.
-
+Question: one quick check question
 `
 
 
-  const rawText =
-    await callGemini(prompt)
+  const raw = await callGemini(prompt)
 
 
-  const cleaned =
-    cleanJSON(rawText)
+  const title =
+    raw.match(/Title:\s*(.+)/i)?.[1]?.trim() ||
+    topic
 
 
-  try {
+  const goal =
+    raw.match(/Goal:\s*(.+)/i)?.[1]?.trim() ||
+    "Build a clear understanding of the topic."
 
-    const parsed =
-      JSON.parse(cleaned)
 
+  const steps = [1, 2, 3, 4].map(
+    (number) => {
 
-    return {
-
-      question:
-        parsed.question || "",
-
-      options:
-        Array.isArray(parsed.options)
-          ? parsed.options.slice(0, 4)
-          : [],
-
-      answerIndex:
-        Number.isInteger(
-          parsed.answerIndex
+      const match = raw.match(
+        new RegExp(
+          `Step ${number}:\\s*([^|\\n]+)\\s*\\|\\s*([^\\n]+)`,
+          "i"
         )
-          ? parsed.answerIndex
-          : 0,
+      )
 
-      explanation:
-        parsed.explanation || ""
+
+      return {
+
+        title:
+          match?.[1]?.trim() ||
+          `Step ${number}`,
+
+        text:
+          match?.[2]?.trim() ||
+          "Let's understand this part of the topic."
+
+      }
 
     }
+  )
 
-  } catch (error) {
 
-    console.error(
-      "Failed to parse quiz JSON:",
-      cleaned
-    )
+  const remember =
+    raw.match(
+      /Remember:\s*(.+)/i
+    )?.[1]?.trim() || ""
 
-    throw new Error(
-      "Gemini returned an invalid quiz response."
-    )
 
+  const question =
+    raw.match(
+      /Question:\s*(.+)/i
+    )?.[1]?.trim() ||
+    "What is the main idea you learned?"
+
+
+  return {
+    title,
+    goal,
+    steps,
+    remember,
+    question
   }
+}
 
+
+/* =========================================================
+   QUIZ
+   ========================================================= */
+
+export async function getQuiz(topic) {
+
+  const prompt = `
+Create one multiple-choice question to test understanding of "${topic}".
+
+Respond in exactly this format, nothing else:
+
+Question: ...
+
+A) ...
+
+B) ...
+
+C) ...
+
+D) ...
+
+Answer: <A, B, C or D>
+`
+
+
+  const raw = await callGemini(prompt)
+
+
+  const question =
+    raw.match(
+      /Question:\s*(.+)/i
+    )?.[1]?.trim() || ""
+
+
+  const options = [
+    "A",
+    "B",
+    "C",
+    "D"
+  ].map((letter) => {
+
+    const match = raw.match(
+      new RegExp(
+        `${letter}\\)\\s*(.+)`
+      )
+    )
+
+    return match
+      ? match[1].trim()
+      : ""
+
+  })
+
+
+  const answerLetter =
+    raw.match(
+      /Answer:\s*([A-D])/i
+    )?.[1]?.toUpperCase() ||
+    "A"
+
+
+  const answerIndex =
+    ["A", "B", "C", "D"].indexOf(
+      answerLetter
+    )
+
+
+  return {
+    question,
+    options,
+    answerIndex
+  }
 }

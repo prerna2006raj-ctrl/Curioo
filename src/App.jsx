@@ -44,9 +44,11 @@ function App() {
 
   const [error, setError] =
     useState("")
-  const [difficulty, setDifficulty] = useState("Medium")
+  const [difficulty, setDifficulty] = useState("Easy")
 
   const [showWelcome, setShowWelcome] = useState(true)
+
+  
   // =====================================================
   // HISTORY
   // =====================================================
@@ -87,7 +89,11 @@ function App() {
   const [quizLoading, setQuizLoading] =
     useState(false)
 
+  const [learningMode, setLearningMode] = useState(false)
+  const [lessonStep, setLessonStep] = useState(0)
+  const [lesson, setLesson] = useState([])
 
+  const [explainAgainLoading, setExplainAgainLoading] = useState(false)
   // =====================================================
   // LOG
   // =====================================================
@@ -548,8 +554,62 @@ function App() {
       )
 
     }
+  const startLearningMode = async () => {
+    if (!topic.trim()) return
 
+    setExplainAgainLoading(true)
+    setError("")
 
+    try {
+      const { text } = await getExplanation(
+        topic,
+        "step-by-step"
+      )
+
+      const steps = text
+        .split(/\n+/)
+        .map((step) => step.replace(/^[-•\d.)]+\s*/, "").trim())
+        .filter(Boolean)
+        .slice(0, 6)
+
+      setLesson(steps)
+      setLessonStep(0)
+      setLearningMode(true)
+    } catch (err) {
+      setError("Couldn't start learning mode. Try again.")
+    } finally {
+      setExplainAgainLoading(false)
+    }
+  }
+  const explainAgain = async (style) => {
+    if (!topic.trim()) return
+
+    setExplainAgainLoading(true)
+    setError("")
+
+    try {
+      const { text, related } = await getExplanation(
+        topic,
+        style
+      )
+
+      setResult(text)
+      setRelatedTopics(related || [])
+
+      setHistory((prev) => [
+        {
+          topic: topic,
+          text,
+          id: Date.now()
+        },
+        ...prev
+      ])
+    } catch (err) {
+      setError("Couldn't generate the new explanation. Try again.")
+    } finally {
+      setExplainAgainLoading(false)
+    }
+  }
   // =====================================================
   // FAVORITE
   // =====================================================
@@ -1831,7 +1891,9 @@ function App() {
                       result
                   })
                 }
-
+                onLearningMode={startLearningMode}
+                onExplainAgain={explainAgain}
+                explainAgainLoading={explainAgainLoading}
                 isFavorite={
                   favorites.some(
                     (f) =>
@@ -1879,6 +1941,7 @@ function App() {
                 kidMode={
                   kidMode
                 }
+                
 
               />
 
@@ -2038,7 +2101,98 @@ function App() {
             </div>
 
           )}
+          {learningMode && lesson.length > 0 && (
+            <div className="max-w-xl mx-auto mt-6">
+              <div className="rounded-3xl border border-line/20 dark:border-line-dark/20 bg-panel dark:bg-blueprint-panel p-6 shadow-sm">
 
+                <div className="flex items-center justify-between mb-5">
+                  <div>
+                    <p className="font-display text-xs text-ink/50 dark:text-paper-dark/50">
+                      🎓 learning mode
+                    </p>
+
+                    <h2 className="text-xl font-semibold mt-1">
+                      {topic}
+                    </h2>
+                  </div>
+
+                  <button
+                    onClick={() => setLearningMode(false)}
+                    className="text-sm opacity-60 hover:opacity-100"
+                  >
+                    close
+                  </button>
+                </div>
+
+                <div className="mb-5">
+                  <div className="flex justify-between text-xs mb-2 opacity-60">
+                    <span>
+                      Step {lessonStep + 1} of {lesson.length}
+                    </span>
+
+                    <span>
+                      {Math.round(
+                        ((lessonStep + 1) / lesson.length) * 100
+                      )}%
+                    </span>
+                  </div>
+
+                  <div className="h-2 rounded-full bg-ink/10 dark:bg-paper-dark/10 overflow-hidden">
+                    <div
+                      className="h-full bg-amber transition-all duration-300"
+                      style={{
+                        width: `${
+                          ((lessonStep + 1) / lesson.length) * 100
+                        }%`
+                      }}
+                    />
+                  </div>
+                </div>
+
+                <div className="rounded-2xl border border-line/20 dark:border-line-dark/20 p-5 min-h-[180px]">
+                  <p className="font-display text-sm opacity-50 mb-3">
+                    Step {lessonStep + 1}
+                  </p>
+
+                  <p className="font-body text-lg leading-relaxed">
+                    {lesson[lessonStep]}
+                  </p>
+                </div>
+
+                <div className="flex justify-between mt-5">
+
+                  <button
+                    disabled={lessonStep === 0}
+                    onClick={() =>
+                      setLessonStep((prev) => prev - 1)
+                    }
+                    className="px-4 py-2 rounded-xl border border-line/30 dark:border-line-dark/30 disabled:opacity-30"
+                  >
+                    ← Previous
+                  </button>
+
+                  {lessonStep < lesson.length - 1 ? (
+                    <button
+                      onClick={() =>
+                        setLessonStep((prev) => prev + 1)
+                      }
+                      className="px-5 py-2 rounded-xl bg-amber text-white hover:scale-105 transition-transform"
+                    >
+                      Next →
+                    </button>
+                  ) : (
+                    <button
+                      onClick={() => setLearningMode(false)}
+                      className="px-5 py-2 rounded-xl bg-amber text-white hover:scale-105 transition-transform"
+                    >
+                      ✓ Finish
+                    </button>
+                  )}
+
+                </div>
+              </div>
+            </div>
+          )}
 
           {/* =================================================
               QUIZ
