@@ -2103,8 +2103,8 @@ function App() {
 
           )}
           {learningMode && lesson.length > 0 && (
-            <div className="max-w-xl mx-auto mt-6">
-              <div className="rounded-3xl border border-line/20 dark:border-line-dark/20 bg-panel dark:bg-blueprint-panel p-6 shadow-sm">
+             <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm px-4">
+              <div className="w-full max-w-xl max-h-[85vh] overflow-y-auto rounded-3xl border border-line/20 dark:border-line-dark/20 bg-panel dark:bg-blueprint-panel p-6 shadow-2xl">
 
                 <div className="flex items-center justify-between mb-5">
                   <div>
