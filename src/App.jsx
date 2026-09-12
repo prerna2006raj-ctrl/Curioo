@@ -295,19 +295,19 @@ function App() {
 
       // HISTORY
 
-      setHistory((prev) => [
-        {
-          topic: searchTopic,
+      setHistory((prev) =>
+        [
+          {
+            topic: searchTopic,
+            text,
+            id: Date.now(),
+          },
 
-          text,
-
-          id: Date.now(),
-        },
-
-        ...prev.filter(
-          (item) => item.topic.toLowerCase() !== searchTopic.toLowerCase(),
-        ),
-      ]);
+          ...prev.filter(
+            (item) => item.topic.toLowerCase() !== searchTopic.toLowerCase(),
+          ),
+        ].slice(0, 10),
+      );
 
       // LOG
 
@@ -389,14 +389,19 @@ function App() {
       setResult(text);
       setRelatedTopics(related || []);
 
-      setHistory((prev) => [
-        {
-          topic: topic,
-          text,
-          id: Date.now(),
-        },
-        ...prev,
-      ]);
+      setHistory((prev) =>
+        [
+          {
+            topic: topic,
+            text,
+            id: Date.now(),
+          },
+
+          ...prev.filter(
+            (item) => item.topic.toLowerCase() !== topic.toLowerCase(),
+          ),
+        ].slice(0, 10),
+      );
     } catch (err) {
       setError("Couldn't generate the new explanation. Try again.");
     } finally {
@@ -1238,6 +1243,7 @@ function App() {
           dailyGoal={dailyGoal}
           todayTopics={todayTopicCount}
           streak={currentStreak}
+          latestTopics={history.slice(0, 10)}
           onGoalChange={setDailyGoal}
           onBack={() => setView("home")}
         />

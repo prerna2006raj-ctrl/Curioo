@@ -18,6 +18,7 @@ function ProgressPage({
   todayTopics,
   streak,
   log,
+  latestTopics = [],
   onGoalChange,
   onBack,
 }) {
@@ -37,25 +38,25 @@ function ProgressPage({
   const [chartType, setChartType] = useState("bar");
 
   // =====================================================
-  // TOPIC ANALYTICS
+  // TOPIC ANALYTICS - LATEST 10 TOPICS ONLY
   // =====================================================
 
-  const topicEntries = Object.entries(progress?.byTopic || {});
+  const latestTopicNames = latestTopics
+    .map((item) =>
+      typeof item === "string"
+        ? item
+        : item?.topic || item?.query || item?.question || item?.title || "",
+    )
+    .filter(Boolean);
 
-  const chartData = Object.entries(progress?.byTopic || {}).map(
-    ([topic, data]) => ({
-      topic: topic.length > 12 ? topic.substring(0, 12) + "..." : topic,
-      fullTopic: topic,
-      attempts: data.attempts || 0,
-      correct: data.correct || 0,
-    }),
-  );
-  const topicStats = topicEntries.map(([topic, data]) => {
-    const attempts = data?.attempts || 0;
+  const topicStats = latestTopicNames.map((topic) => {
+    const data = progress?.byTopic?.[topic] || {};
 
-    const answered = data?.answered || 0;
+    const attempts = Number(data?.attempts) || 0;
 
-    const topicCorrect = data?.correct || 0;
+    const answered = Number(data?.answered) || 0;
+
+    const topicCorrect = Number(data?.correct) || 0;
 
     const topicAccuracy =
       answered > 0 ? Math.round((topicCorrect / answered) * 100) : 0;
@@ -69,17 +70,23 @@ function ProgressPage({
     };
   });
 
+  const chartData = topicStats.map((item) => ({
+    topic:
+      item.topic.length > 12 ? item.topic.substring(0, 12) + "..." : item.topic,
+
+    fullTopic: item.topic,
+
+    attempts: item.attempts,
+
+    correct: item.correct,
+  }));
+
   const sortedTopics = [...topicStats].sort((a, b) => b.accuracy - a.accuracy);
 
   const bestTopic = sortedTopics.length > 0 ? sortedTopics[0] : null;
 
   const weakestTopic =
     sortedTopics.length > 0 ? sortedTopics[sortedTopics.length - 1] : null;
-
-  // Because each generated quiz currently
-  // contains one question, average score
-  // is the same as overall accuracy.
-  const averageScore = accuracy;
 
   // =====================================================
   // DAILY GOAL
@@ -566,7 +573,7 @@ function ProgressPage({
             </div>
           ) : (
             <div className="space-y-5">
-              {topicStats
+              {[...topicStats]
                 .sort((a, b) => b.attempts - a.attempts)
                 .map((item) => (
                   <div
