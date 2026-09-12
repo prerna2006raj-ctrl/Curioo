@@ -291,48 +291,50 @@ function ProgressPage({
 <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 mb-4">
 
   {/* Quizzes Completed */}
-  <div className="bg-white rounded-2xl border border-blue-200 p-4">
-    <p className="text-sm text-slate-500">
+  <div className="bg-panel dark:bg-blueprint-panel border border-line/20 dark:border-line-dark/20 rounded-lg p-4">
+    <p className="font-display text-xs text-ink/50 dark:text-paper-dark/50">
       🏆 Quizzes completed
     </p>
 
-    <p className="text-2xl font-display font-semibold mt-2">
+    <p className="font-display text-2xl text-ink dark:text-paper-dark mt-1">
       {total}
     </p>
   </div>
 
   {/* Questions Answered */}
-  <div className="bg-white rounded-2xl border border-green-200 p-4">
-    <p className="text-sm text-slate-500">
-      💬 Questions answered
-    </p>
+<div className="bg-panel dark:bg-blueprint-panel rounded-2xl border border-green-200 dark:border-green-500/30 p-4">
+  <p className="text-sm text-ink/50 dark:text-paper-dark/50">
+    💬 Questions answered
+  </p>
 
-    <p className="text-2xl font-display font-semibold mt-2">
-      {progress.questionsAnswered || 0}
-    </p>
-  </div>
+  <p className="text-2xl font-display font-semibold mt-2 text-ink dark:text-paper-dark">
+    {progress.questionsAnswered || 0}
+  </p>
+</div>
 
-  {/* Correct */}
-  <div className="bg-white rounded-2xl border border-red-200 p-4">
-    <p className="text-sm text-slate-500">
-      ✅ Correct
-    </p>
 
-    <p className="text-2xl font-display font-semibold mt-2">
-      {correct}
-    </p>
-  </div>
+{/* Correct */}
+<div className="bg-panel dark:bg-blueprint-panel rounded-2xl border border-red-200 dark:border-red-500/30 p-4">
+  <p className="text-sm text-ink/50 dark:text-paper-dark/50">
+    ✅ Correct
+  </p>
 
-  {/* Timed Out */}
-  <div className="bg-white rounded-2xl border border-amber-200 p-4">
-    <p className="text-sm text-slate-500">
-      ⏱️ Timed out
-    </p>
+  <p className="text-2xl font-display font-semibold mt-2 text-ink dark:text-paper-dark">
+    {correct}
+  </p>
+</div>
 
-    <p className="text-2xl font-display font-semibold mt-2">
-      {timedOut}
-    </p>
-  </div>
+
+{/* Timed Out */}
+<div className="bg-panel dark:bg-blueprint-panel rounded-2xl border border-amber-200 dark:border-amber-500/30 p-4">
+  <p className="text-sm text-ink/50 dark:text-paper-dark/50">
+    ⏱️ Timed out
+  </p>
+
+  <p className="text-2xl font-display font-semibold mt-2 text-ink dark:text-paper-dark">
+    {timedOut}
+  </p>
+</div>
 
 </div>
 
