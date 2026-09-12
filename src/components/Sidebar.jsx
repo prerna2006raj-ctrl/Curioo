@@ -4,6 +4,8 @@ export default function Sidebar({
   recent = [],
   activePage = "home",
   onNavigate,
+  mobileOpen = false,
+  setMobileOpen,
 }) {
   const handleNavigate = (page, item = null) => {
     if (onNavigate) {
@@ -12,7 +14,14 @@ export default function Sidebar({
   };
 
   return (
-    <aside className="sidebar" style={{ display: "flex", flexDirection: "column" }}>
+    <aside className={`sidebar ${mobileOpen ? "mobile-open" : ""}`}>
+      <button
+        type="button"
+        className="mobile-sidebar-close"
+        onClick={() => setMobileOpen(false)}
+      >
+        ✕
+      </button>
       {/* =====================================================
           HEADER
           ===================================================== */}

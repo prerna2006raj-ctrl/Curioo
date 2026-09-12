@@ -35,6 +35,7 @@ function App() {
   const [error, setError] = useState("");
 
   const [showWelcome, setShowWelcome] = useState(true);
+  const [sidebarOpen, setSidebarOpen] = useState(false);
 
   // =====================================================
   // HISTORY
@@ -859,6 +860,13 @@ function App() {
           ================================================= */}
 
       <aside className="curioo-sidebar">
+        <button
+  type="button"
+  className="mobile-menu-button"
+  onClick={() => setSidebarOpen(true)}
+>
+  ☰
+</button>
         <div className="sidebar-brand">
           <button
             onClick={() => setView("home")}
