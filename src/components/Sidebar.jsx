@@ -7,14 +7,20 @@ export default function Sidebar({
   mobileOpen = false,
   setMobileOpen,
 }) {
-  const handleNavigate = (page, item = null) => {
-    if (onNavigate) {
-      onNavigate(page, item);
-    }
-  };
+ const handleNavigate = (page, item = null) => {
+  if (onNavigate) {
+    onNavigate(page, item);
+  }
+
+  if (setMobileOpen) {
+    setMobileOpen(false);
+  }
+};
 
   return (
-    <aside className={`sidebar ${mobileOpen ? "mobile-open" : ""}`}>
+    <aside
+      className={`curioo-sidebar ${mobileOpen ? "mobile-open" : ""}`}
+    >
       <button
         type="button"
         className="mobile-sidebar-close"

@@ -2926,3 +2926,18 @@ body {
   margin-top: auto;
   flex-shrink: 0;
 }
+/* =====================================================
+   MOBILE SIDEBAR
+   Closed by default
+   ===================================================== */
+
+@media (max-width: 900px) {
+  .curioo-sidebar {
+    transform: translateX(-100%);
+    transition: transform 0.3s ease;
+  }
+
+  .curioo-sidebar.mobile-open {
+    transform: translateX(0);
+  }
+}

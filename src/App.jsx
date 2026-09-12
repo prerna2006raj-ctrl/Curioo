@@ -776,10 +776,6 @@ function App() {
     setRecentMenu(null);
   };
 
-  const clearRecentTopics = () => {
-    setHistory([]);
-    setRecentMenu(null);
-  };
   const togglePinRecent = (item) => {
     setPinnedTopics((prev) => {
       const exists = prev.includes(item.id);
@@ -856,23 +852,25 @@ function App() {
       }`}
     >
       {/* MOBILE MENU */}
-    <button
-      type="button"
-      className="sidebar-mobile-button"
-      onClick={() => setSidebarOpen(true)}
-      aria-label="Open menu"
-    >
-      ☰
-    </button>
+      <button
+        type="button"
+        className="sidebar-mobile-button"
+        onClick={() => setSidebarOpen(true)}
+        aria-label="Open menu"
+      >
+        ☰
+      </button>
       {/* =================================================
           SIDEBAR
           ================================================= */}
 
-      <aside className="curioo-sidebar">
-        
+      <aside className={`curioo-sidebar ${sidebarOpen ? "mobile-open" : ""}`}>
         <div className="sidebar-brand">
           <button
-            onClick={() => setView("home")}
+            onClick={() => {
+              setView("home");
+              setSidebarOpen(false);
+            }}
             className="sidebar-logo-button"
           >
             <span className="sidebar-logo">✦</span>
@@ -888,7 +886,10 @@ function App() {
           <br />
 
           <button
-            onClick={() => setView("favorites")}
+            onClick={() => {
+              setView("favorites");
+              setSidebarOpen(false);
+            }}
             className={`sidebar-nav-item ${
               view === "favorites" ? "sidebar-nav-active" : ""
             }`}
@@ -907,7 +908,10 @@ function App() {
           </button>
 
           <button
-            onClick={() => setView("progress")}
+            onClick={() => {
+              setView("progress");
+              setSidebarOpen(false);
+            }}
             className={`sidebar-nav-item ${
               view === "progress" ? "sidebar-nav-active" : ""
             }`}
@@ -924,7 +928,10 @@ function App() {
           </button>
 
           <button
-            onClick={() => setView("library")}
+            onClick={() => {
+              setView("library");
+              setSidebarOpen(false);
+            }}
             className={`sidebar-nav-item ${
               view === "library" ? "sidebar-nav-active" : ""
             }`}
@@ -1021,6 +1028,7 @@ function App() {
                           setView("home");
                           setQuiz(null);
                           setError("");
+                          setSidebarOpen(false);
                         }}
                         className="sidebar-recent-item cursor-pointer"
                       >
@@ -1160,7 +1168,10 @@ function App() {
             </div>
 
             <button
-              onClick={handleLogout}
+              onClick={() => {
+                handleLogout();
+                setSidebarOpen(false);
+              }}
               className="sidebar-logout"
               title="Log out"
             >
@@ -1528,7 +1539,7 @@ function App() {
               difficulty={quizDifficulty}
               onClose={() => setQuiz(null)}
               onComplete={(isCorrect, didTimeOut) =>
-                handleQuizComplete(isCorrect, didTimeOut, topic)
+                handleQuizComplete(isCorrect, didTimeOut)
               }
             />
           )}
