@@ -12,7 +12,7 @@ export default function Sidebar({
   };
 
   return (
-    <aside className="sidebar">
+    <aside className="sidebar" style={{ display: "flex", flexDirection: "column" }}>
       {/* =====================================================
           HEADER
           ===================================================== */}
@@ -138,7 +138,7 @@ export default function Sidebar({
           
           This stays at the bottom and does NOT scroll.
           ===================================================== */}
-      <div className="sidebar-footer">
+      <div className="sidebar-footer" style={{ marginTop: "auto" }}>
         <div className="sidebar-profile">
           <div className="sidebar-profile-avatar">P</div>
 

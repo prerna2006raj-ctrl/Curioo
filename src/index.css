@@ -2901,3 +2901,17 @@ body {
     max-height: 190px;
   }
 }
+.sidebar {
+  display: flex;
+  flex-direction: column;
+}
+
+.sidebar-recent {
+  flex: 1;
+  min-height: 0;
+}
+
+.sidebar-footer {
+  margin-top: auto;
+  flex-shrink: 0;
+}

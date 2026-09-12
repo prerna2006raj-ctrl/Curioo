@@ -12,15 +12,13 @@ function WelcomePage({ onStart, dark = false }) {
 
   return (
     <div
-  className={`min-h-screen transition-colors duration-500 ${
-    dark
-      ? "bg-[#07151c] text-[#e8f1ef]"
-      : "bg-[#f6f7f4] text-[#17211c]"
-  }`}
-  style={{
-    fontFamily: "DM Sans, sans-serif",
-  }}
->
+      className={`min-h-screen transition-colors duration-500 ${
+        dark ? "bg-[#07151c] text-[#e8f1ef]" : "bg-[#f6f7f4] text-[#17211c]"
+      }`}
+      style={{
+        fontFamily: "DM Sans, sans-serif",
+      }}
+    >
       {/* =====================================================
           BACKGROUND
       ===================================================== */}
@@ -29,15 +27,15 @@ function WelcomePage({ onStart, dark = false }) {
     BACKGROUND
 ===================================================== */}
 
-<div
-  className="fixed inset-0 pointer-events-none"
-  style={{
-    backgroundImage: dark
-      ? `radial-gradient(circle, rgba(170,165,75,0.55) 2px, transparent 2px)`
-      : `radial-gradient(circle, rgba(236,170,210,0.55) 2px, transparent 2px)`,
-    backgroundSize: "26px 26px",
-  }}
-/>
+      <div
+        className="fixed inset-0 pointer-events-none"
+        style={{
+          backgroundImage: dark
+            ? `radial-gradient(circle, rgba(170,165,75,0.55) 2px, transparent 2px)`
+            : `radial-gradient(circle, rgba(236,170,210,0.55) 2px, transparent 2px)`,
+          backgroundSize: "26px 26px",
+        }}
+      />
 
       {/* =====================================================
           MAIN CONTENT
@@ -48,19 +46,19 @@ function WelcomePage({ onStart, dark = false }) {
     NAVBAR
 ===================================================== */}
 
-<nav className="max-w-6xl mx-auto px-6 py-6 flex items-center justify-center">
-  <div
-    className={`text-6xl font-semibold tracking-tight ${
-      dark ? "text-[#eef7f5]" : "text-[#18242a]"
-    }`}
-    style={{
-      fontFamily: "Georgia, serif",
-    }}
-  >
-    <br />
-    ✦Curioo
-  </div>
-</nav>
+        <nav className="max-w-6xl mx-auto px-6 py-6 flex items-center justify-center">
+          <div
+            className={`text-6xl font-semibold tracking-tight ${
+              dark ? "text-[#eef7f5]" : "text-[#18242a]"
+            }`}
+            style={{
+              fontFamily: "Georgia, serif",
+            }}
+          >
+            <br />
+            ✦Curioo
+          </div>
+        </nav>
 
         {/* =====================================================
             HERO
