@@ -147,7 +147,7 @@ export default function Sidebar({
           
           This stays at the bottom and does NOT scroll.
           ===================================================== */}
-      <div className="sidebar-footer" style={{ marginTop: "auto" }}>
+      <div className="sidebar-footer" >
         <div className="sidebar-profile">
           <div className="sidebar-profile-avatar">P</div>
 

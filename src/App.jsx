@@ -772,7 +772,7 @@ function App() {
 
   const deleteRecentTopic = (id) => {
     setHistory((prev) => prev.filter((item) => item.id !== id));
-
+    setPinnedTopics((prev) => prev.filter((pinnedId) => pinnedId !== id));
     setRecentMenu(null);
   };
 
@@ -855,18 +855,21 @@ function App() {
           : "grid-paper bg-paper dark:bg-blueprint"
       }`}
     >
+      {/* MOBILE MENU */}
+    <button
+      type="button"
+      className="sidebar-mobile-button"
+      onClick={() => setSidebarOpen(true)}
+      aria-label="Open menu"
+    >
+      ☰
+    </button>
       {/* =================================================
           SIDEBAR
           ================================================= */}
 
       <aside className="curioo-sidebar">
-        <button
-  type="button"
-  className="mobile-menu-button"
-  onClick={() => setSidebarOpen(true)}
->
-  ☰
-</button>
+        
         <div className="sidebar-brand">
           <button
             onClick={() => setView("home")}
