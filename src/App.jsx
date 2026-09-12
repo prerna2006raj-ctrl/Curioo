@@ -15,6 +15,7 @@ import TopicOfDay from "./components/TopicOfDay"
 import QuizCard from "./components/QuizCard"
 import ProgressPage from "./components/ProgressPage"
 import LearningLibrary from "./components/LearningLibrary"
+import QuizDifficulty from "./components/QuizDifficulty"
 import ApiLoader from "./components/ApiLoader"
 import ApiError from "./components/ApiError"
 import WelcomePage from "./components/WelcomePage"
@@ -46,7 +47,6 @@ function App() {
 
   const [error, setError] =
     useState("")
-  const [difficulty, setDifficulty] = useState("Easy")
 
   const [showWelcome, setShowWelcome] = useState(true)
 
@@ -90,6 +90,7 @@ function App() {
 
   const [quizLoading, setQuizLoading] =
     useState(false)
+
 
   const [learningMode, setLearningMode] = useState(false)
   const [lessonStep, setLessonStep] = useState(0)
@@ -201,12 +202,19 @@ function App() {
     timedOut: 0,
     byTopic: {}
   }
+ 
 })
+
+
     const [dailyGoal, setDailyGoal] = useState(() => {
       const saved = localStorage.getItem("curioo-daily-goal")
       return saved ? Number(saved) : 3
     })
+    const [showDifficulty, setShowDifficulty] =
+  useState(false)
 
+const [quizDifficulty, setQuizDifficulty] =
+  useState(null)
   // =====================================================
   // COLLECTIONS
   // =====================================================
@@ -875,56 +883,54 @@ function App() {
   // QUIZ
   // =====================================================
 
-  const handleQuiz =
-    async () => {
+  const handleQuiz = () => {
 
-      if (
-        !topic.trim() ||
-        quizLoading
-      ) {
-        return
+        if (!topic.trim() || quizLoading) {
+          return
+        }
+
+        // Hide any previous quiz
+        setQuiz(null)
+
+        // Show difficulty popup first
+        setShowDifficulty(true)
       }
+      const handleDifficultySelect = async (selectedDifficulty) => {
 
+  setShowDifficulty(false)
 
-      setQuizLoading(
-        true
-      )
+  setQuizDifficulty(selectedDifficulty)
 
+  setQuizLoading(true)
 
-      try {
+  try {
 
-        const q =
-          await getQuiz(
-            topic
-          )
+    const q = await getQuiz(
+      topic,
+      selectedDifficulty
+    )
 
+    setQuiz(q)
 
-        setQuiz(q)
+  } catch (err) {
 
-      } catch (err) {
+    console.error(
+      "Quiz error:",
+      err
+    )
 
-        console.error(
-          "Quiz error:",
-          err
-        )
+    alert(
+      err.message === "RATE_LIMIT"
+        ? "Too many requests. Please wait and try again."
+        : "Couldn't load the quiz. Please try again."
+    )
 
-        alert(
-          err.message ===
-          "RATE_LIMIT"
-            ? "Too many requests. Please wait and try again."
-            : "Couldn't load the quiz. Please try again."
-        )
+  } finally {
 
-      } finally {
+    setQuizLoading(false)
 
-        setQuizLoading(
-          false
-        )
-
-      }
-
-    }
-
+  }
+}
 
   // =====================================================
   // QUIZ COMPLETE
@@ -2241,38 +2247,31 @@ const todayTopicCount =
           {/* =================================================
               QUIZ
               ================================================= */}
+                        {showDifficulty && (
+                <QuizDifficulty
+                  onSelect={handleDifficultySelect}
+                  onClose={() => setShowDifficulty(false)}
+                />
+              )}
 
-          {quiz && (
-
-            <QuizCard
-              quiz={
-                quiz
-              }
-
-              topic={
-                topic
-              }
-              difficulty={difficulty} 
-              onClose={() =>
-                setQuiz(
-                  null
-                )
-              }
-
-              onComplete={(
-                isCorrect,
-                didTimeOut
-              ) =>
-                handleQuizComplete(
-                  isCorrect,
-                  didTimeOut,
-                  topic
-                )
-              }
-            />
-
-          )}
-
+              {quiz && (
+                <QuizCard
+                  quiz={quiz}
+                  topic={topic}
+                  difficulty={quizDifficulty}
+                  onClose={() => setQuiz(null)}
+                  onComplete={(
+                    isCorrect,
+                    didTimeOut
+                  ) =>
+                    handleQuizComplete(
+                      isCorrect,
+                      didTimeOut,
+                      topic
+                    )
+                  }
+                />
+              )}
         </>
 
       )}

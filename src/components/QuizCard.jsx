@@ -1,417 +1,399 @@
-import { useEffect, useRef, useState } from "react"
+import { useEffect, useState } from "react"
+import Confetti from "./Confetti"
 
 const QUIZ_TIME = 60
-
 
 function QuizCard({
   quiz,
   topic,
-  difficulty = "Medium",
+  difficulty,
   onClose,
   onComplete
 }) {
 
   const [selected, setSelected] = useState(null)
+
+  const [showConfetti, setShowConfetti] =
+    useState(false)
+
   const [timeLeft, setTimeLeft] =
     useState(QUIZ_TIME)
-
-  const [finished, setFinished] =
-    useState(false)
 
   const [timedOut, setTimedOut] =
     useState(false)
 
-  const completedRef =
-    useRef(false)
 
-
-  // Keep latest callback
-  const onCompleteRef =
-    useRef(onComplete)
-
-
-  useEffect(() => {
-    onCompleteRef.current =
-      onComplete
-  }, [onComplete])
-
-
-  // =====================================================
-  // COMPLETE QUIZ
-  // =====================================================
+  // =========================================
+  // FINISH QUIZ
+  // =========================================
 
   const finishQuiz = (
-    isCorrect,
-    didTimeOut
+    index,
+    didTimeOut = false
   ) => {
-
-    if (completedRef.current) {
-      return
-    }
-
-
-    completedRef.current = true
-
-    setFinished(true)
-
-    onCompleteRef.current?.(
-      isCorrect,
-      didTimeOut,
-      topic
-    )
-  }
-
-
-  // =====================================================
-  // TIMER
-  // =====================================================
-
-  useEffect(() => {
-
-    if (finished) {
-      return
-    }
-
-
-    const timer =
-      window.setInterval(() => {
-
-        setTimeLeft((previous) => {
-
-          if (previous <= 1) {
-
-            window.clearInterval(
-              timer
-            )
-
-            setTimedOut(true)
-
-            finishQuiz(
-              false,
-              true
-            )
-
-            return 0
-          }
-
-
-          return previous - 1
-
-        })
-
-      }, 1000)
-
-
-    return () =>
-      window.clearInterval(timer)
-
-  }, [finished])
-
-
-  // =====================================================
-  // ANSWER
-  // =====================================================
-
-  const handleAnswer = (index) => {
-
-    if (finished) {
-      return
-    }
-
 
     setSelected(index)
 
+    setTimedOut(didTimeOut)
 
-    const isCorrect =
-      Number(index) ===
-      Number(quiz.answerIndex)
-
-
-    finishQuiz(
-      isCorrect,
-      false
+    onComplete(
+      index === quiz.answerIndex,
+      didTimeOut
     )
   }
 
 
-  // =====================================================
-  // TIMER DISPLAY
-  // =====================================================
+  // =========================================
+  // TIMER
+  // =========================================
 
-  const minutes =
-    Math.floor(
-      timeLeft / 60
-    )
+  useEffect(() => {
 
-  const seconds =
-    timeLeft % 60
+    if (selected !== null) {
+      return
+    }
+
+    const timer = window.setInterval(() => {
+
+      setTimeLeft(previous => {
+
+        if (previous <= 1) {
+
+          window.clearInterval(timer)
+
+          finishQuiz(-1, true)
+
+          return 0
+        }
+
+        return previous - 1
+      })
+
+    }, 1000)
 
 
-  const timerText =
-    `${minutes}:${String(
-      seconds
-    ).padStart(2, "0")}`
+    return () => {
+      window.clearInterval(timer)
+    }
+
+  }, [selected])
+
+
+  // =========================================
+  // CONFETTI
+  // =========================================
+
+  useEffect(() => {
+
+    if (
+      selected !== null &&
+      selected === quiz.answerIndex
+    ) {
+
+      setShowConfetti(true)
+
+      const confettiTimer =
+        window.setTimeout(() => {
+          setShowConfetti(false)
+        }, 2500)
+
+      return () => {
+        window.clearTimeout(confettiTimer)
+      }
+    }
+
+  }, [selected, quiz.answerIndex])
+
+
+  // =========================================
+  // SELECT ANSWER
+  // =========================================
+
+  const handleSelect = (index) => {
+
+    if (selected !== null) {
+      return
+    }
+
+    finishQuiz(index)
+  }
 
 
   const timerPercent =
-    Math.max(
-      0,
-      Math.round(
-        (timeLeft /
-          QUIZ_TIME) *
-          100
-      )
-    )
+    (timeLeft / QUIZ_TIME) * 100
 
+  const timerWarning =
+    timeLeft <= 10 &&
+    selected === null
 
-  // =====================================================
-  // UI
-  // =====================================================
 
   return (
 
-    <div className="fixed inset-0 z-[110] flex items-center justify-center bg-black/40 backdrop-blur-sm px-4">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 px-4 backdrop-blur-sm">
 
-      <div className="w-full max-w-2xl max-h-[90vh] overflow-y-auto rounded-3xl border border-line/20 dark:border-line-dark/20 bg-panel dark:bg-blueprint-panel shadow-2xl p-6 animate-pop-in">
+      {showConfetti && <Confetti />}
 
 
-        {/* HEADER */}
+      <div className="animate-pop-in w-full max-w-xl bg-panel dark:bg-blueprint-panel border border-amber/40 rounded-md p-6 shadow-2xl max-h-[90vh] overflow-y-auto">
 
-        <div className="flex items-start justify-between gap-4">
 
-          <div>
+        {/* =====================================
+            HEADER
+        ===================================== */}
 
-            <p className="text-xs uppercase tracking-wider font-display text-ink/40 dark:text-paper-dark/40">
-              Curioo Quiz
-            </p>
+        <div className="flex items-center justify-between mb-4">
 
-            <h2 className="font-display text-xl font-semibold mt-1">
-              {topic}
-            </h2>
+          <h3 className="font-display text-sm tracking-wide text-amber">
 
-          </div>
+            🧩 quick quiz · {difficulty || "medium"}
+
+          </h3>
 
 
           <button
             onClick={onClose}
-            className="w-9 h-9 rounded-full border border-line/20 dark:border-line-dark/20 hover:bg-ink/5 dark:hover:bg-white/5 transition"
+            className="font-display text-xs text-ink/50 dark:text-paper-dark/50 hover:text-amber transition-colors"
           >
-            ✕
+            close
           </button>
 
         </div>
 
 
-        {/* DIFFICULTY + TIMER */}
+        {/* =====================================
+            TIMER
+        ===================================== */}
 
-        <div className="flex flex-wrap items-center justify-between gap-3 mt-5">
+        <div className="mb-5">
 
-          <span className="px-3 py-1 rounded-full text-xs font-display border border-line/20 dark:border-line-dark/20">
-            {difficulty}
-          </span>
+          <div className="flex items-center justify-between font-display text-xs mb-1">
 
-
-          <span
-            className={`font-display text-sm font-semibold ${
-              timeLeft <= 10
-                ? "text-red-500"
-                : "text-ink/70 dark:text-paper-dark/70"
-            }`}
-          >
-            ⏱ {timerText}
-          </span>
-
-        </div>
+            <span className="text-ink/50 dark:text-paper-dark/50">
+              time remaining
+            </span>
 
 
-        {/* TIMER BAR */}
+            <span
+              className={
+                timerWarning
+                  ? "text-red-500 font-semibold"
+                  : "text-amber"
+              }
+            >
+              ⏱️ {timeLeft}s
+            </span>
 
-        <div className="h-2 bg-ink/10 dark:bg-white/10 rounded-full overflow-hidden mt-3">
-
-          <div
-            className={`h-full transition-all duration-1000 ${
-              timeLeft <= 10
-                ? "bg-red-500"
-                : "bg-amber"
-            }`}
-            style={{
-              width: `${timerPercent}%`
-            }}
-          />
-
-        </div>
+          </div>
 
 
-        {/* QUESTION */}
+          <div className="h-2 rounded-full bg-line/10 dark:bg-line-dark/10 overflow-hidden">
 
-        <div className="mt-7">
+            <div
+              className={`h-full transition-all duration-1000 ${
+                timerWarning
+                  ? "bg-red-500"
+                  : "bg-amber"
+              }`}
+              style={{
+                width: `${timerPercent}%`
+              }}
+            />
 
-          <p className="font-display text-lg font-semibold leading-relaxed">
-            {quiz.question}
-          </p>
+          </div>
 
         </div>
 
 
-        {/* OPTIONS */}
+        {/* =====================================
+            QUESTION
+        ===================================== */}
 
-        <div className="grid gap-3 mt-6">
+        <p className="font-body text-base mb-5">
 
-          {quiz.options.map(
-            (option, index) => {
+          {quiz.question}
 
-              const isCorrect =
-                Number(index) ===
-                Number(
-                  quiz.answerIndex
-                )
-
-              const isSelected =
-                selected === index
+        </p>
 
 
-              let optionClass =
-                "border-line/20 dark:border-line-dark/20 hover:border-amber hover:scale-[1.01]"
+        {/* =====================================
+            OPTIONS
+        ===================================== */}
+
+        <div className="flex flex-col gap-3">
+
+          {quiz.options.map((option, index) => {
+
+            const isCorrect =
+              index === quiz.answerIndex
+
+            const isSelected =
+              index === selected
 
 
-              if (finished) {
+            let stateClasses =
+              "border-line/25 dark:border-line-dark/25 hover:border-amber"
 
-                if (isCorrect) {
 
-                  optionClass =
-                    "border-green-500 bg-green-50 dark:bg-green-900/20"
+            if (selected !== null) {
 
-                } else if (
-                  isSelected &&
-                  !isCorrect
-                ) {
+              if (isCorrect) {
 
-                  optionClass =
-                    "border-red-500 bg-red-50 dark:bg-red-900/20"
-
-                }
+                stateClasses =
+                  "border-green-500 bg-green-500/10 text-green-700 dark:text-green-400"
 
               }
 
+              else if (isSelected) {
 
-              return (
+                stateClasses =
+                  "border-red-500 bg-red-500/10 text-red-700 dark:text-red-400"
 
-                <button
-                  key={index}
-                  onClick={() =>
-                    handleAnswer(index)
-                  }
-                  disabled={finished}
-                  className={`w-full text-left rounded-2xl border p-4 font-body transition-all duration-200 ${optionClass} disabled:cursor-default`}
-                >
+              }
 
-                  <div className="flex items-start gap-3">
+              else {
 
-                    <span className="w-8 h-8 shrink-0 rounded-full border border-current/20 flex items-center justify-center font-display text-sm">
-                      {String.fromCharCode(
-                        65 + index
-                      )}
-                    </span>
+                stateClasses =
+                  "border-line/15 dark:border-line-dark/15 opacity-60"
 
-                    <span className="pt-1">
-                      {option}
-                    </span>
-
-                  </div>
-
-                </button>
-
-              )
+              }
             }
-          )}
+
+
+            return (
+
+              <button
+                key={index}
+                onClick={() => handleSelect(index)}
+                disabled={selected !== null}
+                className={`font-body text-left px-4 py-3 rounded-sm border transition-all duration-150 ${stateClasses}`}
+              >
+
+                <div className="flex items-start gap-3">
+
+                  <span className="font-display">
+                    {String.fromCharCode(65 + index)}.
+                  </span>
+
+                  <span>
+                    {option}
+                  </span>
+
+                </div>
+
+
+                {/* =================================
+                    EXPLANATION
+                ================================= */}
+
+                  {selected !== null &&
+                    quiz.explanations &&
+                    quiz.explanations[index] && (
+
+                    <div
+                      className={`mt-3 pt-3 border-t text-xs leading-relaxed ${
+                        isCorrect
+                          ? "border-green-500/30"
+                          : "border-red-500/30"
+                      }`}
+                    >
+
+                      <strong>
+
+                        {isCorrect
+                          ? "Why this is correct:"
+                          : "Why this is not correct:"}
+
+                      </strong>
+
+                      <p className="mt-1 opacity-80">
+
+                        {quiz.explanations[index]}
+
+                      </p>
+
+                    </div>
+
+                  )}
+
+              </button>
+
+            )
+          })}
 
         </div>
 
 
-        {/* RESULT */}
+        {/* =====================================
+            RESULT
+        ===================================== */}
 
-        {finished && (
+        {selected !== null && (
 
-          <div className="mt-6 rounded-2xl border border-line/20 dark:border-line-dark/20 bg-paper/60 dark:bg-blueprint p-5">
+          <div className="mt-5 rounded-md border border-line/20 dark:border-line-dark/20 p-4">
+
 
             {timedOut ? (
 
               <>
+                <p className="font-display text-sm text-red-500">
 
-                <h3 className="font-display font-semibold text-red-500">
                   ⏰ Time's up!
-                </h3>
 
-                <p className="font-body text-sm mt-2">
-                  The correct answer is:
                 </p>
 
+                <p className="font-body text-sm mt-2">
+
+                  The correct answer is highlighted above.
+
+                </p>
               </>
 
-            ) : Number(selected) ===
-                  Number(quiz.answerIndex) ? (
+            ) : selected === quiz.answerIndex ? (
 
-              <h3 className="font-display font-semibold text-green-600 dark:text-green-400">
-                ✓ Correct!
-              </h3>
+              <>
+                <p className="font-display text-sm text-green-600 dark:text-green-400">
+
+                  🎉 Correct! Great job!
+
+                </p>
+
+                <p className="font-body text-xs mt-1 opacity-70">
+
+                  You got the answer right.
+
+                </p>
+              </>
 
             ) : (
 
               <>
+                <p className="font-display text-sm text-red-500">
 
-                <h3 className="font-display font-semibold text-red-500">
-                  ✕ Incorrect
-                </h3>
+                  ❌ Not quite!
 
-                <p className="font-body text-sm mt-2">
-                  Correct answer:
                 </p>
 
+                <p className="font-body text-xs mt-1 opacity-70">
+
+                  The correct answer is highlighted above.
+
+                </p>
               </>
 
             )}
 
 
-            <p className="font-display font-medium mt-2">
+            <p className="font-body text-xs text-ink/50 dark:text-paper-dark/50 mt-3">
 
-              {quiz.options[
-                quiz.answerIndex
-              ]}
+              {topic} ·{" "}
+
+              {selected === quiz.answerIndex
+                ? "1 point"
+                : "0 points"}
 
             </p>
 
-
-            {quiz.explanation && (
-
-              <div className="mt-4 pt-4 border-t border-line/10 dark:border-line-dark/10">
-
-                <p className="text-xs uppercase tracking-wider font-display text-ink/40 dark:text-paper-dark/40">
-                  Explanation
-                </p>
-
-                <p className="font-body text-sm mt-2 leading-relaxed">
-                  {quiz.explanation}
-                </p>
-
-              </div>
-
-            )}
-
           </div>
-
-        )}
-
-
-        {/* CLOSE */}
-
-        {finished && (
-
-          <button
-            onClick={onClose}
-            className="w-full mt-5 rounded-xl bg-line dark:bg-amber text-paper dark:text-blueprint font-display font-medium py-3 hover:opacity-90 transition"
-          >
-            Done
-          </button>
 
         )}
 
@@ -420,6 +402,5 @@ function QuizCard({
     </div>
   )
 }
-
 
 export default QuizCard

@@ -237,72 +237,78 @@ Question: one quick check question
    QUIZ
    ========================================================= */
 
-export async function getQuiz(topic) {
+export async function getQuiz(topic, difficulty = "medium") {
+
+  const difficultyInstructions = {
+    easy: "Use basic recall and simple understanding. Keep the question straightforward.",
+    medium: "Test understanding and application. Require some reasoning but stay accessible.",
+    hard: "Make the question challenging. Test deeper understanding, application, or careful reasoning."
+  }
 
   const prompt = `
 Create one multiple-choice question to test understanding of "${topic}".
 
-Respond in exactly this format, nothing else:
+Difficulty: ${difficulty}
 
-Question: ...
+${difficultyInstructions[difficulty]}
 
-A) ...
+Create exactly 4 options.
 
-B) ...
+Also provide a brief explanation for EVERY option.
+The explanation should explain why that option is correct or why it is incorrect.
 
-C) ...
+Respond ONLY in this JSON format:
 
-D) ...
-
-Answer: <A, B, C or D>
+{
+  "question": "Question here",
+  "options": [
+    "Option A",
+    "Option B",
+    "Option C",
+    "Option D"
+  ],
+  "answerIndex": 0,
+  "explanations": [
+    "Explanation for option A",
+    "Explanation for option B",
+    "Explanation for option C",
+    "Explanation for option D"
+  ]
+}
 `
 
+   const raw = await callGemini(prompt)
 
-  const raw = await callGemini(prompt)
+  let parsed
 
+  try {
 
-  const question =
-    raw.match(
-      /Question:\s*(.+)/i
-    )?.[1]?.trim() || ""
+    // Remove possible markdown JSON formatting
+    const cleaned = raw
+      .replace(/```json/gi, "")
+      .replace(/```/g, "")
+      .trim()
 
+    parsed = JSON.parse(cleaned)
 
-  const options = [
-    "A",
-    "B",
-    "C",
-    "D"
-  ].map((letter) => {
+  } catch (error) {
 
-    const match = raw.match(
-      new RegExp(
-        `${letter}\\)\\s*(.+)`
-      )
+    console.error(
+      "Quiz JSON parsing error:",
+      error,
+      raw
     )
 
-    return match
-      ? match[1].trim()
-      : ""
-
-  })
-
-
-  const answerLetter =
-    raw.match(
-      /Answer:\s*([A-D])/i
-    )?.[1]?.toUpperCase() ||
-    "A"
-
-
-  const answerIndex =
-    ["A", "B", "C", "D"].indexOf(
-      answerLetter
+    throw new Error(
+      "Couldn't understand the quiz response"
     )
+  }
 
 
   return {
-    question,
-    options,
-    answerIndex
+    question: parsed.question,
+    options: parsed.options,
+    answerIndex: parsed.answerIndex,
+    explanations: parsed.explanations
   }
 }
