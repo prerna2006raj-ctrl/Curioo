@@ -75,15 +75,8 @@
   background-color: #faf8f2;
 
   background-image:
-    linear-gradient(
-      rgba(11, 61, 92, 0.075) 1px,
-      transparent 1px
-    ),
-    linear-gradient(
-      90deg,
-      rgba(11, 61, 92, 0.075) 1px,
-      transparent 1px
-    );
+    linear-gradient(rgba(11, 61, 92, 0.075) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(11, 61, 92, 0.075) 1px, transparent 1px);
 
   background-size: 28px 28px;
 }
@@ -92,15 +85,8 @@
   background-color: #10293b;
 
   background-image:
-    linear-gradient(
-      rgba(142, 202, 230, 0.11) 1px,
-      transparent 1px
-    ),
-    linear-gradient(
-      90deg,
-      rgba(142, 202, 230, 0.11) 1px,
-      transparent 1px
-    );
+    linear-gradient(rgba(142, 202, 230, 0.11) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(142, 202, 230, 0.11) 1px, transparent 1px);
 }
 
 .dot-paper {
@@ -160,43 +146,35 @@
 
   padding: 20px 14px;
 
-  background:
-    linear-gradient(
-      145deg,
-      rgba(255, 255, 255, 0.96),
-      rgba(255, 255, 255, 0.84)
-    );
+  background: linear-gradient(
+    145deg,
+    rgba(255, 255, 255, 0.96),
+    rgba(255, 255, 255, 0.84)
+  );
 
-  border: 1px solid
-    rgba(11, 61, 92, 0.12);
+  border: 1px solid rgba(11, 61, 92, 0.12);
 
   border-radius: 24px;
 
   box-shadow:
-    0 20px 60px
-      rgba(11, 61, 92, 0.09),
-    0 3px 12px
-      rgba(11, 61, 92, 0.05);
+    0 20px 60px rgba(11, 61, 92, 0.09),
+    0 3px 12px rgba(11, 61, 92, 0.05);
 
   backdrop-filter: blur(18px);
 
-  overflow: hidden;
+  overflow: visible;
 }
 
 .dark .curioo-sidebar {
-  background:
-    linear-gradient(
-      145deg,
-      rgba(22, 60, 82, 0.97),
-      rgba(16, 41, 59, 0.95)
-    );
+  background: linear-gradient(
+    145deg,
+    rgba(22, 60, 82, 0.97),
+    rgba(16, 41, 59, 0.95)
+  );
 
-  border-color:
-    rgba(142, 202, 230, 0.16);
+  border-color: rgba(142, 202, 230, 0.16);
 
-  box-shadow:
-    0 25px 70px
-      rgba(0, 0, 0, 0.25);
+  box-shadow: 0 25px 70px rgba(0, 0, 0, 0.25);
 }
 
 /* Sidebar brand */
@@ -208,13 +186,11 @@
 
   padding: 7px 8px 20px;
 
-  border-bottom: 1px solid
-    rgba(11, 61, 92, 0.08);
+  border-bottom: 1px solid rgba(11, 61, 92, 0.08);
 }
 
 .dark .sidebar-brand {
-  border-color:
-    rgba(142, 202, 230, 0.1);
+  border-color: rgba(142, 202, 230, 0.1);
 }
 
 .sidebar-logo-mark {
@@ -229,16 +205,9 @@
   align-items: center;
   justify-content: center;
 
-  background:
-    linear-gradient(
-      135deg,
-      #ff6fa5,
-      #ff9dc1
-    );
+  background: linear-gradient(135deg, #ff6fa5, #ff9dc1);
 
-  box-shadow:
-    0 8px 20px
-      rgba(255, 111, 165, 0.25);
+  box-shadow: 0 8px 20px rgba(255, 111, 165, 0.25);
 }
 
 .sidebar-logo-mark::before,
@@ -247,8 +216,7 @@
 
   position: absolute;
 
-  border: 1.5px solid
-    rgba(255, 255, 255, 0.9);
+  border: 1.5px solid rgba(255, 255, 255, 0.9);
 
   border-radius: 50%;
 }
@@ -360,43 +328,35 @@
 .sidebar-nav-item:hover {
   transform: translateX(3px);
 
-  background:
-    rgba(255, 111, 165, 0.08);
+  background: rgba(255, 111, 165, 0.08);
 
-  border-color:
-    rgba(255, 111, 165, 0.12);
+  border-color: rgba(255, 111, 165, 0.12);
 }
 
 .sidebar-nav-active {
-  background:
-    linear-gradient(
-      135deg,
-      rgba(255, 111, 165, 0.15),
-      rgba(255, 111, 165, 0.07)
-    );
+  background: linear-gradient(
+    135deg,
+    rgba(255, 111, 165, 0.15),
+    rgba(255, 111, 165, 0.07)
+  );
 
-  border-color:
-    rgba(255, 111, 165, 0.22);
+  border-color: rgba(255, 111, 165, 0.22);
 
   box-shadow:
     inset 3px 0 0 #ff6fa5,
-    0 5px 15px
-      rgba(255, 111, 165, 0.08);
+    0 5px 15px rgba(255, 111, 165, 0.08);
 }
 
 .dark .sidebar-nav-active {
-  background:
-    linear-gradient(
-      135deg,
-      rgba(255, 210, 63, 0.14),
-      rgba(142, 202, 230, 0.06)
-    );
+  background: linear-gradient(
+    135deg,
+    rgba(255, 210, 63, 0.14),
+    rgba(142, 202, 230, 0.06)
+  );
 
-  border-color:
-    rgba(255, 210, 63, 0.2);
+  border-color: rgba(255, 210, 63, 0.2);
 
-  box-shadow:
-    inset 3px 0 0 #ffd23f;
+  box-shadow: inset 3px 0 0 #ffd23f;
 }
 
 .sidebar-nav-icon {
@@ -435,8 +395,7 @@
 }
 
 .dark .sidebar-count {
-  background:
-    rgba(142, 202, 230, 0.1);
+  background: rgba(142, 202, 230, 0.1);
 
   color: rgba(232, 241, 245, 0.65);
 }
@@ -461,21 +420,17 @@
 
   padding: 9px;
 
-  border: 1px solid
-    rgba(11, 61, 92, 0.08);
+  border: 1px solid rgba(11, 61, 92, 0.08);
 
   border-radius: 11px;
 
-  background:
-    rgba(255, 255, 255, 0.45);
+  background: rgba(255, 255, 255, 0.45);
 }
 
 .dark .sidebar-stat {
-  border-color:
-    rgba(142, 202, 230, 0.1);
+  border-color: rgba(142, 202, 230, 0.1);
 
-  background:
-    rgba(255, 255, 255, 0.025);
+  background: rgba(255, 255, 255, 0.025);
 }
 
 .sidebar-stat-icon {
@@ -526,25 +481,11 @@
 
   border-radius: 99px;
 
-  background:
-    rgba(255, 111, 165, 0.1);
+  background: rgba(255, 111, 165, 0.1);
 
   text-align: center;
 
   font-size: 8px;
-}
-
-.sidebar-recent-list {
-  display: flex;
-  flex-direction: column;
-
-  gap: 2px;
-
-  max-height: 100%;
-
-  overflow-y: auto;
-
-  padding-right: 2px;
 }
 
 .sidebar-recent-list::-webkit-scrollbar {
@@ -577,16 +518,159 @@
     transform 0.16s ease;
 }
 
+/* =====================================================
+   RECENT TOPIC MORE BUTTON
+===================================================== */
+
+.recent-more-button {
+  margin-left: auto;
+  flex-shrink: 0;
+  width: 28px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  border-radius: 8px;
+  background: transparent;
+  font-size: 19px;
+  line-height: 1;
+  color: inherit;
+  cursor: pointer;
+  opacity: 0.65;
+  position: relative;
+  z-index: 20;
+  transition:
+    background 0.15s ease,
+    opacity 0.15s ease;
+}
+
+.recent-more-button:hover {
+  opacity: 1;
+  background: rgba(128, 128, 128, 0.15);
+}
+
+/* =====================================================
+   RECENT OPTIONS MENU
+   Opens to the RIGHT of the topic
+===================================================== */
+
+.recent-options-menu {
+  position: absolute;
+
+  left: calc(100% + 6px);
+  top: 50%;
+
+  transform: translateY(-50%);
+
+  width: 190px;
+
+  padding: 6px;
+
+  border-radius: 12px;
+
+  background: #ffffff;
+  color: #1f2937;
+
+  border: 1px solid rgba(128, 128, 128, 0.2);
+
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+
+  z-index: 99999;
+}
+
+/* Dark mode */
+
+.dark .recent-options-menu {
+  background: #1e293b;
+  color: #f8fafc;
+
+  border-color: rgba(142, 202, 230, 0.16);
+
+  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.35);
+}
+
+/* =====================================================
+   MENU OPTIONS
+===================================================== */
+
+.recent-option {
+  width: 100%;
+
+  display: flex;
+  align-items: center;
+
+  gap: 10px;
+
+  padding: 9px 10px;
+
+  border: none;
+  border-radius: 8px;
+
+  background: transparent;
+
+  color: inherit;
+
+  cursor: pointer;
+
+  text-align: left;
+
+  font-family: var(--font-display);
+  font-size: 12px;
+
+  transition:
+    background 0.15s ease,
+    transform 0.15s ease;
+}
+
+.recent-option:hover {
+  background: rgba(128, 128, 128, 0.12);
+}
+
+.recent-option:active {
+  transform: scale(0.98);
+}
+
+.recent-delete-option {
+  color: #ef4444;
+}
+.recent-topic-wrapper {
+  position: relative;
+  width: 100%;
+}
+
+.recent-options-menu {
+  position: absolute;
+  left: calc(100% + 6px);
+  top: 50%;
+  transform: translateY(-50%);
+
+  width: 190px;
+  padding: 6px;
+
+  border-radius: 12px;
+  background: white;
+  color: #1f2937;
+
+  border: 1px solid rgba(128, 128, 128, 0.2);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+
+  z-index: 99999;
+}
+
+.dark .recent-options-menu {
+  background: #1e293b;
+  color: #f8fafc;
+}
+
 .sidebar-recent-item:hover {
-  background:
-    rgba(255, 111, 165, 0.07);
+  background: rgba(255, 111, 165, 0.07);
 
   transform: translateX(3px);
 }
 
 .dark .sidebar-recent-item:hover {
-  background:
-    rgba(142, 202, 230, 0.07);
+  background: rgba(142, 202, 230, 0.07);
 }
 
 .sidebar-recent-dot {
@@ -599,9 +683,7 @@
 
   background: #ff6fa5;
 
-  box-shadow:
-    0 0 0 3px
-      rgba(255, 111, 165, 0.08);
+  box-shadow: 0 0 0 3px rgba(255, 111, 165, 0.08);
 }
 
 .sidebar-recent-topic {
@@ -651,13 +733,11 @@
 .sidebar-bottom {
   padding-top: 12px;
 
-  border-top: 1px solid
-    rgba(11, 61, 92, 0.08);
+  border-top: 1px solid rgba(11, 61, 92, 0.08);
 }
 
 .dark .sidebar-bottom {
-  border-color:
-    rgba(142, 202, 230, 0.1);
+  border-color: rgba(142, 202, 230, 0.1);
 }
 
 .sidebar-user-card {
@@ -669,27 +749,23 @@
 
   border-radius: 13px;
 
-  background:
-    linear-gradient(
-      135deg,
-      rgba(11, 61, 92, 0.035),
-      rgba(255, 111, 165, 0.05)
-    );
+  background: linear-gradient(
+    135deg,
+    rgba(11, 61, 92, 0.035),
+    rgba(255, 111, 165, 0.05)
+  );
 
-  border: 1px solid
-    rgba(11, 61, 92, 0.07);
+  border: 1px solid rgba(11, 61, 92, 0.07);
 }
 
 .dark .sidebar-user-card {
-  background:
-    linear-gradient(
-      135deg,
-      rgba(142, 202, 230, 0.05),
-      rgba(255, 210, 63, 0.04)
-    );
+  background: linear-gradient(
+    135deg,
+    rgba(142, 202, 230, 0.05),
+    rgba(255, 210, 63, 0.04)
+  );
 
-  border-color:
-    rgba(142, 202, 230, 0.1);
+  border-color: rgba(142, 202, 230, 0.1);
 }
 
 .sidebar-avatar {
@@ -704,12 +780,7 @@
 
   border-radius: 10px;
 
-  background:
-    linear-gradient(
-      135deg,
-      #ff6fa5,
-      #ff9ac0
-    );
+  background: linear-gradient(135deg, #ff6fa5, #ff9ac0);
 
   color: white;
 
@@ -717,9 +788,7 @@
   font-weight: 700;
   font-size: 13px;
 
-  box-shadow:
-    0 5px 15px
-      rgba(255, 111, 165, 0.2);
+  box-shadow: 0 5px 15px rgba(255, 111, 165, 0.2);
 }
 
 .sidebar-user-info {
@@ -763,8 +832,7 @@
   align-items: center;
   justify-content: center;
 
-  border: 1px solid
-    rgba(11, 61, 92, 0.08);
+  border: 1px solid rgba(11, 61, 92, 0.08);
 
   border-radius: 8px;
 
@@ -801,26 +869,21 @@
   width: 43px;
   height: 43px;
 
-  border: 1px solid
-    rgba(11, 61, 92, 0.12);
+  border: 1px solid rgba(11, 61, 92, 0.12);
 
   border-radius: 13px;
 
-  background:
-    rgba(255, 255, 255, 0.9);
+  background: rgba(255, 255, 255, 0.9);
 
   backdrop-filter: blur(12px);
 
   font-size: 19px;
 
-  box-shadow:
-    0 10px 30px
-      rgba(11, 61, 92, 0.1);
+  box-shadow: 0 10px 30px rgba(11, 61, 92, 0.1);
 }
 
 .dark .sidebar-mobile-button {
-  background:
-    rgba(22, 60, 82, 0.9);
+  background: rgba(22, 60, 82, 0.9);
 
   color: white;
 }
@@ -838,8 +901,7 @@
 
   margin-bottom: 40px;
 
-  animation:
-    fade-in-up 0.55s ease-out;
+  animation: fade-in-up 0.55s ease-out;
 }
 
 .curioo-greeting {
@@ -900,8 +962,7 @@
   top: 50%;
   left: 50%;
 
-  transform:
-    translate(-50%, -50%);
+  transform: translate(-50%, -50%);
 }
 
 .curioo-target::after {
@@ -911,8 +972,7 @@
   top: 50%;
   left: 50%;
 
-  transform:
-    translate(-50%, -50%);
+  transform: translate(-50%, -50%);
 }
 
 .curioo-target span {
@@ -924,8 +984,7 @@
   top: 50%;
   left: 50%;
 
-  transform:
-    translate(-50%, -50%);
+  transform: translate(-50%, -50%);
 
   border-radius: 50%;
 
@@ -996,48 +1055,35 @@
 
   border-radius: 23px;
 
-  background:
-    rgba(255, 255, 255, 0.87);
+  background: rgba(255, 255, 255, 0.87);
 
-  border: 1px solid
-    rgba(11, 61, 92, 0.12);
+  border: 1px solid rgba(11, 61, 92, 0.12);
 
   box-shadow:
-    0 20px 60px
-      rgba(11, 61, 92, 0.075),
-    0 3px 12px
-      rgba(11, 61, 92, 0.04);
+    0 20px 60px rgba(11, 61, 92, 0.075),
+    0 3px 12px rgba(11, 61, 92, 0.04);
 
   backdrop-filter: blur(15px);
 
-  animation:
-    fade-in-up 0.6s ease-out;
+  animation: fade-in-up 0.6s ease-out;
 }
 
 .dark .search-card {
-  background:
-    rgba(22, 60, 82, 0.86);
+  background: rgba(22, 60, 82, 0.86);
 
-  border-color:
-    rgba(142, 202, 230, 0.13);
+  border-color: rgba(142, 202, 230, 0.13);
 
-  box-shadow:
-    0 25px 70px
-      rgba(0, 0, 0, 0.2);
+  box-shadow: 0 25px 70px rgba(0, 0, 0, 0.2);
 }
 
 .search-card-kid {
-  border-color:
-    rgba(255, 111, 165, 0.34);
+  border-color: rgba(255, 111, 165, 0.34);
 
-  box-shadow:
-    0 20px 60px
-      rgba(255, 111, 165, 0.08);
+  box-shadow: 0 20px 60px rgba(255, 111, 165, 0.08);
 }
 
 .search-card-engineer {
-  border-color:
-    rgba(11, 61, 92, 0.18);
+  border-color: rgba(11, 61, 92, 0.18);
 }
 
 .search-card-top {
@@ -1078,13 +1124,11 @@
   align-items: center;
   gap: 9px;
 
-  border: 1px solid
-    rgba(220, 70, 70, 0.18);
+  border: 1px solid rgba(220, 70, 70, 0.18);
 
   border-radius: 12px;
 
-  background:
-    rgba(220, 70, 70, 0.06);
+  background: rgba(220, 70, 70, 0.06);
 
   color: #c33c3c;
 
@@ -1109,18 +1153,16 @@
 
   padding: 40px 20px;
 
-  transition:
-    background 0.3s ease;
+  transition: background 0.3s ease;
 }
 
 .auth-kid-mode {
   background-color: #fffafc;
 
-  background-image:
-    radial-gradient(
-      rgba(255, 111, 165, 0.28) 2.5px,
-      transparent 2.5px
-    );
+  background-image: radial-gradient(
+    rgba(255, 111, 165, 0.28) 2.5px,
+    transparent 2.5px
+  );
 
   background-size: 25px 25px;
 }
@@ -1129,15 +1171,8 @@
   background-color: #faf8f2;
 
   background-image:
-    linear-gradient(
-      rgba(11, 61, 92, 0.07) 1px,
-      transparent 1px
-    ),
-    linear-gradient(
-      90deg,
-      rgba(11, 61, 92, 0.07) 1px,
-      transparent 1px
-    );
+    linear-gradient(rgba(11, 61, 92, 0.07) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(11, 61, 92, 0.07) 1px, transparent 1px);
 
   background-size: 28px 28px;
 }
@@ -1147,24 +1182,16 @@
 }
 
 .dark .auth-kid-mode {
-  background-image:
-    radial-gradient(
-      rgba(255, 210, 63, 0.22) 2.5px,
-      transparent 2.5px
-    );
+  background-image: radial-gradient(
+    rgba(255, 210, 63, 0.22) 2.5px,
+    transparent 2.5px
+  );
 }
 
 .dark .auth-engineer-mode {
   background-image:
-    linear-gradient(
-      rgba(142, 202, 230, 0.11) 1px,
-      transparent 1px
-    ),
-    linear-gradient(
-      90deg,
-      rgba(142, 202, 230, 0.11) 1px,
-      transparent 1px
-    );
+    linear-gradient(rgba(142, 202, 230, 0.11) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(142, 202, 230, 0.11) 1px, transparent 1px);
 }
 
 .auth-container {
@@ -1182,35 +1209,25 @@
 
   border-radius: 28px;
 
-  background:
-    rgba(255, 255, 255, 0.91);
+  background: rgba(255, 255, 255, 0.91);
 
-  border: 1px solid
-    rgba(11, 61, 92, 0.13);
+  border: 1px solid rgba(11, 61, 92, 0.13);
 
   box-shadow:
-    0 35px 100px
-      rgba(11, 61, 92, 0.12),
-    0 5px 20px
-      rgba(11, 61, 92, 0.05);
+    0 35px 100px rgba(11, 61, 92, 0.12),
+    0 5px 20px rgba(11, 61, 92, 0.05);
 
   backdrop-filter: blur(20px);
 
-  animation:
-    auth-card-in 0.65s
-    cubic-bezier(0.2, 0.8, 0.2, 1);
+  animation: auth-card-in 0.65s cubic-bezier(0.2, 0.8, 0.2, 1);
 }
 
 .dark .auth-card {
-  background:
-    rgba(22, 60, 82, 0.94);
+  background: rgba(22, 60, 82, 0.94);
 
-  border-color:
-    rgba(142, 202, 230, 0.15);
+  border-color: rgba(142, 202, 230, 0.15);
 
-  box-shadow:
-    0 35px 100px
-      rgba(0, 0, 0, 0.3);
+  box-shadow: 0 35px 100px rgba(0, 0, 0, 0.3);
 }
 
 .auth-card::before {
@@ -1224,13 +1241,7 @@
   width: 70%;
   height: 2px;
 
-  background:
-    linear-gradient(
-      90deg,
-      transparent,
-      #ff6fa5,
-      transparent
-    );
+  background: linear-gradient(90deg, transparent, #ff6fa5, transparent);
 
   border-radius: 99px;
 }
@@ -1274,8 +1285,7 @@
   left: 50%;
   top: 50%;
 
-  transform:
-    translate(-50%, -50%);
+  transform: translate(-50%, -50%);
 
   background: #ff6fa5;
 }
@@ -1291,8 +1301,7 @@
   left: 50%;
   top: 50%;
 
-  transform:
-    translate(-50%, -50%);
+  transform: translate(-50%, -50%);
 
   background: #ff6fa5;
 }
@@ -1306,8 +1315,7 @@
   left: 50%;
   top: 50%;
 
-  transform:
-    translate(-50%, -50%);
+  transform: translate(-50%, -50%);
 
   border-radius: 50%;
 
@@ -1411,13 +1419,11 @@
 
   min-height: 49px;
 
-  border: 1px solid
-    rgba(11, 61, 92, 0.14);
+  border: 1px solid rgba(11, 61, 92, 0.14);
 
   border-radius: 12px;
 
-  background:
-    rgba(250, 248, 242, 0.65);
+  background: rgba(250, 248, 242, 0.65);
 
   transition:
     border 0.2s ease,
@@ -1426,19 +1432,15 @@
 }
 
 .dark .auth-input-wrapper {
-  background:
-    rgba(16, 41, 59, 0.65);
+  background: rgba(16, 41, 59, 0.65);
 
-  border-color:
-    rgba(142, 202, 230, 0.15);
+  border-color: rgba(142, 202, 230, 0.15);
 }
 
 .auth-input-wrapper:focus-within {
   border-color: #ff6fa5;
 
-  box-shadow:
-    0 0 0 4px
-      rgba(255, 111, 165, 0.08);
+  box-shadow: 0 0 0 4px rgba(255, 111, 165, 0.08);
 
   transform: translateY(-1px);
 }
@@ -1482,9 +1484,7 @@
   color: rgba(27, 42, 51, 0.32);
 }
 
-.dark
-  .auth-input-wrapper
-  input::placeholder {
+.dark .auth-input-wrapper input::placeholder {
   color: rgba(232, 241, 245, 0.32);
 }
 
@@ -1499,11 +1499,9 @@
 
   border-radius: 10px;
 
-  background:
-    rgba(220, 70, 70, 0.06);
+  background: rgba(220, 70, 70, 0.06);
 
-  border: 1px solid
-    rgba(220, 70, 70, 0.15);
+  border: 1px solid rgba(220, 70, 70, 0.15);
 
   color: #c33c3c;
 
@@ -1542,12 +1540,7 @@
   border: 0;
   border-radius: 12px;
 
-  background:
-    linear-gradient(
-      135deg,
-      #ff6fa5,
-      #ff8db7
-    );
+  background: linear-gradient(135deg, #ff6fa5, #ff8db7);
 
   color: white;
 
@@ -1555,9 +1548,7 @@
   font-size: 12px;
   font-weight: 650;
 
-  box-shadow:
-    0 10px 25px
-      rgba(255, 111, 165, 0.23);
+  box-shadow: 0 10px 25px rgba(255, 111, 165, 0.23);
 
   transition:
     transform 0.2s ease,
@@ -1567,9 +1558,7 @@
 .auth-submit:hover {
   transform: translateY(-2px);
 
-  box-shadow:
-    0 14px 32px
-      rgba(255, 111, 165, 0.3);
+  box-shadow: 0 14px 32px rgba(255, 111, 165, 0.3);
 }
 
 .auth-submit:active {
@@ -1586,8 +1575,7 @@
 
   border-radius: 8px;
 
-  background:
-    rgba(255, 255, 255, 0.18);
+  background: rgba(255, 255, 255, 0.18);
 
   font-size: 15px;
 }
@@ -1639,8 +1627,7 @@
   margin-top: 24px;
   padding-top: 15px;
 
-  border-top: 1px dashed
-    rgba(11, 61, 92, 0.1);
+  border-top: 1px dashed rgba(11, 61, 92, 0.1);
 
   font-family: var(--font-display);
   font-size: 8px;
@@ -1651,8 +1638,7 @@
 }
 
 .dark .auth-footer {
-  border-color:
-    rgba(142, 202, 230, 0.1);
+  border-color: rgba(142, 202, 230, 0.1);
 
   color: rgba(232, 241, 245, 0.35);
 }
@@ -1720,12 +1706,7 @@
   width: 1px;
   height: 70px;
 
-  background:
-    linear-gradient(
-      transparent,
-      currentColor,
-      transparent
-    );
+  background: linear-gradient(transparent, currentColor, transparent);
 }
 
 .auth-side-left {
@@ -1769,27 +1750,21 @@
 @keyframes auth-card-in {
   from {
     opacity: 0;
-    transform:
-      translateY(25px)
-      scale(0.97);
+    transform: translateY(25px) scale(0.97);
   }
 
   to {
     opacity: 1;
-    transform:
-      translateY(0)
-      scale(1);
+    transform: translateY(0) scale(1);
   }
 }
 
 .animate-fade-in-up {
-  animation:
-    fade-in-up 0.45s ease-out;
+  animation: fade-in-up 0.45s ease-out;
 }
 
 .animate-pop-in {
-  animation:
-    pop-in 0.3s ease-out;
+  animation: pop-in 0.3s ease-out;
 }
 
 /* =====================================================
@@ -1798,25 +1773,20 @@
 
 @keyframes confetti-fall {
   0% {
-    transform:
-      translateY(-10vh)
-      rotate(0deg);
+    transform: translateY(-10vh) rotate(0deg);
 
     opacity: 1;
   }
 
   100% {
-    transform:
-      translateY(110vh)
-      rotate(360deg);
+    transform: translateY(110vh) rotate(360deg);
 
     opacity: 0;
   }
 }
 
 .animate-confetti-fall {
-  animation:
-    confetti-fall linear forwards;
+  animation: confetti-fall linear forwards;
 }
 
 /* =====================================================
@@ -1829,18 +1799,9 @@
   }
 
   .curioo-sidebar {
-    transform: translateX(
-      calc(-100% - 30px)
-    );
+    transform: translateX(calc(-100% - 30px));
 
-    transition:
-      transform 0.3s
-      cubic-bezier(
-        0.22,
-        1,
-        0.36,
-        1
-      );
+    transition: transform 0.3s cubic-bezier(0.22, 1, 0.36, 1);
   }
 
   .curioo-sidebar.sidebar-open {
@@ -1883,24 +1844,19 @@
 
     inset: 0;
 
-    background:
-      rgba(11, 30, 40, 0.3);
+    background: rgba(11, 30, 40, 0.3);
 
     backdrop-filter: blur(3px);
   }
 
   .curioo-main {
-    padding:
-      80px 22px
-      70px;
+    padding: 80px 22px 70px;
   }
 }
 
 @media (max-width: 600px) {
   .curioo-main {
-    padding:
-      72px 14px
-      60px;
+    padding: 72px 14px 60px;
   }
 
   .curioo-header {
@@ -1939,9 +1895,7 @@
   }
 
   .auth-card {
-    padding:
-      30px 20px
-      21px;
+    padding: 30px 20px 21px;
 
     border-radius: 22px;
   }
@@ -1958,7 +1912,6 @@
 /* =====================================================
    CURIOO API EXPERIENCE
 ===================================================== */
-
 
 /* =====================================================
    LOADING
@@ -1985,25 +1938,20 @@
 
   border: 1px solid rgba(31, 78, 95, 0.14);
 
-  background:
-    linear-gradient(
-      135deg,
-      rgba(255,255,255,0.94),
-      rgba(245,249,250,0.88)
-    );
+  background: linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 0.94),
+    rgba(245, 249, 250, 0.88)
+  );
 
   box-shadow:
-    0 18px 45px rgba(31,78,95,0.09),
-    0 4px 12px rgba(31,78,95,0.05);
+    0 18px 45px rgba(31, 78, 95, 0.09),
+    0 4px 12px rgba(31, 78, 95, 0.05);
 
   backdrop-filter: blur(16px);
 
-  animation:
-    apiLoaderAppear
-    0.4s
-    ease-out;
+  animation: apiLoaderAppear 0.4s ease-out;
 }
-
 
 /* subtle shine */
 
@@ -2018,23 +1966,17 @@
   width: 70%;
   height: 100%;
 
-  background:
-    linear-gradient(
-      90deg,
-      transparent,
-      rgba(255,255,255,0.6),
-      transparent
-    );
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.6),
+    transparent
+  );
 
   transform: skewX(-20deg);
 
-  animation:
-    apiShine
-    2.8s
-    ease-in-out
-    infinite;
+  animation: apiShine 2.8s ease-in-out infinite;
 }
-
 
 /* =====================================================
    ORBIT
@@ -2060,18 +2002,13 @@
 
   border-radius: 50%;
 
-  background:
-    rgba(31,78,95,0.08);
+  background: rgba(31, 78, 95, 0.08);
 
   font-size: 21px;
 
   z-index: 2;
 
-  animation:
-    corePulse
-    1.6s
-    ease-in-out
-    infinite;
+  animation: corePulse 1.6s ease-in-out infinite;
 }
 
 .api-loader-orbit span {
@@ -2081,13 +2018,9 @@
 
   border-radius: 50%;
 
-  border: 1px solid rgba(31,78,95,0.16);
+  border: 1px solid rgba(31, 78, 95, 0.16);
 
-  animation:
-    orbitSpin
-    2.5s
-    linear
-    infinite;
+  animation: orbitSpin 2.5s linear infinite;
 }
 
 .api-loader-orbit span:nth-child(2) {
@@ -2101,7 +2034,6 @@
 .api-loader-orbit span:nth-child(4) {
   transform: rotate(180deg);
 }
-
 
 /* =====================================================
    LOADING CONTENT
@@ -2118,9 +2050,7 @@
 .api-loader-content h3 {
   margin: 0;
 
-  font-family:
-    Georgia,
-    serif;
+  font-family: Georgia, serif;
 
   font-size: 18px;
 
@@ -2134,9 +2064,8 @@
 
   font-size: 13px;
 
-  color: rgba(23,50,77,0.58);
+  color: rgba(23, 50, 77, 0.58);
 }
-
 
 /* =====================================================
    PROGRESS
@@ -2151,8 +2080,7 @@
 
   border-radius: 999px;
 
-  background:
-    rgba(31,78,95,0.08);
+  background: rgba(31, 78, 95, 0.08);
 }
 
 .api-loader-progress {
@@ -2161,21 +2089,10 @@
 
   border-radius: inherit;
 
-  background:
-    linear-gradient(
-      90deg,
-      #6f8794,
-      #c99352,
-      #6f8794
-    );
+  background: linear-gradient(90deg, #6f8794, #c99352, #6f8794);
 
-  animation:
-    apiProgress
-    1.7s
-    ease-in-out
-    infinite;
+  animation: apiProgress 1.7s ease-in-out infinite;
 }
-
 
 /* =====================================================
    STATUS
@@ -2196,8 +2113,7 @@
 
   letter-spacing: 0.08em;
 
-  color:
-    rgba(23,50,77,0.4);
+  color: rgba(23, 50, 77, 0.4);
 }
 
 .api-status-dot {
@@ -2208,17 +2124,10 @@
 
   background: #c99352;
 
-  box-shadow:
-    0 0 0 4px
-    rgba(201,147,82,0.12);
+  box-shadow: 0 0 0 4px rgba(201, 147, 82, 0.12);
 
-  animation:
-    statusPulse
-    1.2s
-    ease-in-out
-    infinite;
+  animation: statusPulse 1.2s ease-in-out infinite;
 }
-
 
 /* =====================================================
    ERROR
@@ -2238,21 +2147,13 @@
 
   border-radius: 18px;
 
-  border:
-    1px solid
-    rgba(175,76,61,0.16);
+  border: 1px solid rgba(175, 76, 61, 0.16);
 
-  background:
-    rgba(255,248,246,0.92);
+  background: rgba(255, 248, 246, 0.92);
 
-  box-shadow:
-    0 12px 30px
-    rgba(100,45,35,0.07);
+  box-shadow: 0 12px 30px rgba(100, 45, 35, 0.07);
 
-  animation:
-    apiLoaderAppear
-    0.3s
-    ease-out;
+  animation: apiLoaderAppear 0.3s ease-out;
 }
 
 .api-error-icon {
@@ -2267,8 +2168,7 @@
 
   border-radius: 13px;
 
-  background:
-    rgba(175,76,61,0.09);
+  background: rgba(175, 76, 61, 0.09);
 
   font-size: 20px;
 }
@@ -2294,10 +2194,8 @@
 
   line-height: 1.5;
 
-  color:
-    rgba(121,55,46,0.67);
+  color: rgba(121, 55, 46, 0.67);
 }
-
 
 /* =====================================================
    RETRY
@@ -2310,12 +2208,9 @@
 
   border-radius: 10px;
 
-  border:
-    1px solid
-    rgba(121,55,46,0.16);
+  border: 1px solid rgba(121, 55, 46, 0.16);
 
-  background:
-    rgba(255,255,255,0.8);
+  background: rgba(255, 255, 255, 0.8);
 
   color: #79372e;
 
@@ -2332,17 +2227,12 @@
 }
 
 .api-retry-button:hover {
-  transform:
-    translateY(-2px);
+  transform: translateY(-2px);
 
-  background:
-    white;
+  background: white;
 
-  box-shadow:
-    0 7px 18px
-    rgba(121,55,46,0.1);
+  box-shadow: 0 7px 18px rgba(121, 55, 46, 0.1);
 }
-
 
 /* =====================================================
    SAVE BUTTONS
@@ -2353,12 +2243,9 @@
 
   border-radius: 11px;
 
-  border:
-    1px solid
-    rgba(31,78,95,0.16);
+  border: 1px solid rgba(31, 78, 95, 0.16);
 
-  background:
-    rgba(255,255,255,0.45);
+  background: rgba(255, 255, 255, 0.45);
 
   color: inherit;
 
@@ -2375,17 +2262,12 @@
 }
 
 .curioo-save-button:hover {
-  transform:
-    translateY(-2px);
+  transform: translateY(-2px);
 
-  background:
-    rgba(31,78,95,0.06);
+  background: rgba(31, 78, 95, 0.06);
 
-  box-shadow:
-    0 5px 15px
-    rgba(31,78,95,0.07);
+  box-shadow: 0 5px 15px rgba(31, 78, 95, 0.07);
 }
-
 
 /* =====================================================
    COLLECTION BUTTONS
@@ -2396,12 +2278,9 @@
 
   border-radius: 9px;
 
-  border:
-    1px solid
-    rgba(31,78,95,0.13);
+  border: 1px solid rgba(31, 78, 95, 0.13);
 
-  background:
-    rgba(255,255,255,0.38);
+  background: rgba(255, 255, 255, 0.38);
 
   color: inherit;
 
@@ -2415,11 +2294,9 @@
 }
 
 .curioo-collection-button:hover {
-  transform:
-    translateY(-2px);
+  transform: translateY(-2px);
 
-  background:
-    rgba(31,78,95,0.06);
+  background: rgba(31, 78, 95, 0.06);
 }
 
 .curioo-collection-button:disabled {
@@ -2430,25 +2307,20 @@
   transform: none;
 }
 
-
 /* =====================================================
    DARK MODE
 ===================================================== */
 
 .dark .api-loader-card {
-  border-color:
-    rgba(220,235,245,0.1);
+  border-color: rgba(220, 235, 245, 0.1);
 
-  background:
-    linear-gradient(
-      135deg,
-      rgba(18,32,43,0.94),
-      rgba(15,28,38,0.9)
-    );
+  background: linear-gradient(
+    135deg,
+    rgba(18, 32, 43, 0.94),
+    rgba(15, 28, 38, 0.9)
+  );
 
-  box-shadow:
-    0 18px 45px
-    rgba(0,0,0,0.3);
+  box-shadow: 0 18px 45px rgba(0, 0, 0, 0.3);
 }
 
 .dark .api-loader-content h3 {
@@ -2456,37 +2328,29 @@
 }
 
 .dark .api-loader-content p {
-  color:
-    rgba(229,237,242,0.55);
+  color: rgba(229, 237, 242, 0.55);
 }
 
 .dark .api-loader-status {
-  color:
-    rgba(229,237,242,0.4);
+  color: rgba(229, 237, 242, 0.4);
 }
 
 .dark .api-loader-track {
-  background:
-    rgba(220,235,245,0.09);
+  background: rgba(220, 235, 245, 0.09);
 }
 
 .dark .api-loader-core {
-  background:
-    rgba(220,235,245,0.07);
+  background: rgba(220, 235, 245, 0.07);
 }
 
 .dark .api-loader-orbit span {
-  border-color:
-    rgba(220,235,245,0.12);
+  border-color: rgba(220, 235, 245, 0.12);
 }
 
-
 .dark .api-error-card {
-  border-color:
-    rgba(255,130,110,0.13);
+  border-color: rgba(255, 130, 110, 0.13);
 
-  background:
-    rgba(54,29,27,0.8);
+  background: rgba(54, 29, 27, 0.8);
 }
 
 .dark .api-error-content h3 {
@@ -2494,106 +2358,78 @@
 }
 
 .dark .api-error-content p {
-  color:
-    rgba(255,210,202,0.64);
+  color: rgba(255, 210, 202, 0.64);
 }
 
 .dark .api-retry-button {
-  border-color:
-    rgba(255,170,155,0.18);
+  border-color: rgba(255, 170, 155, 0.18);
 
-  background:
-    rgba(255,255,255,0.05);
+  background: rgba(255, 255, 255, 0.05);
 
   color: #ffb2a5;
 }
 
 .dark .curioo-save-button,
 .dark .curioo-collection-button {
-  border-color:
-    rgba(220,235,245,0.12);
+  border-color: rgba(220, 235, 245, 0.12);
 
-  background:
-    rgba(255,255,255,0.035);
+  background: rgba(255, 255, 255, 0.035);
 }
-
 
 /* =====================================================
    ANIMATIONS
 ===================================================== */
 
 @keyframes apiLoaderAppear {
-
   from {
     opacity: 0;
 
-    transform:
-      translateY(10px);
+    transform: translateY(10px);
   }
 
   to {
     opacity: 1;
 
-    transform:
-      translateY(0);
+    transform: translateY(0);
   }
-
 }
 
-
 @keyframes apiProgress {
-
   0% {
-    transform:
-      translateX(-130%);
+    transform: translateX(-130%);
   }
 
   50% {
-    transform:
-      translateX(100%);
+    transform: translateX(100%);
   }
 
   100% {
-    transform:
-      translateX(300%);
+    transform: translateX(300%);
   }
-
 }
 
-
 @keyframes orbitSpin {
-
   from {
-    transform:
-      rotate(0deg);
+    transform: rotate(0deg);
   }
 
   to {
-    transform:
-      rotate(360deg);
+    transform: rotate(360deg);
   }
-
 }
 
-
 @keyframes corePulse {
-
   0%,
   100% {
-    transform:
-      scale(1);
+    transform: scale(1);
   }
 
   50% {
-    transform:
-      scale(1.08);
+    transform: scale(1.08);
   }
-
 }
 
-
 @keyframes statusPulse {
-
   0%,
   100% {
     opacity: 0.45;
@@ -2602,12 +2438,9 @@
   50% {
     opacity: 1;
   }
-
 }
 
-
 @keyframes apiShine {
-
   0% {
     left: -100%;
   }
@@ -2616,16 +2449,13 @@
   100% {
     left: 160%;
   }
-
 }
-
 
 /* =====================================================
    MOBILE
 ===================================================== */
 
 @media (max-width: 640px) {
-
   .api-loader-card {
     padding: 19px;
 
@@ -2663,7 +2493,6 @@
   .api-retry-button {
     margin-left: 58px;
   }
-
 }
 /* =========================================================
    CURIOO - FINAL SMALL WINDOW / SIDEBAR FIX
@@ -2685,7 +2514,6 @@ body {
   overflow-x: hidden !important;
 }
 
-
 /* =========================================================
    DESKTOP SIDEBAR
    ========================================================= */
@@ -2699,20 +2527,17 @@ body {
   z-index: 1000;
 }
 
-
 /* =========================================================
    IMPORTANT:
    REMOVE SIDEBAR SPACE ON SMALL WINDOWS
    ========================================================= */
 
 @media (max-width: 900px) {
-
   /* Hide the sidebar */
   .sidebar {
     display: none !important;
     transform: translateX(-100%) !important;
   }
-
 
   /* -----------------------------------------------
      REMOVE COMMON TAILWIND SIDEBAR MARGINS
@@ -2730,7 +2555,6 @@ body {
     padding-right: 12px !important;
   }
 
-
   /* Tailwind margin-left utilities */
   main[class*="ml-"],
   div[class*="ml-"],
@@ -2738,14 +2562,12 @@ body {
     margin-left: 0 !important;
   }
 
-
   /* Tailwind padding-left utilities */
   main[class*="pl-"],
   div[class*="pl-"],
   section[class*="pl-"] {
     padding-left: 12px !important;
   }
-
 
   /* -----------------------------------------------
      COMMON SIDEBAR CONTENT WRAPPERS
@@ -2768,7 +2590,6 @@ body {
     padding-right: 12px !important;
   }
 
-
   /* -----------------------------------------------
      FLEX LAYOUT
      ----------------------------------------------- */
@@ -2778,14 +2599,12 @@ body {
     width: 100% !important;
   }
 
-
   /* If parent uses flex */
   body > div,
   #root > div {
     max-width: 100% !important;
     min-width: 0 !important;
   }
-
 
   /* -----------------------------------------------
      CURIOO CENTER CONTENT
@@ -2799,7 +2618,6 @@ body {
     margin-right: auto !important;
   }
 
-
   /* -----------------------------------------------
      SEARCH CARD
      ----------------------------------------------- */
@@ -2810,7 +2628,6 @@ body {
     max-width: 100% !important;
     min-width: 0 !important;
   }
-
 
   /* -----------------------------------------------
      EXPLANATION CARD
@@ -2825,19 +2642,16 @@ body {
   }
 }
 
-
 /* =========================================================
    VERY SMALL WINDOW
    ========================================================= */
 
 @media (max-width: 600px) {
-
   main,
   [role="main"] {
     padding-left: 8px !important;
     padding-right: 8px !important;
   }
-
 
   .main-content,
   .content-area,
@@ -2847,7 +2661,6 @@ body {
     padding-right: 8px !important;
   }
 
-
   /* Search */
   .search-container,
   .search-row {
@@ -2855,25 +2668,21 @@ body {
     flex-wrap: wrap;
   }
 
-
   input {
     min-width: 0 !important;
     max-width: 100% !important;
   }
-
 
   button {
     max-width: 100%;
   }
 }
 
-
 /* =========================================================
    EXTRA SMALL
    ========================================================= */
 
 @media (max-width: 450px) {
-
   main,
   [role="main"] {
     padding-left: 6px !important;
@@ -2899,14 +2708,12 @@ body {
   overflow: hidden;
 }
 
-
 /* Recent heading */
 
 .sidebar-recent .sidebar-section-title {
   flex-shrink: 0;
   margin-bottom: 8px;
 }
-
 
 /* =========================================================
    SCROLLABLE RECENT LIST
@@ -2923,7 +2730,7 @@ body {
   max-height: 330px;
 
   overflow-y: auto;
-  overflow-x: hidden;
+  overflow-x: visible;
 
   padding-right: 5px;
 
@@ -2939,7 +2746,6 @@ body {
   scrollbar-color: rgba(120, 120, 120, 0.35) transparent;
 }
 
-
 /* =========================================================
    CHROME / EDGE SCROLLBAR
    ========================================================= */
@@ -2953,14 +2759,13 @@ body {
 }
 
 .sidebar-recent-list::-webkit-scrollbar-thumb {
-  background: rgba(120, 120, 120, 0.30);
+  background: rgba(120, 120, 120, 0.3);
   border-radius: 20px;
 }
 
 .sidebar-recent-list::-webkit-scrollbar-thumb:hover {
   background: rgba(120, 120, 120, 0.55);
 }
-
 
 /* =========================================================
    RECENT ITEM
@@ -2994,14 +2799,12 @@ body {
     transform 0.2s ease;
 }
 
-
 /* Hover */
 
 .sidebar-recent-item:hover {
   background: rgba(255, 255, 255, 0.65);
   transform: translateX(2px);
 }
-
 
 /* =========================================================
    TOPIC TEXT
@@ -3028,7 +2831,6 @@ body {
   overflow-wrap: anywhere;
 }
 
-
 /* =========================================================
    ARROW
    ========================================================= */
@@ -3046,12 +2848,10 @@ body {
     opacity 0.2s ease;
 }
 
-
 .sidebar-recent-item:hover .sidebar-recent-arrow {
   transform: translateX(3px);
   opacity: 1;
 }
-
 
 /* =========================================================
    EMPTY STATE
@@ -3065,7 +2865,6 @@ body {
 .sidebar-empty p {
   margin: 5px 0 0;
 }
-
 
 /* =========================================================
    DARK MODE
@@ -3087,21 +2886,17 @@ body {
   background: rgba(255, 255, 255, 0.4);
 }
 
-
 /* =========================================================
    SMALLER SIDEBAR
    ========================================================= */
 
 @media (max-height: 750px) {
-
   .sidebar-recent-list {
     max-height: 250px;
   }
 }
 
-
 @media (max-height: 600px) {
-
   .sidebar-recent-list {
     max-height: 190px;
   }

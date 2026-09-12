@@ -1,8 +1,10 @@
 function History({ items, onSelect }) {
-  if (items.length === 0) return null
+  if (items.length === 0) return null;
   return (
     <div className="animate-fade-in-up max-w-xl mx-auto mt-10">
-      <h2 className="font-display text-xs tracking-wide text-ink/50 dark:text-paper-dark/50 mb-2">recent</h2>
+      <h2 className="font-display text-xs tracking-wide text-ink/50 dark:text-paper-dark/50 mb-2">
+        recent
+      </h2>
       <div className="flex flex-col gap-2">
         {items.map((item) => (
           <button
@@ -15,6 +17,6 @@ function History({ items, onSelect }) {
         ))}
       </div>
     </div>
-  )
+  );
 }
-export default History
+export default History;

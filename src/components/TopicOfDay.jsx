@@ -8,21 +8,22 @@ const DAILY_TOPICS = [
   "how do seasons change",
   "how does a compass work",
   "how do plants know which way is up",
-  "how does a rainbow prism split light"
-]
+  "how does a rainbow prism split light",
+];
 
 function getTopicOfDay() {
-  const startOfYear = new Date(new Date().getFullYear(), 0, 0)
-  const dayOfYear = Math.floor((Date.now() - startOfYear) / 86400000)
-  return DAILY_TOPICS[dayOfYear % DAILY_TOPICS.length]
+  const startOfYear = new Date(new Date().getFullYear(), 0, 0);
+  const dayOfYear = Math.floor((Date.now() - startOfYear) / 86400000);
+  return DAILY_TOPICS[dayOfYear % DAILY_TOPICS.length];
 }
 
 function TopicOfDay({ onExplore }) {
-  const topic = getTopicOfDay()
+  const topic = getTopicOfDay();
   return (
     <div className="max-w-xl mx-auto mt-6 animate-fade-in-up bg-amber/10 border border-amber/30 rounded-md p-4 flex items-center justify-between gap-3 flex-wrap">
       <p className="font-body text-sm">
-        <span className="font-display text-amber">🌟 topic of the day:</span> {topic}
+        <span className="font-display text-amber">🌟 topic of the day:</span>{" "}
+        {topic}
       </p>
       <button
         onClick={() => onExplore(topic)}
@@ -31,6 +32,6 @@ function TopicOfDay({ onExplore }) {
         explore it
       </button>
     </div>
-  )
+  );
 }
-export default TopicOfDay
+export default TopicOfDay;

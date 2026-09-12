@@ -22,6 +22,6 @@ function ToneToggle({ tone, setTone }) {
         <span></span> like an engineer
       </button>
     </div>
-  )
+  );
 }
-export default ToneToggle
+export default ToneToggle;

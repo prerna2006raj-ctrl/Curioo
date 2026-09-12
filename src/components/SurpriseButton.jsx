@@ -8,14 +8,14 @@ const TOPICS = [
   "how does GPS know your location",
   "how does a battery store energy",
   "how does the internet actually work",
-  "how does a camera capture an image"
-]
+  "how does a camera capture an image",
+];
 
 function SurpriseButton({ onPick }) {
   const handleClick = () => {
-    const random = TOPICS[Math.floor(Math.random() * TOPICS.length)]
-    onPick(random)
-  }
+    const random = TOPICS[Math.floor(Math.random() * TOPICS.length)];
+    onPick(random);
+  };
 
   return (
     <button
@@ -24,6 +24,6 @@ function SurpriseButton({ onPick }) {
     >
       🎲 surprise me
     </button>
-  )
+  );
 }
-export default SurpriseButton
+export default SurpriseButton;

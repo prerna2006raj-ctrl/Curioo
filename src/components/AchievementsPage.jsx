@@ -1,24 +1,15 @@
-import React from "react"
+import React from "react";
 
-function AchievementsPage({
-  progress,
-  log,
-  streak,
-  longestStreak,
-  onBack
-}) {
-  const totalDiscoveries = log.length
+function AchievementsPage({ progress, log, streak, longestStreak, onBack }) {
+  const totalDiscoveries = log.length;
 
-  const totalQuizzes = progress?.total || 0
-  const correctAnswers = progress?.correct || 0
+  const totalQuizzes = progress?.total || 0;
+  const correctAnswers = progress?.correct || 0;
 
   const accuracy =
-    totalQuizzes > 0
-      ? Math.round((correctAnswers / totalQuizzes) * 100)
-      : 0
+    totalQuizzes > 0 ? Math.round((correctAnswers / totalQuizzes) * 100) : 0;
 
-  const perfectQuiz =
-    totalQuizzes > 0 && correctAnswers === totalQuizzes
+  const perfectQuiz = totalQuizzes > 0 && correctAnswers === totalQuizzes;
 
   const achievements = [
     {
@@ -29,7 +20,7 @@ function AchievementsPage({
       requirement: "1 discovery",
       unlocked: totalDiscoveries >= 1,
       progress: Math.min(totalDiscoveries, 1),
-      target: 1
+      target: 1,
     },
 
     {
@@ -40,7 +31,7 @@ function AchievementsPage({
       requirement: "3 days",
       unlocked: longestStreak >= 3,
       progress: Math.min(longestStreak, 3),
-      target: 3
+      target: 3,
     },
 
     {
@@ -51,7 +42,7 @@ function AchievementsPage({
       requirement: "7 days",
       unlocked: longestStreak >= 7,
       progress: Math.min(longestStreak, 7),
-      target: 7
+      target: 7,
     },
 
     {
@@ -62,7 +53,7 @@ function AchievementsPage({
       requirement: "10 discoveries",
       unlocked: totalDiscoveries >= 10,
       progress: Math.min(totalDiscoveries, 10),
-      target: 10
+      target: 10,
     },
 
     {
@@ -73,7 +64,7 @@ function AchievementsPage({
       requirement: "5 quizzes",
       unlocked: totalQuizzes >= 5,
       progress: Math.min(totalQuizzes, 5),
-      target: 5
+      target: 5,
     },
 
     {
@@ -85,7 +76,7 @@ function AchievementsPage({
       unlocked: accuracy >= 80,
       progress: Math.min(accuracy, 80),
       target: 80,
-      percentage: true
+      percentage: true,
     },
 
     {
@@ -97,7 +88,7 @@ function AchievementsPage({
       unlocked: perfectQuiz,
       progress: Math.min(accuracy, 100),
       target: 100,
-      percentage: true
+      percentage: true,
     },
 
     {
@@ -108,28 +99,22 @@ function AchievementsPage({
       requirement: "25 discoveries",
       unlocked: totalDiscoveries >= 25,
       progress: Math.min(totalDiscoveries, 25),
-      target: 25
-    }
-  ]
+      target: 25,
+    },
+  ];
 
   const unlockedCount = achievements.filter(
-    (achievement) => achievement.unlocked
-  ).length
+    (achievement) => achievement.unlocked,
+  ).length;
 
   return (
     <main className="max-w-5xl mx-auto px-4 pb-16">
-
       {/* Header */}
       <div className="flex items-center justify-between mb-8">
-
         <div>
-          <p className="text-sm opacity-50 mb-1">
-            your learning journey
-          </p>
+          <p className="text-sm opacity-50 mb-1">your learning journey</p>
 
-          <h2 className="text-3xl font-semibold">
-            🏆 Achievements
-          </h2>
+          <h2 className="text-3xl font-semibold">🏆 Achievements</h2>
 
           <p className="text-sm opacity-60 mt-2">
             {unlockedCount} of {achievements.length} badges unlocked
@@ -151,9 +136,7 @@ function AchievementsPage({
         >
           ← Back
         </button>
-
       </div>
-
 
       {/* Achievement summary */}
       <div
@@ -165,7 +148,6 @@ function AchievementsPage({
           mb-8
         "
       >
-
         <div
           className="
             rounded-2xl
@@ -177,20 +159,13 @@ function AchievementsPage({
             p-5
           "
         >
-          <p className="text-sm opacity-50">
-            Badges
-          </p>
+          <p className="text-sm opacity-50">Badges</p>
 
-          <p className="text-3xl font-semibold mt-2">
-            {unlockedCount}
-          </p>
+          <p className="text-3xl font-semibold mt-2">{unlockedCount}</p>
 
-          <p className="text-xs opacity-50 mt-1">
-            unlocked
-          </p>
+          <p className="text-xs opacity-50 mt-1">unlocked</p>
         </div>
 
-
         <div
           className="
             rounded-2xl
@@ -202,20 +177,15 @@ function AchievementsPage({
             p-5
           "
         >
-          <p className="text-sm opacity-50">
-            Current streak
-          </p>
+          <p className="text-sm opacity-50">Current streak</p>
 
-          <p className="text-3xl font-semibold mt-2">
-            🔥 {streak}
-          </p>
+          <p className="text-3xl font-semibold mt-2">🔥 {streak}</p>
 
           <p className="text-xs opacity-50 mt-1">
             {streak === 1 ? "day" : "days"}
           </p>
         </div>
 
-
         <div
           className="
             rounded-2xl
@@ -227,21 +197,13 @@ function AchievementsPage({
             p-5
           "
         >
-          <p className="text-sm opacity-50">
-            Best streak
-          </p>
+          <p className="text-sm opacity-50">Best streak</p>
 
-          <p className="text-3xl font-semibold mt-2">
-            🔥 {longestStreak}
-          </p>
+          <p className="text-3xl font-semibold mt-2">🔥 {longestStreak}</p>
 
-          <p className="text-xs opacity-50 mt-1">
-            personal best
-          </p>
+          <p className="text-xs opacity-50 mt-1">personal best</p>
         </div>
-
       </div>
-
 
       {/* Achievement grid */}
       <div
@@ -253,20 +215,14 @@ function AchievementsPage({
           gap-5
         "
       >
-
         {achievements.map((achievement) => {
-
           const percentage =
             achievement.target > 0
               ? Math.min(
                   100,
-                  Math.round(
-                    (achievement.progress /
-                      achievement.target) *
-                      100
-                  )
+                  Math.round((achievement.progress / achievement.target) * 100),
                 )
-              : 0
+              : 0;
 
           return (
             <div
@@ -297,7 +253,6 @@ function AchievementsPage({
                 }
               `}
             >
-
               {/* Status */}
               <div className="absolute top-4 right-4 text-xs">
                 {achievement.unlocked ? (
@@ -314,12 +269,9 @@ function AchievementsPage({
                     ✓ unlocked
                   </span>
                 ) : (
-                  <span className="opacity-40">
-                    🔒
-                  </span>
+                  <span className="opacity-40">🔒</span>
                 )}
               </div>
-
 
               {/* Icon */}
               <div
@@ -342,20 +294,15 @@ function AchievementsPage({
                 {achievement.icon}
               </div>
 
-
-              <h3 className="text-lg font-semibold">
-                {achievement.title}
-              </h3>
+              <h3 className="text-lg font-semibold">{achievement.title}</h3>
 
               <p className="text-sm opacity-60 mt-1 min-h-[40px]">
                 {achievement.description}
               </p>
 
-
               {/* Progress */}
               {!achievement.unlocked && (
                 <div className="mt-5">
-
                   <div className="flex justify-between text-xs opacity-50 mb-2">
                     <span>
                       {achievement.progress}
@@ -386,29 +333,24 @@ function AchievementsPage({
                         duration-500
                       "
                       style={{
-                        width: `${percentage}%`
+                        width: `${percentage}%`,
                       }}
                     />
                   </div>
-
                 </div>
               )}
-
 
               {achievement.unlocked && (
                 <p className="text-xs mt-5 opacity-50">
                   ✨ {achievement.requirement} achieved
                 </p>
               )}
-
             </div>
-          )
+          );
         })}
-
       </div>
-
     </main>
-  )
+  );
 }
 
-export default AchievementsPage
+export default AchievementsPage;

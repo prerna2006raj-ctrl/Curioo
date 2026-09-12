@@ -1,47 +1,52 @@
-import { useState } from "react"
+import { useState } from "react";
 
 function SearchBar({ topic, setTopic, onExplain, loading, kidMode, history }) {
-  const [listening, setListening] = useState(false)
-  const [showSuggestions, setShowSuggestions] = useState(false)
+  const [listening, setListening] = useState(false);
+  const [showSuggestions, setShowSuggestions] = useState(false);
 
   const handleVoiceInput = () => {
-    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition
+    const SpeechRecognition =
+      window.SpeechRecognition || window.webkitSpeechRecognition;
     if (!SpeechRecognition) {
-      alert("Voice input isn't supported in this browser. Try Chrome or Edge.")
-      return
+      alert("Voice input isn't supported in this browser. Try Chrome or Edge.");
+      return;
     }
 
-    const recognition = new SpeechRecognition()
-    recognition.lang = "en-US"
-    recognition.interimResults = false
-    recognition.maxAlternatives = 1
+    const recognition = new SpeechRecognition();
+    recognition.lang = "en-US";
+    recognition.interimResults = false;
+    recognition.maxAlternatives = 1;
 
-    recognition.onstart = () => setListening(true)
-    recognition.onend = () => setListening(false)
-    recognition.onerror = () => setListening(false)
+    recognition.onstart = () => setListening(true);
+    recognition.onend = () => setListening(false);
+    recognition.onerror = () => setListening(false);
     recognition.onresult = (event) => {
-      const spokenText = event.results[0][0].transcript
-      setTopic(spokenText)
-    }
+      const spokenText = event.results[0][0].transcript;
+      setTopic(spokenText);
+    };
 
-    recognition.start()
-  }
+    recognition.start();
+  };
 
   const handleKeyDown = (e) => {
     if (e.key === "Enter" && topic.trim() && !loading) {
-      setShowSuggestions(false)
-      onExplain()
+      setShowSuggestions(false);
+      onExplain();
     }
     if (e.key === "Escape") {
-      setShowSuggestions(false)
+      setShowSuggestions(false);
     }
-  }
+  };
 
   const matches = topic.trim()
     ? [...new Set(history.map((h) => h.topic))]
-        .filter((t) => t.toLowerCase().includes(topic.toLowerCase()) && t.toLowerCase() !== topic.toLowerCase())
+        .filter(
+          (t) =>
+            t.toLowerCase().includes(topic.toLowerCase()) &&
+            t.toLowerCase() !== topic.toLowerCase(),
+        )
         .slice(0, 4)
-    : []
+    : [];
 
   return (
     <div className="flex flex-col sm:flex-row gap-3 w-full">
@@ -50,8 +55,8 @@ function SearchBar({ topic, setTopic, onExplain, loading, kidMode, history }) {
           type="text"
           value={topic}
           onChange={(e) => {
-            setTopic(e.target.value)
-            setShowSuggestions(true)
+            setTopic(e.target.value);
+            setShowSuggestions(true);
           }}
           onFocus={() => setShowSuggestions(true)}
           onBlur={() => setTimeout(() => setShowSuggestions(false), 150)}
@@ -82,8 +87,8 @@ function SearchBar({ topic, setTopic, onExplain, loading, kidMode, history }) {
               <button
                 key={m}
                 onMouseDown={() => {
-                  setTopic(m)
-                  setShowSuggestions(false)
+                  setTopic(m);
+                  setShowSuggestions(false);
                 }}
                 className="font-body block w-full text-left px-4 py-2 text-sm hover:bg-line/5 dark:hover:bg-line-dark/10 text-ink dark:text-paper-dark"
               >
@@ -105,6 +110,6 @@ function SearchBar({ topic, setTopic, onExplain, loading, kidMode, history }) {
         {loading ? "Thinking…" : "Explain"}
       </button>
     </div>
-  )
+  );
 }
-export default SearchBar
+export default SearchBar;

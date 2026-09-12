@@ -1,1294 +1,831 @@
-import {
-  useState,
-  useEffect
-} from "react"
-
-import SearchBar from "./components/SearchBar"
-import ResultCard from "./components/ResultCard"
-import ToneToggle from "./components/ToneToggle"
-import SurpriseButton from "./components/SurpriseButton"
-import CategoryBrowser from "./components/CategoryBrowser"
-import ThemeToggle from "./components/ThemeToggle"
-import FavoritesPage from "./components/FavoritesPage"
-import AuthPage from "./components/AuthPage"
-import TopicOfDay from "./components/TopicOfDay"
-import QuizCard from "./components/QuizCard"
-import ProgressPage from "./components/ProgressPage"
-import LearningLibrary from "./components/LearningLibrary"
-import QuizDifficulty from "./components/QuizDifficulty"
-import ApiLoader from "./components/ApiLoader"
-import ApiError from "./components/ApiError"
-import WelcomePage from "./components/WelcomePage"
-import LearningMode from "./components/LearningMode"
-import {
-  getExplanation,
-  getQuiz,
-  getLearningLesson
-} from "./services/gemini"
-
+import { useState, useEffect } from "react";
+import { createPortal } from "react-dom";
+import SearchBar from "./components/SearchBar";
+import ResultCard from "./components/ResultCard";
+import ToneToggle from "./components/ToneToggle";
+import SurpriseButton from "./components/SurpriseButton";
+import CategoryBrowser from "./components/CategoryBrowser";
+import ThemeToggle from "./components/ThemeToggle";
+import FavoritesPage from "./components/FavoritesPage";
+import AuthPage from "./components/AuthPage";
+import TopicOfDay from "./components/TopicOfDay";
+import QuizCard from "./components/QuizCard";
+import ProgressPage from "./components/ProgressPage";
+import LearningLibrary from "./components/LearningLibrary";
+import QuizDifficulty from "./components/QuizDifficulty";
+import ApiLoader from "./components/ApiLoader";
+import ApiError from "./components/ApiError";
+import WelcomePage from "./components/WelcomePage";
+import LearningMode from "./components/LearningMode";
+import { getExplanation, getQuiz, getLearningLesson } from "./services/gemini";
 
 function App() {
-
   // =====================================================
   // BASIC
   // =====================================================
 
-  const [topic, setTopic] =
-    useState("")
+  const [topic, setTopic] = useState("");
 
-  const [tone, setTone] =
-    useState("kid")
+  const [tone, setTone] = useState("kid");
 
-  const [result, setResult] =
-    useState("")
+  const [result, setResult] = useState("");
 
-  const [loading, setLoading] =
-    useState(false)
+  const [loading, setLoading] = useState(false);
 
-  const [error, setError] =
-    useState("")
+  const [error, setError] = useState("");
 
-  const [showWelcome, setShowWelcome] = useState(true)
+  const [showWelcome, setShowWelcome] = useState(true);
 
-  
   // =====================================================
   // HISTORY
   // =====================================================
 
-  const [history, setHistory] =
-    useState(() => {
+  const [history, setHistory] = useState(() => {
+    const saved = localStorage.getItem("curioo-history");
 
-      const saved =
-        localStorage.getItem(
-          "curioo-history"
-        )
-
-      return saved
-        ? JSON.parse(saved)
-        : []
-    })
-
-
+    return saved ? JSON.parse(saved) : [];
+  });
+  const [recentMenu, setRecentMenu] = useState(null);
+  const [recentMenuPosition, setRecentMenuPosition] = useState({
+    top: 0,
+    left: 0,
+  });
+  const [editingRecent, setEditingRecent] = useState(null);
+  const [editRecentName, setEditRecentName] = useState("");
+  const [pinnedTopics, setPinnedTopics] = useState(() => {
+    const saved = localStorage.getItem("curioo-pinned-topics");
+    return saved ? JSON.parse(saved) : [];
+  });
   // =====================================================
   // VIEW
   // =====================================================
 
-  const [view, setView] =
-    useState("home")
+  const [view, setView] = useState("home");
 
-
-  const [relatedTopics, setRelatedTopics] =
-    useState([])
-
+  const [relatedTopics, setRelatedTopics] = useState([]);
 
   // =====================================================
   // QUIZ
   // =====================================================
 
-  const [quiz, setQuiz] =
-    useState(null)
+  const [quiz, setQuiz] = useState(null);
 
-  const [quizLoading, setQuizLoading] =
-    useState(false)
+  const [quizLoading, setQuizLoading] = useState(false);
 
+  const [learningMode, setLearningMode] = useState(false);
+  const [lessonStep, setLessonStep] = useState(0);
+  const [lesson, setLesson] = useState([]);
 
-  const [learningMode, setLearningMode] = useState(false)
-  const [lessonStep, setLessonStep] = useState(0)
-  const [lesson, setLesson] = useState([])
-
-  const [explainAgainLoading, setExplainAgainLoading] = useState(false)
+  const [explainAgainLoading, setExplainAgainLoading] = useState(false);
   // =====================================================
   // LOG
   // =====================================================
 
-  const [log, setLog] =
-    useState(() => {
+  const [log, setLog] = useState(() => {
+    const saved = localStorage.getItem("curioo-log");
 
-      const saved =
-        localStorage.getItem(
-          "curioo-log"
-        )
-
-      return saved
-        ? JSON.parse(saved)
-        : []
-    })
-
+    return saved ? JSON.parse(saved) : [];
+  });
 
   // =====================================================
   // FAVORITES
   // =====================================================
 
-  const [favorites, setFavorites] =
-    useState(() => {
+  const [favorites, setFavorites] = useState(() => {
+    const saved = localStorage.getItem("curioo-favorites");
 
-      const saved =
-        localStorage.getItem(
-          "curioo-favorites"
-        )
-
-      return saved
-        ? JSON.parse(saved)
-        : []
-    })
-
+    return saved ? JSON.parse(saved) : [];
+  });
 
   // =====================================================
   // THEME
   // =====================================================
 
-  const [dark, setDark] =
-    useState(() => {
-
-      return (
-        localStorage.getItem(
-          "curioo-theme"
-        ) === "dark"
-      )
-
-    })
-
+  const [dark, setDark] = useState(() => {
+    return localStorage.getItem("curioo-theme") === "dark";
+  });
 
   // =====================================================
   // USER
   // =====================================================
 
-  const [currentUser, setCurrentUser] =
-    useState(() => {
+  const [currentUser, setCurrentUser] = useState(() => {
+    const saved = localStorage.getItem("curioo-current-user");
 
-      const saved =
-        localStorage.getItem(
-          "curioo-current-user"
-        )
-
-      return saved
-        ? JSON.parse(saved)
-        : null
-    })
-
+    return saved ? JSON.parse(saved) : null;
+  });
 
   // =====================================================
   // PROGRESS
   // =====================================================
 
-    const [progress, setProgress] = useState(() => {
-  const saved = localStorage.getItem("curioo-progress")
+  const [progress, setProgress] = useState(() => {
+    const saved = localStorage.getItem("curioo-progress");
 
-  if (saved) {
-    const parsed = JSON.parse(saved)
+    if (saved) {
+      const parsed = JSON.parse(saved);
 
-    const total = Number(parsed.total) || 0
-    const correct = Number(parsed.correct) || 0
-    const timedOut = Number(parsed.timedOut) || 0
+      const total = Number(parsed.total) || 0;
+      const correct = Number(parsed.correct) || 0;
+      const timedOut = Number(parsed.timedOut) || 0;
+
+      return {
+        total,
+        correct,
+        timedOut,
+
+        // Repair old progress data
+        questionsAnswered:
+          parsed.questionsAnswered ?? Math.max(0, total - timedOut),
+
+        byTopic: parsed.byTopic || {},
+      };
+    }
 
     return {
-      total,
-      correct,
-      timedOut,
+      total: 0,
+      questionsAnswered: 0,
+      correct: 0,
+      timedOut: 0,
+      byTopic: {},
+    };
+  });
 
-      // Repair old progress data
-      questionsAnswered:
-        parsed.questionsAnswered ??
-        Math.max(0, total - timedOut),
+  const [dailyGoal, setDailyGoal] = useState(() => {
+    const saved = localStorage.getItem("curioo-daily-goal");
+    return saved ? Number(saved) : 3;
+  });
+  const [showDifficulty, setShowDifficulty] = useState(false);
 
-      byTopic: parsed.byTopic || {}
-    }
-  }
-
-  return {
-    total: 0,
-    questionsAnswered: 0,
-    correct: 0,
-    timedOut: 0,
-    byTopic: {}
-  }
- 
-})
-
-
-    const [dailyGoal, setDailyGoal] = useState(() => {
-      const saved = localStorage.getItem("curioo-daily-goal")
-      return saved ? Number(saved) : 3
-    })
-    const [showDifficulty, setShowDifficulty] =
-  useState(false)
-
-const [quizDifficulty, setQuizDifficulty] =
-  useState(null)
+  const [quizDifficulty, setQuizDifficulty] = useState(null);
   // =====================================================
   // COLLECTIONS
   // =====================================================
 
-  const [collections, setCollections] =
-    useState(() => {
+  const [collections, setCollections] = useState(() => {
+    const saved = localStorage.getItem("curioo-collections");
 
-      const saved =
-        localStorage.getItem(
-          "curioo-collections"
-        )
+    if (saved) {
+      return JSON.parse(saved);
+    }
 
-      if (saved) {
-        return JSON.parse(saved)
-      }
-
-      return [
-        {
-          id: 1,
-          name: "Science",
-          items: []
-        },
-        {
-          id: 2,
-          name: "Java",
-          items: []
-        },
-        {
-          id: 3,
-          name: "AI",
-          items: []
-        },
-        {
-          id: 4,
-          name: "Space",
-          items: []
-        }
-      ]
-
-    })
-
+    return [
+      {
+        id: 1,
+        name: "Science",
+        items: [],
+      },
+      {
+        id: 2,
+        name: "Java",
+        items: [],
+      },
+      {
+        id: 3,
+        name: "AI",
+        items: [],
+      },
+      {
+        id: 4,
+        name: "Space",
+        items: [],
+      },
+    ];
+  });
 
   // =====================================================
   // BOOKMARKS
   // =====================================================
 
-  const [bookmarks, setBookmarks] =
-    useState(() => {
+  const [bookmarks, setBookmarks] = useState(() => {
+    const saved = localStorage.getItem("curioo-bookmarks");
 
-      const saved =
-        localStorage.getItem(
-          "curioo-bookmarks"
-        )
-
-      return saved
-        ? JSON.parse(saved)
-        : []
-    })
-
+    return saved ? JSON.parse(saved) : [];
+  });
 
   // =====================================================
   // LEARN LATER
   // =====================================================
 
-  const [learnLater, setLearnLater] =
-    useState(() => {
+  const [learnLater, setLearnLater] = useState(() => {
+    const saved = localStorage.getItem("curioo-learn-later");
 
-      const saved =
-        localStorage.getItem(
-          "curioo-learn-later"
-        )
-
-      return saved
-        ? JSON.parse(saved)
-        : []
-    })
-
+    return saved ? JSON.parse(saved) : [];
+  });
 
   // =====================================================
   // LOCAL STORAGE
   // =====================================================
 
   useEffect(() => {
-
-    localStorage.setItem(
-      "curioo-history",
-      JSON.stringify(history)
-    )
-
-  }, [history])
-
+    localStorage.setItem("curioo-history", JSON.stringify(history));
+  }, [history]);
 
   useEffect(() => {
-
-    localStorage.setItem(
-      "curioo-favorites",
-      JSON.stringify(favorites)
-    )
-
-  }, [favorites])
-
+    localStorage.setItem("curioo-favorites", JSON.stringify(favorites));
+  }, [favorites]);
 
   useEffect(() => {
+    document.documentElement.classList.toggle("dark", dark);
 
-    document.documentElement.classList.toggle(
-      "dark",
-      dark
-    )
-
-    localStorage.setItem(
-      "curioo-theme",
-      dark
-        ? "dark"
-        : "light"
-    )
-
-  }, [dark])
-
+    localStorage.setItem("curioo-theme", dark ? "dark" : "light");
+  }, [dark]);
 
   useEffect(() => {
-
-    localStorage.setItem(
-      "curioo-log",
-      JSON.stringify(log)
-    )
-
-  }, [log])
-
+    localStorage.setItem("curioo-log", JSON.stringify(log));
+  }, [log]);
 
   useEffect(() => {
-
-    localStorage.setItem(
-      "curioo-progress",
-      JSON.stringify(progress)
-    )
-
-  }, [progress])
+    localStorage.setItem("curioo-progress", JSON.stringify(progress));
+  }, [progress]);
   useEffect(() => {
-  localStorage.setItem(
-    "curioo-daily-goal",
-    String(dailyGoal)
-  )
-}, [dailyGoal])
+    localStorage.setItem("curioo-daily-goal", String(dailyGoal));
+  }, [dailyGoal]);
 
   useEffect(() => {
-
-    localStorage.setItem(
-      "curioo-collections",
-      JSON.stringify(collections)
-    )
-
-  }, [collections])
-
+    localStorage.setItem("curioo-collections", JSON.stringify(collections));
+  }, [collections]);
 
   useEffect(() => {
-
-    localStorage.setItem(
-      "curioo-bookmarks",
-      JSON.stringify(bookmarks)
-    )
-
-  }, [bookmarks])
-
+    localStorage.setItem("curioo-bookmarks", JSON.stringify(bookmarks));
+  }, [bookmarks]);
 
   useEffect(() => {
-
-    localStorage.setItem(
-      "curioo-learn-later",
-      JSON.stringify(learnLater)
-    )
-
-  }, [learnLater])
-
-
+    localStorage.setItem("curioo-learn-later", JSON.stringify(learnLater));
+  }, [learnLater]);
+  useEffect(() => {
+    localStorage.setItem("curioo-pinned-topics", JSON.stringify(pinnedTopics));
+  }, [pinnedTopics]);
   // =====================================================
   // EXPLAIN
   // =====================================================
 
-  const handleExplain =
-    async (
-      customTopic
-    ) => {
+  const handleExplain = async (customTopic) => {
+    const searchTopic = (customTopic || topic).trim();
 
-      const searchTopic =
-        (
-          customTopic ||
-          topic
-        ).trim()
+    if (!searchTopic) {
+      setError("Please enter a topic first.");
 
-
-      if (!searchTopic) {
-
-        setError(
-          "Please enter a topic first."
-        )
-
-        return
-      }
-
-
-      // Prevent duplicate requests
-
-      if (loading) {
-        return
-      }
-
-
-      setLoading(true)
-
-      setError("")
-
-      setRelatedTopics([])
-
-      setQuiz(null)
-
-
-      try {
-
-        const {
-          text,
-          related
-        } =
-          await getExplanation(
-            searchTopic,
-            tone
-          )
-
-
-        setTopic(
-          searchTopic
-        )
-
-        setResult(
-          text
-        )
-
-        setRelatedTopics(
-          related || []
-        )
-
-
-        // HISTORY
-
-        setHistory(
-          (prev) => [
-
-            {
-              topic:
-                searchTopic,
-
-              text,
-
-              id:
-                Date.now()
-            },
-
-            ...prev.filter(
-              (item) =>
-                item.topic.toLowerCase() !==
-                searchTopic.toLowerCase()
-            )
-
-          ]
-        )
-
-
-        // LOG
-
-        setLog(
-          (prev) => [
-
-            ...prev,
-
-            {
-              topic:
-                searchTopic,
-
-              timestamp:
-                Date.now()
-            }
-
-          ]
-        )
-
-
-      } catch (err) {
-
-        console.error(
-          "Curioo API error:",
-          err
-        )
-
-
-        if (
-          err.message ===
-          "TIMEOUT"
-        ) {
-
-          setError(
-            "The AI is taking longer than expected. Please try again."
-          )
-
-        } else if (
-          err.message ===
-          "RATE_LIMIT"
-        ) {
-
-          setError(
-            "Too many requests right now. Please wait a little and try again."
-          )
-
-        } else if (
-          err.message ===
-          "API_KEY_MISSING"
-        ) {
-
-          setError(
-            "Gemini API key is missing. Check your .env file."
-          )
-
-        } else if (
-          err.message ===
-          "API_AUTH"
-        ) {
-
-          setError(
-            "Your Gemini API key is invalid or not authorized."
-          )
-
-        } else if (
-          err.message ===
-          "SERVER_ERROR"
-        ) {
-
-          setError(
-            "The AI service is temporarily unavailable. Please try again."
-          )
-
-        } else {
-
-          setError(
-            "Couldn't get an explanation right now. Please try again."
-          )
-
-        }
-
-      } finally {
-
-        setLoading(false)
-
-      }
-
+      return;
     }
 
+    // Prevent duplicate requests
+
+    if (loading) {
+      return;
+    }
+
+    setLoading(true);
+
+    setError("");
+
+    setRelatedTopics([]);
+
+    setQuiz(null);
+
+    try {
+      const { text, related } = await getExplanation(searchTopic, tone);
+
+      setTopic(searchTopic);
+
+      setResult(text);
+
+      setRelatedTopics(related || []);
+
+      // HISTORY
+
+      setHistory((prev) => [
+        {
+          topic: searchTopic,
+
+          text,
+
+          id: Date.now(),
+        },
+
+        ...prev.filter(
+          (item) => item.topic.toLowerCase() !== searchTopic.toLowerCase(),
+        ),
+      ]);
+
+      // LOG
+
+      setLog((prev) => [
+        ...prev,
+
+        {
+          topic: searchTopic,
+
+          timestamp: Date.now(),
+        },
+      ]);
+    } catch (err) {
+      console.error("Curioo API error:", err);
+
+      if (err.message === "TIMEOUT") {
+        setError("The AI is taking longer than expected. Please try again.");
+      } else if (err.message === "RATE_LIMIT") {
+        setError(
+          "Too many requests right now. Please wait a little and try again.",
+        );
+      } else if (err.message === "API_KEY_MISSING") {
+        setError("Gemini API key is missing. Check your .env file.");
+      } else if (err.message === "API_AUTH") {
+        setError("Your Gemini API key is invalid or not authorized.");
+      } else if (err.message === "SERVER_ERROR") {
+        setError(
+          "The AI service is temporarily unavailable. Please try again.",
+        );
+      } else {
+        setError("Couldn't get an explanation right now. Please try again.");
+      }
+    } finally {
+      setLoading(false);
+    }
+  };
 
   // =====================================================
   // RETRY
   // =====================================================
 
-  const handleRetry =
-    () => {
-
-      if (!topic.trim()) {
-        return
-      }
-
-      handleExplain(
-        topic
-      )
-
+  const handleRetry = () => {
+    if (!topic.trim()) {
+      return;
     }
+
+    handleExplain(topic);
+  };
   const startLearningMode = async () => {
-      if (!topic.trim()) return
+    if (!topic.trim()) return;
 
-      setExplainAgainLoading(true)
-      setError("")
-
-      try {
-        const { steps } = await getLearningLesson(
-          topic,
-          tone
-        )
-
-        const lessonSteps = steps.map(
-          (step) => `${step.title}: ${step.text}`
-        )
-
-        setLesson(lessonSteps)
-        setLessonStep(0)
-        setLearningMode(true)
-      } catch (err) {
-        console.error("Learning Mode error:", err)
-        setError("Couldn't start learning mode. Try again.")
-      } finally {
-        setExplainAgainLoading(false)
-      }
-    }
-  const explainAgain = async (style) => {
-    if (!topic.trim()) return
-
-    setExplainAgainLoading(true)
-    setError("")
+    setExplainAgainLoading(true);
+    setError("");
 
     try {
-      const { text, related } = await getExplanation(
-        topic,
-        style
-      )
+      const { steps } = await getLearningLesson(topic, tone);
 
-      setResult(text)
-      setRelatedTopics(related || [])
+      const lessonSteps = steps.map((step) => `${step.title}: ${step.text}`);
+
+      setLesson(lessonSteps);
+      setLessonStep(0);
+      setLearningMode(true);
+    } catch (err) {
+      console.error("Learning Mode error:", err);
+      setError("Couldn't start learning mode. Try again.");
+    } finally {
+      setExplainAgainLoading(false);
+    }
+  };
+  const explainAgain = async (style) => {
+    if (!topic.trim()) return;
+
+    setExplainAgainLoading(true);
+    setError("");
+
+    try {
+      const { text, related } = await getExplanation(topic, style);
+
+      setResult(text);
+      setRelatedTopics(related || []);
 
       setHistory((prev) => [
         {
           topic: topic,
           text,
-          id: Date.now()
+          id: Date.now(),
         },
-        ...prev
-      ])
+        ...prev,
+      ]);
     } catch (err) {
-      setError("Couldn't generate the new explanation. Try again.")
+      setError("Couldn't generate the new explanation. Try again.");
     } finally {
-      setExplainAgainLoading(false)
+      setExplainAgainLoading(false);
     }
-  }
+  };
   // =====================================================
   // FAVORITE
   // =====================================================
 
-  const toggleFavorite =
-    (item) => {
+  const toggleFavorite = (item) => {
+    setFavorites((prev) => {
+      const exists = prev.find((f) => f.topic === item.topic);
 
-      setFavorites(
-        (prev) => {
+      if (exists) {
+        return prev.filter((f) => f.topic !== item.topic);
+      }
 
-          const exists =
-            prev.find(
-              (f) =>
-                f.topic ===
-                item.topic
-            )
+      return [
+        {
+          ...item,
+          id: item.id || Date.now(),
+        },
 
-
-          if (exists) {
-
-            return prev.filter(
-              (f) =>
-                f.topic !==
-                item.topic
-            )
-
-          }
-
-
-          return [
-            {
-              ...item,
-              id:
-                item.id ||
-                Date.now()
-            },
-
-            ...prev
-          ]
-
-        }
-      )
-
-    }
-
+        ...prev,
+      ];
+    });
+  };
 
   // =====================================================
   // BOOKMARK
   // =====================================================
 
-  const toggleBookmark =
-    () => {
-
-      if (
-        !topic.trim() ||
-        !result
-      ) {
-        return
-      }
-
-
-      setBookmarks(
-        (prev) => {
-
-          const exists =
-            prev.find(
-              (item) =>
-                item.topic.toLowerCase() ===
-                topic.toLowerCase()
-            )
-
-
-          if (exists) {
-
-            return prev.filter(
-              (item) =>
-                item.topic.toLowerCase() !==
-                topic.toLowerCase()
-            )
-
-          }
-
-
-          return [
-            {
-              id:
-                Date.now(),
-
-              topic,
-
-              text:
-                result,
-
-              savedAt:
-                Date.now()
-            },
-
-            ...prev
-          ]
-
-        }
-      )
-
+  const toggleBookmark = () => {
+    if (!topic.trim() || !result) {
+      return;
     }
 
+    setBookmarks((prev) => {
+      const exists = prev.find(
+        (item) => item.topic.toLowerCase() === topic.toLowerCase(),
+      );
+
+      if (exists) {
+        return prev.filter(
+          (item) => item.topic.toLowerCase() !== topic.toLowerCase(),
+        );
+      }
+
+      return [
+        {
+          id: Date.now(),
+
+          topic,
+
+          text: result,
+
+          savedAt: Date.now(),
+        },
+
+        ...prev,
+      ];
+    });
+  };
 
   // =====================================================
   // LEARN LATER
   // =====================================================
 
-  const toggleLearnLater =
-    () => {
-
-      if (
-        !topic.trim() ||
-        !result
-      ) {
-        return
-      }
-
-
-      setLearnLater(
-        (prev) => {
-
-          const exists =
-            prev.find(
-              (item) =>
-                item.topic.toLowerCase() ===
-                topic.toLowerCase()
-            )
-
-
-          if (exists) {
-
-            return prev.filter(
-              (item) =>
-                item.topic.toLowerCase() !==
-                topic.toLowerCase()
-            )
-
-          }
-
-
-          return [
-            {
-              id:
-                Date.now(),
-
-              topic,
-
-              text:
-                result,
-
-              savedAt:
-                Date.now()
-            },
-
-            ...prev
-          ]
-
-        }
-      )
-
+  const toggleLearnLater = () => {
+    if (!topic.trim() || !result) {
+      return;
     }
 
+    setLearnLater((prev) => {
+      const exists = prev.find(
+        (item) => item.topic.toLowerCase() === topic.toLowerCase(),
+      );
+
+      if (exists) {
+        return prev.filter(
+          (item) => item.topic.toLowerCase() !== topic.toLowerCase(),
+        );
+      }
+
+      return [
+        {
+          id: Date.now(),
+
+          topic,
+
+          text: result,
+
+          savedAt: Date.now(),
+        },
+
+        ...prev,
+      ];
+    });
+  };
 
   // =====================================================
   // COLLECTION
   // =====================================================
 
-  const saveToCollection =
-    (collectionId) => {
-
-      if (
-        !topic.trim() ||
-        !result
-      ) {
-        return
-      }
-
-
-      setCollections(
-        (prev) =>
-
-          prev.map(
-            (collection) => {
-
-              if (
-                collection.id !==
-                collectionId
-              ) {
-                return collection
-              }
-
-
-              const exists =
-                collection.items.some(
-                  (item) =>
-                    item.topic.toLowerCase() ===
-                    topic.toLowerCase()
-                )
-
-
-              if (exists) {
-                return collection
-              }
-
-
-              return {
-                ...collection,
-
-                items: [
-
-                  {
-                    id:
-                      Date.now(),
-
-                    topic,
-
-                    text:
-                      result,
-
-                    savedAt:
-                      Date.now()
-                  },
-
-                  ...collection.items
-
-                ]
-              }
-
-            }
-          )
-      )
-
+  const saveToCollection = (collectionId) => {
+    if (!topic.trim() || !result) {
+      return;
     }
 
+    setCollections((prev) =>
+      prev.map((collection) => {
+        if (collection.id !== collectionId) {
+          return collection;
+        }
+
+        const exists = collection.items.some(
+          (item) => item.topic.toLowerCase() === topic.toLowerCase(),
+        );
+
+        if (exists) {
+          return collection;
+        }
+
+        return {
+          ...collection,
+
+          items: [
+            {
+              id: Date.now(),
+
+              topic,
+
+              text: result,
+
+              savedAt: Date.now(),
+            },
+
+            ...collection.items,
+          ],
+        };
+      }),
+    );
+  };
 
   // =====================================================
   // QUIZ
   // =====================================================
 
   const handleQuiz = () => {
+    if (!topic.trim() || quizLoading) {
+      return;
+    }
 
-        if (!topic.trim() || quizLoading) {
-          return
-        }
+    // Hide any previous quiz
+    setQuiz(null);
 
-        // Hide any previous quiz
-        setQuiz(null)
+    // Show difficulty popup first
+    setShowDifficulty(true);
+  };
+  const handleDifficultySelect = async (selectedDifficulty) => {
+    setShowDifficulty(false);
 
-        // Show difficulty popup first
-        setShowDifficulty(true)
-      }
-      const handleDifficultySelect = async (selectedDifficulty) => {
+    setQuizDifficulty(selectedDifficulty);
 
-  setShowDifficulty(false)
+    setQuizLoading(true);
 
-  setQuizDifficulty(selectedDifficulty)
+    try {
+      const q = await getQuiz(topic, selectedDifficulty);
 
-  setQuizLoading(true)
+      setQuiz(q);
+    } catch (err) {
+      console.error("Quiz error:", err);
 
-  try {
-
-    const q = await getQuiz(
-      topic,
-      selectedDifficulty
-    )
-
-    setQuiz(q)
-
-  } catch (err) {
-
-    console.error(
-      "Quiz error:",
-      err
-    )
-
-    alert(
-      err.message === "RATE_LIMIT"
-        ? "Too many requests. Please wait and try again."
-        : "Couldn't load the quiz. Please try again."
-    )
-
-  } finally {
-
-    setQuizLoading(false)
-
-  }
-}
+      alert(
+        err.message === "RATE_LIMIT"
+          ? "Too many requests. Please wait and try again."
+          : "Couldn't load the quiz. Please try again.",
+      );
+    } finally {
+      setQuizLoading(false);
+    }
+  };
 
   // =====================================================
   // QUIZ COMPLETE
   // =====================================================
 
-  const handleQuizComplete = (
-  isCorrect,
-  didTimeOut
-) => {
-  setProgress((prev) => {
-
-    const previousTopic =
-      prev.byTopic?.[topic] || {
+  const handleQuizComplete = (isCorrect, didTimeOut) => {
+    setProgress((prev) => {
+      const previousTopic = prev.byTopic?.[topic] || {
         attempts: 0,
         correct: 0,
         answered: 0,
-        timedOut: 0
-      }
+        timedOut: 0,
+      };
 
-    const previousAnswered =
-      Number(prev.questionsAnswered) || 0
+      const previousAnswered = Number(prev.questionsAnswered) || 0;
 
-    const previousCorrect =
-      Number(prev.correct) || 0
+      const previousCorrect = Number(prev.correct) || 0;
 
-    const previousTotal =
-      Number(prev.total) || 0
+      const previousTotal = Number(prev.total) || 0;
 
-    const previousTimedOut =
-      Number(prev.timedOut) || 0
+      const previousTimedOut = Number(prev.timedOut) || 0;
 
-    return {
-      ...prev,
+      return {
+        ...prev,
 
-      // Every finished quiz counts
-      total:
-        previousTotal + 1,
+        // Every finished quiz counts
+        total: previousTotal + 1,
 
-      // Selected answer = answered
-      // Timeout = NOT answered
-      questionsAnswered:
-        previousAnswered +
-        (didTimeOut ? 0 : 1),
+        // Selected answer = answered
+        // Timeout = NOT answered
+        questionsAnswered: previousAnswered + (didTimeOut ? 0 : 1),
 
-      // Correct selected answer
-      correct:
-        previousCorrect +
-        (isCorrect ? 1 : 0),
+        // Correct selected answer
+        correct: previousCorrect + (isCorrect ? 1 : 0),
 
-      // Timeout count
-      timedOut:
-        previousTimedOut +
-        (didTimeOut ? 1 : 0),
+        // Timeout count
+        timedOut: previousTimedOut + (didTimeOut ? 1 : 0),
 
-      byTopic: {
-        ...prev.byTopic,
+        byTopic: {
+          ...prev.byTopic,
 
-        [topic]: {
-          attempts:
-            (Number(previousTopic.attempts) || 0) + 1,
+          [topic]: {
+            attempts: (Number(previousTopic.attempts) || 0) + 1,
 
-          answered:
-            (Number(previousTopic.answered) || 0) +
-            (didTimeOut ? 0 : 1),
+            answered:
+              (Number(previousTopic.answered) || 0) + (didTimeOut ? 0 : 1),
 
-          correct:
-            (Number(previousTopic.correct) || 0) +
-            (isCorrect ? 1 : 0),
+            correct: (Number(previousTopic.correct) || 0) + (isCorrect ? 1 : 0),
 
-          timedOut:
-            (Number(previousTopic.timedOut) || 0) +
-            (didTimeOut ? 1 : 0)
-        }
-      }
-    }
-  })
-}
-
-
+            timedOut:
+              (Number(previousTopic.timedOut) || 0) + (didTimeOut ? 1 : 0),
+          },
+        },
+      };
+    });
+  };
 
   // =====================================================
   // STREAK
   // =====================================================
 
-  const getDateKey =
-    (timestamp) => {
+  const getDateKey = (timestamp) => {
+    const date = new Date(timestamp);
 
-      const date =
-        new Date(timestamp)
+    return (
+      `${date.getFullYear()}-` +
+      `${String(date.getMonth() + 1).padStart(2, "0")}-` +
+      `${String(date.getDate()).padStart(2, "0")}`
+    );
+  };
 
-      return (
-        `${date.getFullYear()}-` +
-        `${String(
-          date.getMonth() + 1
-        ).padStart(2, "0")}-` +
-        `${String(
-          date.getDate()
-        ).padStart(2, "0")}`
-      )
+  const learningDays = [
+    ...new Set(log.map((item) => getDateKey(item.timestamp))),
+  ];
 
+  const calculateCurrentStreak = () => {
+    if (learningDays.length === 0) {
+      return 0;
     }
 
+    const dates = new Set(learningDays);
 
-  const learningDays =
-    [
-      ...new Set(
-        log.map(
-          (item) =>
-            getDateKey(
-              item.timestamp
-            )
-        )
-      )
-    ]
+    const today = new Date();
 
+    today.setHours(0, 0, 0, 0);
 
-  const calculateCurrentStreak =
-    () => {
+    const todayKey = getDateKey(today.getTime());
 
-      if (
-        learningDays.length ===
-        0
-      ) {
-        return 0
-      }
+    const yesterday = new Date(today);
 
+    yesterday.setDate(yesterday.getDate() - 1);
 
-      const dates =
-        new Set(
-          learningDays
-        )
+    const yesterdayKey = getDateKey(yesterday.getTime());
 
+    let currentDate;
 
-      const today =
-        new Date()
-
-      today.setHours(
-        0,
-        0,
-        0,
-        0
-      )
-
-
-      const todayKey =
-        getDateKey(
-          today.getTime()
-        )
-
-
-      const yesterday =
-        new Date(today)
-
-      yesterday.setDate(
-        yesterday.getDate() -
-        1
-      )
-
-
-      const yesterdayKey =
-        getDateKey(
-          yesterday.getTime()
-        )
-
-
-      let currentDate
-
-
-      if (
-        dates.has(
-          todayKey
-        )
-      ) {
-
-        currentDate =
-          today
-
-      } else if (
-        dates.has(
-          yesterdayKey
-        )
-      ) {
-
-        currentDate =
-          yesterday
-
-      } else {
-
-        return 0
-
-      }
-
-
-      let streak = 0
-
-
-      while (true) {
-
-        const key =
-          getDateKey(
-            currentDate.getTime()
-          )
-
-
-        if (
-          !dates.has(key)
-        ) {
-          break
-        }
-
-
-        streak++
-
-
-        const previous =
-          new Date(
-            currentDate
-          )
-
-
-        previous.setDate(
-          previous.getDate() -
-          1
-        )
-
-
-        currentDate =
-          previous
-
-      }
-
-
-      return streak
-
+    if (dates.has(todayKey)) {
+      currentDate = today;
+    } else if (dates.has(yesterdayKey)) {
+      currentDate = yesterday;
+    } else {
+      return 0;
     }
 
+    let streak = 0;
 
-  const currentStreak = calculateCurrentStreak()
+    while (true) {
+      const key = getDateKey(currentDate.getTime());
 
-const todayKey = getDateKey(Date.now())
+      if (!dates.has(key)) {
+        break;
+      }
 
-const todayTopicNames = [
-  ...new Set(
-    log
-      .filter(
-        (item) =>
-          getDateKey(item.timestamp) === todayKey
-      )
-      .map(
-        (item) =>
-          item.topic.toLowerCase()
-      )
-  )
-]
+      streak++;
 
-const todayTopicCount =
-  todayTopicNames.length
+      const previous = new Date(currentDate);
+
+      previous.setDate(previous.getDate() - 1);
+
+      currentDate = previous;
+    }
+
+    return streak;
+  };
+
+  const currentStreak = calculateCurrentStreak();
+
+  const todayKey = getDateKey(Date.now());
+
+  const todayTopicNames = [
+    ...new Set(
+      log
+        .filter((item) => getDateKey(item.timestamp) === todayKey)
+        .map((item) => item.topic.toLowerCase()),
+    ),
+  ];
+
+  const todayTopicCount = todayTopicNames.length;
   // =====================================================
   // WEEKLY
   // =====================================================
-    
-  const oneWeekAgo =
-    Date.now() -
-    7 *
-      24 *
-      60 *
-      60 *
-      1000
 
+  const oneWeekAgo = Date.now() - 7 * 24 * 60 * 60 * 1000;
 
-  const thisWeekCount =
-    log.filter(
-      (entry) =>
-        entry.timestamp >
-        oneWeekAgo
-    ).length
+  const thisWeekCount = log.filter(
+    (entry) => entry.timestamp > oneWeekAgo,
+  ).length;
 
-
-  const kidMode =
-    tone === "kid"
-
+  const kidMode = tone === "kid";
 
   // =====================================================
   // AUTH
   // =====================================================
 
-  const handleAuth =
-    (user) => {
+  const handleAuth = (user) => {
+    setCurrentUser(user);
 
-      setCurrentUser(
-        user
-      )
+    localStorage.setItem("curioo-current-user", JSON.stringify(user));
+  };
 
-      localStorage.setItem(
-        "curioo-current-user",
-        JSON.stringify(user)
-      )
+  const handleLogout = () => {
+    setCurrentUser(null);
 
+    localStorage.removeItem("curioo-current-user");
+  };
+  // =====================================================
+  // RECENT TOPIC ACTIONS
+  // =====================================================
+
+  const renameRecentTopic = (id) => {
+    if (!editRecentName.trim()) {
+      return;
     }
 
+    setHistory((prev) =>
+      prev.map((item) =>
+        item.id === id
+          ? {
+              ...item,
+              topic: editRecentName.trim(),
+            }
+          : item,
+      ),
+    );
 
-  const handleLogout =
-    () => {
+    setEditingRecent(null);
+    setEditRecentName("");
+    setRecentMenu(null);
+  };
 
-      setCurrentUser(
-        null
-      )
+  const deleteRecentTopic = (id) => {
+    setHistory((prev) => prev.filter((item) => item.id !== id));
 
-      localStorage.removeItem(
-        "curioo-current-user"
-      )
+    setRecentMenu(null);
+  };
 
-    }
+  const clearRecentTopics = () => {
+    setHistory([]);
+    setRecentMenu(null);
+  };
+  const togglePinRecent = (item) => {
+    setPinnedTopics((prev) => {
+      const exists = prev.includes(item.id);
 
+      if (exists) {
+        return prev.filter((id) => id !== item.id);
+      }
+
+      return [...prev, item.id];
+    });
+
+    setRecentMenu(null);
+  };
+
+  const addRecentToFavorites = (item) => {
+    toggleFavorite({
+      topic: item.topic,
+      text: item.text,
+      id: item.id,
+    });
+
+    setRecentMenu(null);
+  };
 
   // =====================================================
   // OPEN SAVED ITEM
   // =====================================================
 
-  const openLibraryItem =
-    (item) => {
+  const openLibraryItem = (item) => {
+    setTopic(item.topic);
 
-      setTopic(
-        item.topic
-      )
+    setResult(item.text);
 
-      setResult(
-        item.text
-      )
+    setRelatedTopics([]);
 
-      setRelatedTopics(
-        []
-      )
+    setQuiz(null);
 
-      setQuiz(
-        null
-      )
+    setError("");
 
-      setError(
-        ""
-      )
-
-      setView(
-        "home"
-      )
-
-    }
-    // ==========================================
+    setView("home");
+  };
+  // ==========================================
   // 1. WELCOME PAGE
   // ==========================================
 
   if (showWelcome) {
-    return (
-      <WelcomePage
-        onStart={() => setShowWelcome(false)}
-        dark={dark}
-      />
-    )
+    return <WelcomePage onStart={() => setShowWelcome(false)} dark={dark} />;
   }
 
   // =====================================================
@@ -1296,33 +833,20 @@ const todayTopicCount =
   // =====================================================
 
   if (!currentUser) {
-
     return (
-
       <div className="grid-paper min-h-screen bg-paper dark:bg-blueprint px-4 py-10 flex items-center justify-center">
+        <ThemeToggle dark={dark} setDark={setDark} />
 
-        <ThemeToggle
-          dark={dark}
-          setDark={setDark}
-        />
-
-        <AuthPage
-          onAuth={handleAuth}
-        />
-
+        <AuthPage onAuth={handleAuth} />
       </div>
-
-    )
-
+    );
   }
-
 
   // =====================================================
   // MAIN
   // =====================================================
 
   return (
-
     <div
       className={`min-h-screen ml-72 px-4 py-10 transition-colors duration-300 text-ink dark:text-paper-dark ${
         kidMode
@@ -1330,454 +854,384 @@ const todayTopicCount =
           : "grid-paper bg-paper dark:bg-blueprint"
       }`}
     >
-
-
       {/* =================================================
           SIDEBAR
           ================================================= */}
 
       <aside className="curioo-sidebar">
-
         <div className="sidebar-brand">
-
           <button
-            onClick={() =>
-              setView("home")
-            }
+            onClick={() => setView("home")}
             className="sidebar-logo-button"
           >
+            <span className="sidebar-logo">✦</span>
 
-            <span className="sidebar-logo">
-              ✦
-            </span>
-
-            <span className="sidebar-brand-name">
-              Curioo
-            </span>
-
+            <span className="sidebar-brand-name">Curioo</span>
           </button>
 
           <span className="sidebar-live-dot" />
-
         </div>
 
-
         <div className="sidebar-navigation">
-
-          <p className="sidebar-section-title">
-            Workspace
-          </p>
+          <p className="sidebar-section-title">Workspace</p>
           <br />
 
           <button
-            onClick={() =>
-              setView("favorites")
-            }
+            onClick={() => setView("favorites")}
             className={`sidebar-nav-item ${
-              view === "favorites"
-                ? "sidebar-nav-active"
-                : ""
+              view === "favorites" ? "sidebar-nav-active" : ""
             }`}
           >
+            {view === "favorites" && <span className="sidebar-active-line" />}
 
-            {view === "favorites" && (
-              <span className="sidebar-active-line" />
-            )}
-
-            <span className="sidebar-nav-icon">
-              ⭐
-            </span>
+            <span className="sidebar-nav-icon">⭐</span>
 
             <div className="sidebar-nav-text">
-
-              <span>
-                Favorites
-              </span>
+              <span>Favorites</span>
               <br />
-              <small>
-                Saved discoveries
-              </small>
+              <small>Saved discoveries</small>
+            </div>
 
+            <span className="sidebar-count">{favorites.length}</span>
+          </button>
+
+          <button
+            onClick={() => setView("progress")}
+            className={`sidebar-nav-item ${
+              view === "progress" ? "sidebar-nav-active" : ""
+            }`}
+          >
+            {view === "progress" && <span className="sidebar-active-line" />}
+
+            <span className="sidebar-nav-icon">📈</span>
+
+            <div className="sidebar-nav-text">
+              <span>Progress</span>
+              <br />
+              <small>Track your learning</small>
+            </div>
+          </button>
+
+          <button
+            onClick={() => setView("library")}
+            className={`sidebar-nav-item ${
+              view === "library" ? "sidebar-nav-active" : ""
+            }`}
+          >
+            {view === "library" && <span className="sidebar-active-line" />}
+
+            <span className="sidebar-nav-icon">📚</span>
+
+            <div className="sidebar-nav-text">
+              <span>Library</span>
+              <br />
+              <small>Collections & saved learning</small>
             </div>
 
             <span className="sidebar-count">
-              {favorites.length}
+              {bookmarks.length + learnLater.length}
             </span>
-
           </button>
-
-
-          <button
-            onClick={() =>
-              setView("progress")
-            }
-            className={`sidebar-nav-item ${
-              view === "progress"
-                ? "sidebar-nav-active"
-                : ""
-            }`}
-          >
-
-            {view === "progress" && (
-              <span className="sidebar-active-line" />
-            )}
-
-            <span className="sidebar-nav-icon">
-              📈
-            </span>
-
-            <div className="sidebar-nav-text">
-
-              <span>
-                Progress
-              </span>
-            <br/>
-              <small>
-                Track your learning
-              </small>
-
-            </div>
-
-          </button>
-
-
-          <button
-            onClick={() =>
-              setView("library")
-            }
-            className={`sidebar-nav-item ${
-              view === "library"
-                ? "sidebar-nav-active"
-                : ""
-            }`}
-          >
-
-            {view === "library" && (
-              <span className="sidebar-active-line" />
-            )}
-
-            <span className="sidebar-nav-icon">
-              📚
-            </span>
-
-            <div className="sidebar-nav-text">
-
-              <span>
-                Library
-              </span>
-              <br />
-              <small>
-                Collections & saved learning
-              </small>
-
-            </div>
-
-            <span className="sidebar-count">
-              {
-                bookmarks.length +
-                learnLater.length
-              }
-            </span>
-
-          </button>
-
         </div>
-
 
         {/* RECENT */}
 
         <div className="sidebar-recent">
-
           <div className="sidebar-recent-header">
-
-            <p className="sidebar-section-title">
-              Recent
-            </p>
+            <p className="sidebar-section-title">Recent</p>
 
             {history.length > 0 && (
-              <span className="sidebar-recent-count">
-                {history.length}
-              </span>
+              <span className="sidebar-recent-count">{history.length}</span>
             )}
-
           </div>
-
 
           <div className="sidebar-recent-list">
-
             {history.length === 0 ? (
-
               <div className="sidebar-empty">
+                <span>🧠</span>
 
-                <span>
-                  🧠
-                </span>
-
-                <p>
-                  Your discoveries
-                  will appear here
-                </p>
-
+                <p>Your discoveries will appear here</p>
               </div>
-
             ) : (
-
-              history.map(
-                (
-                  item,
-                  index
-                ) => (
-
-                  <button
-                    key={item.id}
-                    onClick={() => {
-
-                      setTopic(
-                        item.topic
-                      )
-
-                      setResult(
-                        item.text
-                      )
-
-                      setView(
-                        "home"
-                      )
-
-                      setQuiz(
-                        null
-                      )
-
-                      setError(
-                        ""
-                      )
-
-                    }}
-                    className="sidebar-recent-item"
-                  >
-
-                    <span className="recent-dot" />
-
-                    <div className="recent-topic-container">
-
-                      <span className="recent-topic">
-                        {item.topic}
-                      </span>
-
-                      {index === 0 && (
-                        <span className="recent-latest">
-                          latest
-                        </span>
-                      )}
-
-                    </div>
-
-                    <span className="recent-arrow">
-                      →
-                    </span>
-
-                  </button>
-
+              history
+                .slice()
+                .sort(
+                  (a, b) =>
+                    Number(pinnedTopics.includes(b.id)) -
+                    Number(pinnedTopics.includes(a.id)),
                 )
-              )
+                .map((item, index) => (
+                  <div key={item.id} className="relative">
+                    {editingRecent === item.id ? (
+                      /* RENAME MODE */
 
+                      <div className="flex items-center gap-2 px-2 py-2">
+                        <input
+                          autoFocus
+                          value={editRecentName}
+                          onChange={(e) => setEditRecentName(e.target.value)}
+                          onKeyDown={(e) => {
+                            if (e.key === "Enter") {
+                              renameRecentTopic(item.id);
+                            }
+
+                            if (e.key === "Escape") {
+                              setEditingRecent(null);
+                              setEditRecentName("");
+                            }
+                          }}
+                          className="min-w-0 flex-1 rounded-lg border border-amber/40 bg-paper dark:bg-blueprint px-2 py-1 text-xs text-ink dark:text-paper-dark outline-none"
+                        />
+
+                        <button
+                          onClick={() => renameRecentTopic(item.id)}
+                          className="text-xs text-green-500"
+                        >
+                          ✓
+                        </button>
+
+                        <button
+                          onClick={() => {
+                            setEditingRecent(null);
+                            setEditRecentName("");
+                          }}
+                          className="text-xs opacity-50"
+                        >
+                          ✕
+                        </button>
+                      </div>
+                    ) : (
+                      /* NORMAL RECENT ITEM */
+
+                      <div
+                        onClick={() => {
+                          setTopic(item.topic);
+                          setResult(item.text);
+                          setView("home");
+                          setQuiz(null);
+                          setError("");
+                        }}
+                        className="sidebar-recent-item cursor-pointer"
+                      >
+                        <span className="recent-dot" />
+
+                        <div className="recent-topic-container">
+                          <span className="recent-topic">{item.topic}</span>
+
+                          {pinnedTopics.includes(item.id) ? (
+                            <span className="recent-latest">📌 pinned</span>
+                          ) : index === 0 ? (
+                            <span className="recent-latest">latest</span>
+                          ) : null}
+                        </div>
+
+                        {/* THREE DOT BUTTON */}
+
+                        <button
+                          type="button"
+                          onClick={(e) => {
+                            e.preventDefault();
+                            e.stopPropagation();
+
+                            if (recentMenu === item.id) {
+                              setRecentMenu(null);
+                              return;
+                            }
+
+                            const rect =
+                              e.currentTarget.getBoundingClientRect();
+
+                            setRecentMenuPosition({
+                              top: rect.top + rect.height / 2,
+                              left: rect.right + 8,
+                            });
+
+                            setRecentMenu(item.id);
+                          }}
+                          className="recent-more-button"
+                          title="More options"
+                        >
+                          ⋯
+                        </button>
+                        {/* OPTIONS MENU */}
+
+                        {recentMenu === item.id &&
+                          createPortal(
+                            <div
+                              onClick={(e) => e.stopPropagation()}
+                              className="recent-options-menu"
+                              style={{
+                                position: "fixed",
+                                top: `${recentMenuPosition.top}px`,
+                                left: `${recentMenuPosition.left}px`,
+                                transform: "translateY(-50%)",
+                              }}
+                            >
+                              {/* RENAME */}
+                              <button
+                                onClick={() => {
+                                  setEditingRecent(item.id);
+                                  setEditRecentName(item.topic);
+                                  setRecentMenu(null);
+                                }}
+                                className="recent-option"
+                              >
+                                <span>✏️</span>
+                                <span>Rename</span>
+                              </button>
+
+                              {/* PIN */}
+                              <button
+                                onClick={() => togglePinRecent(item)}
+                                className="recent-option"
+                              >
+                                <span>📌</span>
+
+                                <span>
+                                  {pinnedTopics.includes(item.id)
+                                    ? "Unpin"
+                                    : "Pin"}
+                                </span>
+                              </button>
+
+                              {/* FAVORITE */}
+                              <button
+                                onClick={() => addRecentToFavorites(item)}
+                                className="recent-option"
+                              >
+                                <span>⭐</span>
+
+                                <span>
+                                  {favorites.some(
+                                    (f) =>
+                                      f.topic.toLowerCase() ===
+                                      item.topic.toLowerCase(),
+                                  )
+                                    ? "Remove from Favorites"
+                                    : "Add to Favorites"}
+                                </span>
+                              </button>
+
+                              {/* DELETE */}
+                              <button
+                                onClick={() => deleteRecentTopic(item.id)}
+                                className="recent-option recent-delete-option"
+                              >
+                                <span>🗑️</span>
+                                <span>Delete</span>
+                              </button>
+                            </div>,
+                            document.body,
+                          )}
+
+                        <span className="recent-arrow">→</span>
+                      </div>
+                    )}
+                  </div>
+                ))
             )}
-
           </div>
-
         </div>
-
-
         {/* USER */}
 
         <div className="sidebar-user-section">
-
           <div className="sidebar-user-card">
-
             <div className="sidebar-avatar">
-
-              {
-                currentUser.name
-                  ? currentUser.name
-                      .charAt(0)
-                      .toUpperCase()
-                  : "U"
-              }
-
+              {currentUser.name
+                ? currentUser.name.charAt(0).toUpperCase()
+                : "U"}
             </div>
 
             <div className="sidebar-user-info">
+              <p>{currentUser.name}</p>
 
-              <p>
-                {currentUser.name}
-              </p>
-
-              <small>
-                Curious explorer ✨
-              </small>
-
+              <small>Curious explorer ✨</small>
             </div>
 
             <button
-              onClick={
-                handleLogout
-              }
+              onClick={handleLogout}
               className="sidebar-logout"
               title="Log out"
             >
               ↪
             </button>
-
           </div>
-
         </div>
-
       </aside>
-
 
       {/* THEME */}
 
-      <ThemeToggle
-        dark={dark}
-        setDark={setDark}
-      />
-
+      <ThemeToggle dark={dark} setDark={setDark} />
 
       {/* =================================================
           HEADER
           ================================================= */}
 
       <header className="flex flex-col items-center mb-10">
-
         <div className="flex items-center gap-2 mb-1">
-
           <h1
             className={`text-3xl font-semibold tracking-tight ${
-              kidMode
-                ? "font-kid"
-                : "font-display"
+              kidMode ? "font-kid" : "font-display"
             }`}
           >
             Curioo
           </h1>
-
         </div>
 
-
         <p className="font-body italic text-ink/60 dark:text-paper-dark/60">
-
           {kidMode
             ? "let's find out how things work! ✨"
             : "understand how anything really works"}
-
         </p>
-
 
         <p className="font-display text-xs text-ink/40 dark:text-paper-dark/40 mt-2">
-
-          📊 {log.length} explored ·{" "}
-          {thisWeekCount} this week ·{" "}
-          🔥 {currentStreak} day streak
-
+          📊 {log.length} explored · {thisWeekCount} this week · 🔥{" "}
+          {currentStreak} day streak
         </p>
-
       </header>
-
 
       {/* =================================================
           VIEWS
           ================================================= */}
 
       {view === "favorites" ? (
-
         <FavoritesPage
-          favorites={
-            favorites
-          }
-
-          onBack={() =>
-            setView("home")
-          }
-
-          onRemove={
-            toggleFavorite
-          }
-
+          favorites={favorites}
+          onBack={() => setView("home")}
+          onRemove={toggleFavorite}
           onSelect={(item) => {
+            setTopic(item.topic);
 
-            setTopic(
-              item.topic
-            )
+            setResult(item.text);
 
-            setResult(
-              item.text
-            )
+            setError("");
 
-            setError(
-              ""
-            )
-
-            setView(
-              "home"
-            )
-
+            setView("home");
           }}
         />
-
       ) : view === "progress" ? (
-
         <ProgressPage
-            progress={progress}
-            log={log}
-            dailyGoal={dailyGoal}
-            todayTopics={todayTopicCount}
-            streak={currentStreak}
-            onGoalChange={setDailyGoal}
-            onBack={() =>
-              setView("home")
-            }
-          />
-
-      ) : view === "library" ? (
-
-        <LearningLibrary
-          collections={
-            collections
-          }
-
-          setCollections={
-            setCollections
-          }
-
-          bookmarks={
-            bookmarks
-          }
-
-          setBookmarks={
-            setBookmarks
-          }
-
-          learnLater={
-            learnLater
-          }
-
-          setLearnLater={
-            setLearnLater
-          }
-
-          onBack={() =>
-            setView("home")
-          }
-
-          onOpenExplanation={
-            openLibraryItem
-          }
+          progress={progress}
+          log={log}
+          dailyGoal={dailyGoal}
+          todayTopics={todayTopicCount}
+          streak={currentStreak}
+          onGoalChange={setDailyGoal}
+          onBack={() => setView("home")}
         />
-
+      ) : view === "library" ? (
+        <LearningLibrary
+          collections={collections}
+          setCollections={setCollections}
+          bookmarks={bookmarks}
+          setBookmarks={setBookmarks}
+          learnLater={learnLater}
+          setLearnLater={setLearnLater}
+          onBack={() => setView("home")}
+          onOpenExplanation={openLibraryItem}
+        />
       ) : (
-
         <>
-
           {/* =================================================
               SEARCH
               ================================================= */}
@@ -1789,381 +1243,193 @@ const todayTopicCount =
                 : "rounded-md border border-line/20 dark:border-line-dark/20 bg-panel dark:bg-blueprint-panel"
             }`}
           >
-
             <div className="flex justify-end mb-3">
-
               <SurpriseButton
-                onPick={(
-                  picked
-                ) => {
+                onPick={(picked) => {
+                  setTopic(picked);
 
-                  setTopic(
-                    picked
-                  )
-
-                  handleExplain(
-                    picked
-                  )
-
+                  handleExplain(picked);
                 }}
               />
-
             </div>
 
-
             <SearchBar
-              topic={
-                topic
-              }
-
-              setTopic={
-                setTopic
-              }
-
-              onExplain={() =>
-                handleExplain()
-              }
-
-              loading={
-                loading
-              }
-
-              kidMode={
-                kidMode
-              }
-
-              history={
-                history
-              }
+              topic={topic}
+              setTopic={setTopic}
+              onExplain={() => handleExplain()}
+              loading={loading}
+              kidMode={kidMode}
+              history={history}
             />
 
-
-            <ToneToggle
-              tone={
-                tone
-              }
-
-              setTone={
-                setTone
-              }
-            />
-
+            <ToneToggle tone={tone} setTone={setTone} />
           </div>
 
-
           <CategoryBrowser
-            onPick={(
-              picked
-            ) => {
+            onPick={(picked) => {
+              setTopic(picked);
 
-              setTopic(
-                picked
-              )
-
-              handleExplain(
-                picked
-              )
-
+              handleExplain(picked);
             }}
           />
 
+          {!result && !loading && (
+            <TopicOfDay
+              onExplore={(picked) => {
+                setTopic(picked);
 
-          {!result &&
-            !loading && (
-
-              <TopicOfDay
-                onExplore={(
-                  picked
-                ) => {
-
-                  setTopic(
-                    picked
-                  )
-
-                  handleExplain(
-                    picked
-                  )
-
-                }}
-              />
-
-            )}
-
+                handleExplain(picked);
+              }}
+            />
+          )}
 
           {/* =================================================
               API LOADING
               ================================================= */}
 
-          {loading && (
-
-            <ApiLoader />
-
-          )}
-
+          {loading && <ApiLoader />}
 
           {/* =================================================
               API ERROR
               ================================================= */}
 
           {error && !loading && (
-
-            <ApiError
-              message={
-                error
-              }
-
-              onRetry={
-                handleRetry
-              }
-            />
-
+            <ApiError message={error} onRetry={handleRetry} />
           )}
-
 
           {/* =================================================
               RESULT
               ================================================= */}
 
           {result && !loading && (
-
             <div className="max-w-xl mx-auto">
-
               <ResultCard
-
-                text={
-                  result
-                }
-
+                text={result}
                 onFavorite={() =>
                   toggleFavorite({
                     topic,
-                    text:
-                      result
+                    text: result,
                   })
                 }
                 onLearning={startLearningMode}
                 learningLoading={explainAgainLoading}
                 onExplainAgain={explainAgain}
-                isFavorite={
-                  favorites.some(
-                    (f) =>
-                      f.topic ===
-                      topic
-                  )
-                }
+                isFavorite={favorites.some((f) => f.topic === topic)}
+                onRegenerate={() => handleExplain(topic)}
+                regenerating={loading}
+                relatedTopics={relatedTopics}
+                onRelatedClick={(picked) => {
+                  setTopic(picked);
 
-                onRegenerate={() =>
-                  handleExplain(
-                    topic
-                  )
-                }
-
-                regenerating={
-                  loading
-                }
-
-                relatedTopics={
-                  relatedTopics
-                }
-
-                onRelatedClick={(
-                  picked
-                ) => {
-
-                  setTopic(
-                    picked
-                  )
-
-                  handleExplain(
-                    picked
-                  )
-
+                  handleExplain(picked);
                 }}
-
-                onQuiz={
-                  handleQuiz
-                }
-
-                quizLoading={
-                  quizLoading
-                }
-
-                kidMode={
-                  kidMode
-                }
-                
-
+                onQuiz={handleQuiz}
+                quizLoading={quizLoading}
+                kidMode={kidMode}
               />
-
 
               {/* =================================================
                   SAVE ACTIONS
                   ================================================= */}
 
               <div className="mt-4 rounded-2xl border border-line/20 dark:border-line-dark/20 bg-panel dark:bg-blueprint-panel p-4">
-
                 <div className="flex flex-wrap gap-2">
-
                   {/* FAVORITE */}
 
                   <button
                     onClick={() =>
                       toggleFavorite({
                         topic,
-                        text:
-                          result
+                        text: result,
                       })
                     }
-
                     className="curioo-save-button"
                   >
                     ⭐{" "}
-                    {favorites.some(
-                      (f) =>
-                        f.topic ===
-                        topic
-                    )
+                    {favorites.some((f) => f.topic === topic)
                       ? "Favorited"
                       : "Favorite"}
                   </button>
 
-
                   {/* BOOKMARK */}
 
                   <button
-                    onClick={
-                      toggleBookmark
-                    }
-
+                    onClick={toggleBookmark}
                     className="curioo-save-button"
                   >
                     🔖{" "}
                     {bookmarks.some(
                       (item) =>
-                        item.topic.toLowerCase() ===
-                        topic.toLowerCase()
+                        item.topic.toLowerCase() === topic.toLowerCase(),
                     )
                       ? "Bookmarked"
                       : "Bookmark"}
                   </button>
 
-
                   {/* LEARN LATER */}
 
                   <button
-                    onClick={
-                      toggleLearnLater
-                    }
-
+                    onClick={toggleLearnLater}
                     className="curioo-save-button"
                   >
                     🕐{" "}
                     {learnLater.some(
                       (item) =>
-                        item.topic.toLowerCase() ===
-                        topic.toLowerCase()
+                        item.topic.toLowerCase() === topic.toLowerCase(),
                     )
                       ? "Added to Learn Later"
                       : "Learn Later"}
                   </button>
-
                 </div>
-
 
                 {/* COLLECTION */}
 
                 <div className="mt-4 pt-4 border-t border-line/10 dark:border-line-dark/10">
-
                   <p className="text-xs font-mono uppercase tracking-wider text-ink/40 dark:text-paper-dark/40 mb-3">
                     Save to collection
                   </p>
 
-
                   <div className="flex flex-wrap gap-2">
+                    {collections.map((collection) => {
+                      const alreadySaved = collection.items.some(
+                        (item) =>
+                          item.topic.toLowerCase() === topic.toLowerCase(),
+                      );
 
-                    {collections.map(
-                      (
-                        collection
-                      ) => {
-
-                        const alreadySaved =
-                          collection.items.some(
-                            (item) =>
-                              item.topic.toLowerCase() ===
-                              topic.toLowerCase()
-                          )
-
-
-                        return (
-
-                          <button
-                            key={
-                              collection.id
-                            }
-
-                            onClick={() =>
-                              saveToCollection(
-                                collection.id
-                              )
-                            }
-
-                            disabled={
-                              alreadySaved
-                            }
-
-                            className="curioo-collection-button"
-                          >
-
-                            📚{" "}
-                            {
-                              collection.name
-                            }
-
-                            {alreadySaved &&
-                              " ✓"}
-
-                          </button>
-
-                        )
-
-                      }
-                    )}
-
+                      return (
+                        <button
+                          key={collection.id}
+                          onClick={() => saveToCollection(collection.id)}
+                          disabled={alreadySaved}
+                          className="curioo-collection-button"
+                        >
+                          📚 {collection.name}
+                          {alreadySaved && " ✓"}
+                        </button>
+                      );
+                    })}
 
                     <button
-                      onClick={() =>
-                        setView(
-                          "library"
-                        )
-                      }
-
+                      onClick={() => setView("library")}
                       className="curioo-collection-button"
                     >
                       + Manage
                     </button>
-
                   </div>
-
                 </div>
-
               </div>
-
             </div>
-
           )}
           {learningMode && lesson.length > 0 && (
-             <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm px-4">
+            <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm px-4">
               <div className="w-full max-w-xl max-h-[85vh] overflow-y-auto rounded-3xl border border-line/20 dark:border-line-dark/20 bg-panel dark:bg-blueprint-panel p-6 shadow-2xl">
-
                 <div className="flex items-center justify-between mb-5">
                   <div>
                     <p className="font-display text-xs text-ink/50 dark:text-paper-dark/50">
                       🎓 learning mode
                     </p>
 
-                    <h2 className="text-xl font-semibold mt-1">
-                      {topic}
-                    </h2>
+                    <h2 className="text-xl font-semibold mt-1">{topic}</h2>
                   </div>
 
                   <button
@@ -2181,9 +1447,7 @@ const todayTopicCount =
                     </span>
 
                     <span>
-                      {Math.round(
-                        ((lessonStep + 1) / lesson.length) * 100
-                      )}%
+                      {Math.round(((lessonStep + 1) / lesson.length) * 100)}%
                     </span>
                   </div>
 
@@ -2191,9 +1455,7 @@ const todayTopicCount =
                     <div
                       className="h-full bg-amber transition-all duration-300"
                       style={{
-                        width: `${
-                          ((lessonStep + 1) / lesson.length) * 100
-                        }%`
+                        width: `${((lessonStep + 1) / lesson.length) * 100}%`,
                       }}
                     />
                   </div>
@@ -2210,12 +1472,9 @@ const todayTopicCount =
                 </div>
 
                 <div className="flex justify-between mt-5">
-
                   <button
                     disabled={lessonStep === 0}
-                    onClick={() =>
-                      setLessonStep((prev) => prev - 1)
-                    }
+                    onClick={() => setLessonStep((prev) => prev - 1)}
                     className="px-4 py-2 rounded-xl border border-line/30 dark:border-line-dark/30 disabled:opacity-30"
                   >
                     ← Previous
@@ -2223,9 +1482,7 @@ const todayTopicCount =
 
                   {lessonStep < lesson.length - 1 ? (
                     <button
-                      onClick={() =>
-                        setLessonStep((prev) => prev + 1)
-                      }
+                      onClick={() => setLessonStep((prev) => prev + 1)}
                       className="px-5 py-2 rounded-xl bg-amber text-white hover:scale-105 transition-transform"
                     >
                       Next →
@@ -2238,7 +1495,6 @@ const todayTopicCount =
                       ✓ Finish
                     </button>
                   )}
-
                 </div>
               </div>
             </div>
@@ -2247,37 +1503,27 @@ const todayTopicCount =
           {/* =================================================
               QUIZ
               ================================================= */}
-                        {showDifficulty && (
-                <QuizDifficulty
-                  onSelect={handleDifficultySelect}
-                  onClose={() => setShowDifficulty(false)}
-                />
-              )}
+          {showDifficulty && (
+            <QuizDifficulty
+              onSelect={handleDifficultySelect}
+              onClose={() => setShowDifficulty(false)}
+            />
+          )}
 
-              {quiz && (
-                <QuizCard
-                  quiz={quiz}
-                  topic={topic}
-                  difficulty={quizDifficulty}
-                  onClose={() => setQuiz(null)}
-                  onComplete={(
-                    isCorrect,
-                    didTimeOut
-                  ) =>
-                    handleQuizComplete(
-                      isCorrect,
-                      didTimeOut,
-                      topic
-                    )
-                  }
-                />
-              )}
+          {quiz && (
+            <QuizCard
+              quiz={quiz}
+              topic={topic}
+              difficulty={quizDifficulty}
+              onClose={() => setQuiz(null)}
+              onComplete={(isCorrect, didTimeOut) =>
+                handleQuizComplete(isCorrect, didTimeOut, topic)
+              }
+            />
+          )}
         </>
-
       )}
-
     </div>
-
-  )
+  );
 }
-export default App
+export default App;

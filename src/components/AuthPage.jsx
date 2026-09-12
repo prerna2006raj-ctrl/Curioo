@@ -1,24 +1,20 @@
-import { useState } from "react"
-import { signUp, logIn } from "../services/auth"
+import { useState } from "react";
+import { signUp, logIn } from "../services/auth";
 
 function AuthPage({ onAuth }) {
-  const [mode, setMode] = useState("signup")
+  const [mode, setMode] = useState("signup");
 
-  const [name, setName] =
-    useState("")
+  const [name, setName] = useState("");
 
-  const [email, setEmail] =
-    useState("")
+  const [email, setEmail] = useState("");
 
-  const [password, setPassword] =
-    useState("")
+  const [password, setPassword] = useState("");
 
-  const [error, setError] =
-    useState("")
+  const [error, setError] = useState("");
 
   const handleSubmit = (e) => {
-    e.preventDefault()
-    setError("")
+    e.preventDefault();
+    setError("");
 
     try {
       const user =
@@ -31,13 +27,13 @@ function AuthPage({ onAuth }) {
           : logIn({
               email,
               password,
-            })
+            });
 
-      onAuth(user)
+      onAuth(user);
     } catch (err) {
-      setError(err.message)
+      setError(err.message);
     }
-  }
+  };
 
   return (
     <div className="auth-container">
@@ -78,9 +74,7 @@ function AuthPage({ onAuth }) {
 
         <div className="auth-heading">
           <span className="auth-eyebrow">
-            {mode === "signup"
-              ? "START EXPLORING"
-              : "WELCOME BACK"}
+            {mode === "signup" ? "START EXPLORING" : "WELCOME BACK"}
           </span>
 
           <h2>
@@ -98,31 +92,20 @@ function AuthPage({ onAuth }) {
 
         {/* Form */}
 
-        <form
-          onSubmit={handleSubmit}
-          className="auth-form"
-        >
+        <form onSubmit={handleSubmit} className="auth-form">
           {mode === "signup" && (
             <div className="auth-field">
-              <label htmlFor="name">
-                YOUR NAME
-              </label>
+              <label htmlFor="name">YOUR NAME</label>
 
               <div className="auth-input-wrapper">
-                <span className="auth-input-icon">
-                  ◎
-                </span>
+                <span className="auth-input-icon">◎</span>
 
                 <input
                   id="name"
                   type="text"
                   placeholder="what should we call you?"
                   value={name}
-                  onChange={(e) =>
-                    setName(
-                      e.target.value
-                    )
-                  }
+                  onChange={(e) => setName(e.target.value)}
                   required
                 />
               </div>
@@ -130,50 +113,34 @@ function AuthPage({ onAuth }) {
           )}
 
           <div className="auth-field">
-            <label htmlFor="email">
-              EMAIL
-            </label>
+            <label htmlFor="email">EMAIL</label>
 
             <div className="auth-input-wrapper">
-              <span className="auth-input-icon">
-                @
-              </span>
+              <span className="auth-input-icon">@</span>
 
               <input
                 id="email"
                 type="email"
                 placeholder="you@example.com"
                 value={email}
-                onChange={(e) =>
-                  setEmail(
-                    e.target.value
-                  )
-                }
+                onChange={(e) => setEmail(e.target.value)}
                 required
               />
             </div>
           </div>
 
           <div className="auth-field">
-            <label htmlFor="password">
-              PASSWORD
-            </label>
+            <label htmlFor="password">PASSWORD</label>
 
             <div className="auth-input-wrapper">
-              <span className="auth-input-icon">
-                ◆
-              </span>
+              <span className="auth-input-icon">◆</span>
 
               <input
                 id="password"
                 type="password"
                 placeholder="minimum 4 characters"
                 value={password}
-                onChange={(e) =>
-                  setPassword(
-                    e.target.value
-                  )
-                }
+                onChange={(e) => setPassword(e.target.value)}
                 required
                 minLength={4}
               />
@@ -187,19 +154,10 @@ function AuthPage({ onAuth }) {
             </div>
           )}
 
-          <button
-            type="submit"
-            className="auth-submit"
-          >
-            <span>
-              {mode === "signup"
-                ? "Create account"
-                : "Log in"}
-            </span>
+          <button type="submit" className="auth-submit">
+            <span>{mode === "signup" ? "Create account" : "Log in"}</span>
 
-            <span className="auth-submit-arrow">
-              →
-            </span>
+            <span className="auth-submit-arrow">→</span>
           </button>
         </form>
 
@@ -207,26 +165,18 @@ function AuthPage({ onAuth }) {
 
         <div className="auth-switch">
           <span>
-            {mode === "signup"
-              ? "Already have an account?"
-              : "New to Curioo?"}
+            {mode === "signup" ? "Already have an account?" : "New to Curioo?"}
           </span>
 
           <button
             type="button"
             onClick={() => {
-              setMode(
-                mode === "signup"
-                  ? "login"
-                  : "signup"
-              )
+              setMode(mode === "signup" ? "login" : "signup");
 
-              setError("")
+              setError("");
             }}
           >
-            {mode === "signup"
-              ? "Log in"
-              : "Create account"}
+            {mode === "signup" ? "Log in" : "Create account"}
           </button>
         </div>
 
@@ -234,15 +184,12 @@ function AuthPage({ onAuth }) {
 
         <div className="auth-footer">
           <span>✦</span>
-
-          Your data stays saved locally
-          on this device.
-
+          Your data stays saved locally on this device.
           <span>✦</span>
         </div>
       </div>
     </div>
-  )
+  );
 }
 
-export default AuthPage
+export default AuthPage;

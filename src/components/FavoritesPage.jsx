@@ -1,16 +1,19 @@
 function FavoritesPage({ favorites, onBack, onRemove, onSelect }) {
   const handleExport = () => {
     const content = favorites
-      .map((item) => `${item.topic}\n${"-".repeat(item.topic.length)}\n${item.text}\n`)
-      .join("\n\n")
-    const blob = new Blob([content], { type: "text/plain" })
-    const url = URL.createObjectURL(blob)
-    const link = document.createElement("a")
-    link.href = url
-    link.download = "curioo-favorites.txt"
-    link.click()
-    URL.revokeObjectURL(url)
-  }
+      .map(
+        (item) =>
+          `${item.topic}\n${"-".repeat(item.topic.length)}\n${item.text}\n`,
+      )
+      .join("\n\n");
+    const blob = new Blob([content], { type: "text/plain" });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = "curioo-favorites.txt";
+    link.click();
+    URL.revokeObjectURL(url);
+  };
 
   return (
     <div className="max-w-xl mx-auto animate-fade-in-up">
@@ -30,7 +33,9 @@ function FavoritesPage({ favorites, onBack, onRemove, onSelect }) {
           </button>
         )}
       </div>
-      <h2 className="font-display text-2xl font-semibold mb-6">your favorites</h2>
+      <h2 className="font-display text-2xl font-semibold mb-6">
+        your favorites
+      </h2>
 
       {favorites.length === 0 ? (
         <p className="font-body italic text-ink/60 dark:text-paper-dark/60">
@@ -67,6 +72,6 @@ function FavoritesPage({ favorites, onBack, onRemove, onSelect }) {
         </div>
       )}
     </div>
-  )
+  );
 }
-export default FavoritesPage
+export default FavoritesPage;

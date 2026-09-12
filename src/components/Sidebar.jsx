@@ -13,29 +13,21 @@ export default function Sidebar({
 
   return (
     <aside className="sidebar">
-
       {/* =====================================================
           HEADER
           ===================================================== */}
       <div className="sidebar-header">
-        <div className="sidebar-logo">
-          ✦Curioo
-        </div>
+        <div className="sidebar-logo">✦Curioo</div>
 
         <hr />
       </div>
-
 
       {/* =====================================================
           WORKSPACE
           This section stays fixed.
           ===================================================== */}
       <div className="sidebar-workspace">
-
-        <div className="sidebar-section-title">
-          Workspace
-        </div>
-
+        <div className="sidebar-section-title">Workspace</div>
 
         {/* Favorites */}
         <button
@@ -52,11 +44,8 @@ export default function Sidebar({
             <small>Saved discoveries</small>
           </span>
 
-          <span className="sidebar-count">
-            6
-          </span>
+          <span className="sidebar-count">6</span>
         </button>
-
 
         {/* Progress */}
         <button
@@ -74,7 +63,6 @@ export default function Sidebar({
           </span>
         </button>
 
-
         {/* Library */}
         <button
           type="button"
@@ -90,13 +78,9 @@ export default function Sidebar({
             <small>Collections & saved learning</small>
           </span>
 
-          <span className="sidebar-count">
-            0
-          </span>
+          <span className="sidebar-count">0</span>
         </button>
-
       </div>
-
 
       {/* =====================================================
     RECENT
@@ -106,72 +90,48 @@ export default function Sidebar({
     The sidebar itself NEVER moves.
     ===================================================== */}
 
-<div className="sidebar-recent">
+      <div className="sidebar-recent">
+        <div className="sidebar-section-title">Recent</div>
 
-  <div className="sidebar-section-title">
-    Recent
-  </div>
-
-  {recent.length === 0 ? (
-
-    <div className="sidebar-empty">
-      <span>🕘</span>
-      <p>No recent searches yet.</p>
-    </div>
-
-  ) : (
-
-    <div className="sidebar-recent-list">
-
-      {recent.map((item, index) => {
-
-        /*
+        {recent.length === 0 ? (
+          <div className="sidebar-empty">
+            <span>🕘</span>
+            <p>No recent searches yet.</p>
+          </div>
+        ) : (
+          <div className="sidebar-recent-list">
+            {recent.map((item, index) => {
+              /*
           Support different possible structures
           used by App.jsx.
         */
 
-        const topic =
-          typeof item === "string"
-            ? item
-            : item?.topic ||
-              item?.query ||
-              item?.question ||
-              item?.title ||
-              "Untitled topic";
+              const topic =
+                typeof item === "string"
+                  ? item
+                  : item?.topic ||
+                    item?.query ||
+                    item?.question ||
+                    item?.title ||
+                    "Untitled topic";
 
+              return (
+                <button
+                  type="button"
+                  key={item?.id ?? `${topic}-${index}`}
+                  className="sidebar-recent-item"
+                  onClick={() => handleNavigate("recent", item)}
+                  title={topic}
+                >
+                  <span className="sidebar-recent-topic">{topic}</span>
 
-        return (
-
-          <button
-            type="button"
-            key={item?.id ?? `${topic}-${index}`}
-            className="sidebar-recent-item"
-            onClick={() =>
-              handleNavigate("recent", item)
-            }
-            title={topic}
-          >
-
-            <span className="sidebar-recent-topic">
-              {topic}
-            </span>
-
-            <span className="sidebar-recent-arrow">
-              →
-            </span>
-
-          </button>
-
-        );
-
-      })}
-
-    </div>
-
-  )}
-
-</div>
-
+                  <span className="sidebar-recent-arrow">→</span>
+                </button>
+              );
+            })}
+          </div>
+        )}
+      </div>
 
       {/* =====================================================
           FOOTER / PROFILE
@@ -179,12 +139,8 @@ export default function Sidebar({
           This stays at the bottom and does NOT scroll.
           ===================================================== */}
       <div className="sidebar-footer">
-
         <div className="sidebar-profile">
-
-          <div className="sidebar-profile-avatar">
-            P
-          </div>
+          <div className="sidebar-profile-avatar">P</div>
 
           <div className="sidebar-profile-info">
             <strong>Prerna Raj</strong>
@@ -199,11 +155,8 @@ export default function Sidebar({
           >
             ↗
           </button>
-
         </div>
-
       </div>
-
     </aside>
   );
 }

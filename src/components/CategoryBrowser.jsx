@@ -1,22 +1,42 @@
 const CATEGORIES = {
-  Science: ["how does gravity work", "how does electricity work", "how do magnets work"],
-  Technology: ["how does WiFi work", "how does GPS work", "how does a computer chip work"],
-  Space: ["how do rockets escape gravity", "how do satellites stay in orbit", "how do black holes form"],
-  Nature: ["how do bees make honey", "how does photosynthesis work", "how do volcanoes erupt"],
-  "Human Body": ["how does the immune system work", "how does the heart pump blood", "how do vaccines work"],
+  Science: [
+    "how does gravity work",
+    "how does electricity work",
+    "how do magnets work",
+  ],
+  Technology: [
+    "how does WiFi work",
+    "how does GPS work",
+    "how does a computer chip work",
+  ],
+  Space: [
+    "how do rockets escape gravity",
+    "how do satellites stay in orbit",
+    "how do black holes form",
+  ],
+  Nature: [
+    "how do bees make honey",
+    "how does photosynthesis work",
+    "how do volcanoes erupt",
+  ],
+  "Human Body": [
+    "how does the immune system work",
+    "how does the heart pump blood",
+    "how do vaccines work",
+  ],
   History: [
     "how did the printing press change the world",
     "how was the pyramid of Giza built",
-    "how did the internet start"
-  ]
-}
+    "how did the internet start",
+  ],
+};
 
 function CategoryBrowser({ onPick }) {
   const handleClick = (category) => {
-    const topics = CATEGORIES[category]
-    const random = topics[Math.floor(Math.random() * topics.length)]
-    onPick(random)
-  }
+    const topics = CATEGORIES[category];
+    const random = topics[Math.floor(Math.random() * topics.length)];
+    onPick(random);
+  };
 
   return (
     <div className="max-w-xl mx-auto mt-6">
@@ -35,6 +55,6 @@ function CategoryBrowser({ onPick }) {
         ))}
       </div>
     </div>
-  )
+  );
 }
-export default CategoryBrowser
+export default CategoryBrowser;

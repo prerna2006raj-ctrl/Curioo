@@ -7,6 +7,6 @@ function ThemeToggle({ dark, setDark }) {
     >
       {dark ? "☀️" : "🌙"}
     </button>
-  )
+  );
 }
-export default ThemeToggle
+export default ThemeToggle;

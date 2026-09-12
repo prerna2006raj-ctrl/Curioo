@@ -1,6 +1,6 @@
-import { useState } from "react"
+import { useState } from "react";
 
-const COLORS = ["#ff6fa5", "#2ec4b6", "#ffd23f", "#d98829", "#8ecae6"]
+const COLORS = ["#ff6fa5", "#2ec4b6", "#ffd23f", "#d98829", "#8ecae6"];
 
 function Confetti() {
   const [pieces] = useState(() =>
@@ -9,9 +9,9 @@ function Confetti() {
       left: Math.random() * 100,
       color: COLORS[Math.floor(Math.random() * COLORS.length)],
       delay: Math.random() * 0.3,
-      duration: 1 + Math.random() * 0.8
-    }))
-  )
+      duration: 1 + Math.random() * 0.8,
+    })),
+  );
 
   return (
     <div className="fixed inset-0 pointer-events-none overflow-hidden z-50">
@@ -23,11 +23,11 @@ function Confetti() {
             left: `${p.left}%`,
             backgroundColor: p.color,
             animationDelay: `${p.delay}s`,
-            animationDuration: `${p.duration}s`
+            animationDuration: `${p.duration}s`,
           }}
         />
       ))}
     </div>
-  )
+  );
 }
-export default Confetti
+export default Confetti;
