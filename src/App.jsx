@@ -884,6 +884,16 @@ function App() {
           </button>
 
           <span className="sidebar-live-dot" />
+
+          {/* MOBILE SIDEBAR CLOSE */}
+          <button
+            type="button"
+            className="mobile-sidebar-close"
+            onClick={() => setSidebarOpen(false)}
+            aria-label="Close menu"
+          >
+            ✕
+          </button>
         </div>
 
         <div className="sidebar-navigation">

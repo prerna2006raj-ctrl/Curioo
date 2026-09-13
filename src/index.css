@@ -550,8 +550,6 @@
   background: rgba(128, 128, 128, 0.15);
 }
 
-
-
 /* =====================================================
    MENU OPTIONS
 ===================================================== */
@@ -2547,7 +2545,7 @@ body {
   /* Hide the sidebar */
   .sidebar {
     display: flex !important;
-    transform: translateX(-100%) ;
+    transform: translateX(-100%);
   }
 
   /* -----------------------------------------------
@@ -2939,5 +2937,64 @@ body {
 
   .curioo-sidebar.mobile-open {
     transform: translateX(0);
+  }
+}
+/* =====================================================
+   MOBILE SIDEBAR CLOSE BUTTON
+===================================================== */
+
+.mobile-sidebar-close {
+  display: none;
+}
+
+@media (max-width: 900px) {
+  .mobile-sidebar-close {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    position: absolute;
+    top: 18px;
+    right: 18px;
+
+    width: 42px;
+    height: 42px;
+
+    border: none;
+    border-radius: 12px;
+
+    background: transparent;
+
+    color: #64748b;
+
+    font-size: 32px;
+    line-height: 1;
+
+    cursor: pointer;
+
+    z-index: 10001;
+
+    transition:
+      background 0.2s ease,
+      transform 0.2s ease,
+      color 0.2s ease;
+  }
+
+  .mobile-sidebar-close:hover {
+    background: rgba(128, 128, 128, 0.12);
+    color: #1f2937;
+  }
+
+  .mobile-sidebar-close:active {
+    transform: scale(0.92);
+  }
+
+  .dark .mobile-sidebar-close {
+    color: #cbd5e1;
+  }
+
+  .dark .mobile-sidebar-close:hover {
+    background: rgba(255, 255, 255, 0.1);
+    color: white;
   }
 }
