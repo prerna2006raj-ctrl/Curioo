@@ -613,6 +613,40 @@
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
   z-index: 99999;
 }
+.recent-menu-close {
+  position: absolute;
+  top: 6px;
+  right: 7px;
+
+  width: 28px;
+  height: 28px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border: none;
+  border-radius: 8px;
+
+  background: transparent;
+  color: inherit;
+
+  font-size: 15px;
+  cursor: pointer;
+
+  opacity: 0.55;
+
+  transition: background 0.15s ease, opacity 0.15s ease;
+}
+
+.recent-menu-close:hover {
+  opacity: 1;
+  background: rgba(128, 128, 128, 0.15);
+}
+
+.recent-options-menu {
+  padding-top: 40px;
+}
 
 .dark .recent-options-menu {
   background: #1e293b;

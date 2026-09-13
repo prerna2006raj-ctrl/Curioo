@@ -1101,6 +1101,14 @@ function App() {
                                 transform: "translateY(-50%)",
                               }}
                             >
+                              <button
+                                type="button"
+                                className="recent-menu-close"
+                                onClick={() => setRecentMenu(null)}
+                                title="Close"
+                              >
+                                ✕
+                              </button>
                               {/* RENAME */}
                               <button
                                 onClick={() => {
