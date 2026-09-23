@@ -1,13 +1,19 @@
 # ✦ Curioo
 
 > **Understand how things work.**
-Curioo is an AI-powered curiosity and learning platform that turns everyday questions into simple, understandable explanations.
-Whether you want to understand how WiFi works, how airplanes fly, how GPS works, or explore topics in science, technology, space, and nature — Curioo helps you learn in an engaging way.
+
+Curioo is an AI-powered curiosity and learning platform that helps users explore topics, understand complex concepts through simple explanations, and test their knowledge with interactive quizzes.
+
+Whether you want to understand how WiFi works, how airplanes fly, how GPS works, or explore topics in science, technology, space, nature, and programming — Curioo makes learning simple, interactive, and engaging.
+
+---
 
 ## 🌟 Features
 
 ### 🤖 AI-Powered Explanations
-Ask questions about how things work and get clear explanations powered by AI.
+
+Ask questions about any topic and get clear, AI-generated explanations using the Google Gemini API.
+
 Examples:
 
 - How does WiFi work?
@@ -16,51 +22,91 @@ Examples:
 - How does a refrigerator work?
 - How do airplanes fly?
 - How does a solar panel work?
-- 
-### 🎨 Two Learning Styles
-Curioo provides different explanation styles based on your learning preference:
-- 🧒 **Like I'm 5** — Simple and easy-to-understand explanations
-- 👨‍💻 **Like an Engineer** — More detailed and technical explanations
 
-### 🧩 Interactive Quizzes
-After learning about a topic, users can test their understanding with interactive quizzes.
+### 🎨 Learning Modes
+
+Choose how you want a topic explained:
+
+- 🧒 **Like I'm 5** — Simple and beginner-friendly explanations
+- 👨‍💻 **Like an Engineer** — Detailed and technical explanations
+
+---
+
+## 🧩 Interactive AI Quizzes
+
+After learning about a topic, users can test their understanding through interactive quizzes.
+
 Features include:
 
 - Multiple-choice questions
-- Difficulty selection
-  - Easy
-  - Medium
-  - Hard
-- Timed questions
+- Easy, Medium, and Hard difficulty
+- Timed quizzes
+- Quiz timer
 - Score calculation
-- Quiz progress tracking
+- Question navigation
+- Answer tracking
+- Automatic progress tracking
 - Results and performance feedback
+- Detailed explanations
 
-### 📊 Learning Progress
-Curioo tracks your learning activity and quiz performance.
-Progress information includes:
+---
+
+## 📊 Progress Tracking
+
+Curioo tracks learning and quiz activity to help users understand their progress.
+
+Progress features include:
 
 - Questions answered
-- Quizzes completed
-- Average score
-- Best topic
-- Weakest topic
+- Correct answers
+- Quiz performance
 - Topic accuracy
+- Best-performing topics
+- Weakest topics
 - Learning streak
 - Daily learning goals
+- Recent learning activity
 
-### ⭐ Favorites
-Save interesting explanations to your Favorites so they can be accessed later.
+---
+
+## 🔥 Learning Streaks
+
+Stay consistent with learning by maintaining a daily learning streak.
+
+Curioo tracks learning activity and displays streak information to encourage regular learning.
+
+---
+
+## 🏆 Achievements
+
+Users can unlock achievements based on their learning and quiz activity.
+
+Achievements can be earned through activities such as:
+
+- Completing quizzes
+- Answering questions
+- Maintaining learning streaks
+- Exploring different topics
+- Reaching learning goals
+
+---
+
+## ⭐ Favorites
+
+Save interesting explanations and discoveries for later.
 
 Users can:
 
-- Save discoveries
+- Save topics
 - View saved explanations
 - Remove favorites
 - Revisit previously learned topics
 
-### 📚 Learning Library
-Organize saved knowledge into learning collections.
+---
+
+## 📚 Learning Library
+
+Organize saved knowledge into collections.
 
 Example collections:
 
@@ -68,37 +114,91 @@ Example collections:
 - ☕ Java
 - 🤖 AI
 - 🚀 Space
-Collections can be managed and organized according to your learning needs.
 
-### 🕘 Recent Topics
-Curioo keeps track of recently explored topics so users can quickly return to previous discoveries.
-Recent topics are displayed in the sidebar and can be accessed without searching again.
+Collections help users organize topics according to their interests.
 
-### 🌞 Day & 🌙 Night Themes
-Curioo includes two visual themes:
+---
 
-- ☀️ Day Theme
-- 🌙 Night Theme
-The interface automatically changes backgrounds, cards, borders, text, and accent colors to maintain readability in both modes.
+## 🕘 Recent Topics
 
-### 📱 Responsive Design
-Curioo is designed to work across different screen sizes.
-On desktop:
+Curioo keeps track of recently explored topics.
 
-- Fixed sidebar
-- Workspace navigation
+Users can:
+
+- Quickly revisit recent topics
+- Open a recent topic without searching again
+- Manage recent topic entries
+- Remove recent topics
+
+---
+
+## 🎯 Daily Learning Goals
+
+Set a daily learning target and track progress toward it.
+
+Available goals can include:
+
+- 1 activity per day
+- 3 activities per day
+- 5 activities per day
+
+---
+
+## 🌞 Day & 🌙 Night Themes
+
+Curioo supports light and dark themes.
+
+The theme affects:
+
+- Backgrounds
+- Cards
+- Borders
+- Text
+- Navigation
+- Accent elements
+
+---
+
+## 📱 Responsive Design
+
+Curioo is designed to work across desktop and mobile devices.
+
+### Desktop
+
+- Sidebar navigation
 - Recent topics
 - Profile section
+- Learning workspace
+- Navigation controls
 
-On mobile:
+### Mobile
 
-- Compact interface
-- ☰ menu button
-- Sidebar opens as an overlay
-- Mobile-friendly layout
+- Responsive layout
+- ☰ Menu button
+- Sidebar overlay
+- Sidebar close button
+- Mobile-friendly navigation
+
+---
+
+## 👤 User Features
+
+Curioo includes user-focused functionality for managing the learning experience.
+
+Users can access:
+
+- Profile
+- Favorites
+- Progress
+- Learning Library
+- Recent Topics
+- Learning goals
+- Achievements
+- Theme settings
+
+---
 
 ## 🖥️ Main Sections
-Curioo includes the following major areas:
 
 | Section | Purpose |
 |---|---|
@@ -107,9 +207,13 @@ Curioo includes the following major areas:
 | 📈 Progress | Track learning performance |
 | 📚 Library | Manage learning collections |
 | 🕘 Recent | Revisit recently explored topics |
-| 👤 Profile | User profile area |
+| 🏆 Achievements | View learning achievements |
+| 👤 Profile | Manage user information |
+
+---
 
 ## 🛠️ Tech Stack
+
 ### Frontend
 
 - React
@@ -118,7 +222,7 @@ Curioo includes the following major areas:
 - HTML
 - CSS
 - Tailwind CSS
-- 
+
 ### AI
 
 - Google Gemini API
@@ -131,8 +235,13 @@ Curioo uses browser `localStorage` for storing user-side information such as:
 - Favorites
 - Learning progress
 - Daily goals
-- Saved collections
-- Pinned topics
+- Collections
+- Bookmarks
+- Learn-later topics
+- Theme preferences
+- Current user information
+
+---
 
 ## 📂 Project Structure
 
@@ -144,23 +253,29 @@ Curioo/
 ├── src/
 │   │
 │   ├── components/
+│   │   ├── AuthPage.jsx
 │   │   ├── SearchBar.jsx
 │   │   ├── ResultCard.jsx
-│   │   ├── Loader.jsx
 │   │   ├── QuizCard.jsx
+│   │   ├── QuizDifficulty.jsx
+│   │   ├── ProgressPage.jsx
+│   │   ├── StreakPage.jsx
+│   │   ├── AchievementsPage.jsx
+│   │   ├── LearningLibrary.jsx
+│   │   ├── FavoritesPage.jsx
 │   │   ├── Sidebar.jsx
 │   │   ├── History.jsx
-│   │   ├── FavoritesPage.jsx
-│   │   ├── Progress.jsx
-│   │   ├── Library.jsx
+│   │   ├── TopicOfDay.jsx
 │   │   └── ...
 │   │
 │   ├── services/
+│   │   ├── auth.js
 │   │   └── gemini.js
 │   │
 │   ├── App.jsx
-│   ├── main.jsx
-│   └── index.css
+│   ├── App.css
+│   ├── index.css
+│   └── main.jsx
 │
 ├── package.json
 ├── vite.config.js
