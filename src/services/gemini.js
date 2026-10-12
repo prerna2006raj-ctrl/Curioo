@@ -70,21 +70,31 @@ Step-by-step: ...
 
 Analogy: ...
 
-Related: topic one | topic two | topic three
+Related: topic one | topic two | topic three | topic four | topic five
+
+Rules for related topics:
+- Provide exactly 5 related topics.
+- Each topic must be a short, specific learning topic.
+- Do not repeat the main topic.
+- Suggest useful concepts that help the learner explore the subject further.
+- Return all 5 topics on one line after "Related:".
+- Separate topics using only the | character.
+- Do not use bullets or numbering.
 `;
 
   const fullText = await callGemini(prompt);
 
-  const relatedMatch = fullText.match(/Related:\s*(.+)/i);
+  const relatedMatch = fullText.match(/Related:\s*([^\r\n]*)/i);
 
   const related = relatedMatch
     ? relatedMatch[1]
         .split("|")
-        .map((t) => t.trim())
+        .map((t) => t.trim().replace(/^[-*\d.)\s]+/, ""))
         .filter(Boolean)
+        .filter((t) => t.toLowerCase() !== topic.trim().toLowerCase())
     : [];
 
-  const explanationText = fullText.replace(/Related:\s*.+/i, "").trim();
+  const explanationText = fullText.replace(/Related:[\s\S]*$/i, "").trim();
 
   return {
     text: explanationText,

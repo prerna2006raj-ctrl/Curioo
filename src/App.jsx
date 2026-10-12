@@ -388,6 +388,8 @@ function App() {
 
       setResult(text);
       setRelatedTopics(related || []);
+      console.log("Related topics:", related);
+      console.log("Related topics count:", related?.length);
 
       setHistory((prev) =>
         [
@@ -550,6 +552,19 @@ function App() {
   // =====================================================
   // QUIZ
   // =====================================================
+  const getRecommendedDifficulty = (topicName) => {
+    const stats = progress.byTopic?.[topicName];
+    const answered = Number(stats?.answered) || 0;
+    const correct = Number(stats?.correct) || 0;
+
+    if (answered === 0) return "easy";
+
+    const accuracy = (correct / answered) * 100;
+
+    if (accuracy < 50) return "easy";
+    if (accuracy < 80) return "medium";
+    return "hard";
+  };
 
   const handleQuiz = () => {
     if (!topic.trim() || quizLoading) {
@@ -1262,6 +1277,26 @@ function App() {
           todayTopics={todayTopicCount}
           streak={currentStreak}
           latestTopics={history.slice(0, 10)}
+          relatedTopics={relatedTopics}
+          onExploreTopic={(picked) => {
+            setTopic(picked);
+            setView("home");
+            setSidebarOpen(false);
+            handleExplain(picked);
+          }}
+          recommendedDifficulty={
+            progress.byTopic?.[topic]?.answered > 0
+              ? progress.byTopic[topic].correct /
+                  progress.byTopic[topic].answered <
+                0.5
+                ? "Beginner"
+                : progress.byTopic[topic].correct /
+                      progress.byTopic[topic].answered <
+                    0.8
+                  ? "Intermediate"
+                  : "Advanced"
+              : "Beginner"
+          }
           onGoalChange={setDailyGoal}
           onBack={() => setView("home")}
         />
@@ -1364,6 +1399,12 @@ function App() {
                 onRegenerate={() => handleExplain(topic)}
                 regenerating={loading}
                 relatedTopics={relatedTopics}
+                onExploreTopic={(picked) => {
+                  setTopic(picked);
+                  setView("home");
+                  setSidebarOpen(false);
+                  handleExplain(picked);
+                }}
                 onRelatedClick={(picked) => {
                   setTopic(picked);
 
@@ -1553,6 +1594,7 @@ function App() {
             <QuizDifficulty
               onSelect={handleDifficultySelect}
               onClose={() => setShowDifficulty(false)}
+              recommendedDifficulty={getRecommendedDifficulty(topic)}
             />
           )}
 

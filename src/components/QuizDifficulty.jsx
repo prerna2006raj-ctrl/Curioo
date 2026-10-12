@@ -1,4 +1,4 @@
-function QuizDifficulty({ onSelect, onClose }) {
+function QuizDifficulty({ onSelect, onClose, recommendedDifficulty = "easy" }) {
   const difficulties = [
     {
       value: "easy",
@@ -47,13 +47,20 @@ function QuizDifficulty({ onSelect, onClose }) {
             <button
               key={difficulty.value}
               onClick={() => onSelect(difficulty.value)}
-              className="flex items-center gap-4 rounded-lg border border-line/25 dark:border-line-dark/25 bg-paper/40 dark:bg-blueprint/40 px-4 py-3 text-left hover:border-amber hover:bg-amber/5 transition-all"
+              className={`flex items-center gap-4 rounded-lg border px-4 py-3 text-left transition-all ${
+                difficulty.value === recommendedDifficulty
+                  ? "border-amber bg-amber/10"
+                  : "border-line/25 dark:border-line-dark/25 bg-paper/40 dark:bg-blueprint/40 hover:border-amber hover:bg-amber/5"
+              }`}
             >
               <span className="text-2xl">{difficulty.icon}</span>
 
               <span className="flex-1">
-                <span className="block font-display text-sm text-ink dark:text-paper-dark">
+                <span className="flex items-center gap-2 font-display text-sm text-ink dark:text-paper-dark">
                   {difficulty.title}
+                  {difficulty.value === recommendedDifficulty && (
+                    <span className="text-xs text-amber">Recommended</span>
+                  )}
                 </span>
 
                 <span className="block font-body text-xs text-ink/55 dark:text-paper-dark/55 mt-1">

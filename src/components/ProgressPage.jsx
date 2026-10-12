@@ -19,6 +19,9 @@ function ProgressPage({
   streak,
   log,
   latestTopics = [],
+  relatedTopics = [],
+  onExploreTopic,
+  recommendedDifficulty = "Beginner",
   onGoalChange,
   onBack,
 }) {
@@ -87,6 +90,47 @@ function ProgressPage({
 
   const weakestTopic =
     sortedTopics.length > 0 ? sortedTopics[sortedTopics.length - 1] : null;
+
+  // =====================================================
+  // ADAPTIVE LEARNING RECOMMENDATIONS
+  // =====================================================
+
+  const practicedTopics = topicStats
+    .filter((item) => item.answered > 0)
+    .sort((a, b) => a.accuracy - b.accuracy);
+
+  const recommendedTopic = practicedTopics[0] || null;
+  const suggestedDifficulty = !recommendedTopic
+    ? "Beginner"
+    : recommendedTopic.accuracy < 50
+      ? "Beginner"
+      : recommendedTopic.accuracy < 80
+        ? "Intermediate"
+        : "Advanced";
+
+  const studiedTopics = new Set(
+    [
+      ...latestTopics.map((item) =>
+        typeof item === "string"
+          ? item
+          : item?.topic || item?.query || item?.title || "",
+      ),
+      ...log.map((item) => item?.topic || ""),
+    ]
+      .filter(Boolean)
+      .map((item) => item.trim().toLowerCase()),
+  );
+
+  const newRelatedTopics = [
+    ...new Map(
+      relatedTopics
+        .map((item) =>
+          typeof item === "string" ? item : item?.topic || item?.title || "",
+        )
+        .filter((item) => item && !studiedTopics.has(item.trim().toLowerCase()))
+        .map((item) => [item.trim().toLowerCase(), item.trim()]),
+    ).values(),
+  ].slice(0, 4);
 
   // =====================================================
   // DAILY GOAL
@@ -328,6 +372,79 @@ function ProgressPage({
             ) : (
               <p className="font-body text-sm mt-3 opacity-60">
                 Complete quizzes to find topics that need practice.
+              </p>
+            )}
+          </div>
+        </div>
+        {/* =====================================================
+    ADAPTIVE AI LEARNING ENGINE
+    ===================================================== */}
+
+        <div className="rounded-3xl border border-amber/30 bg-panel dark:bg-blueprint-panel p-6 mt-5">
+          <p className="text-xs uppercase tracking-wider font-display text-amber">
+            🧠 Adaptive Learning
+          </p>
+
+          <h3 className="font-display text-xl font-semibold mt-2">
+            Your next learning steps
+          </h3>
+
+          {recommendedTopic ? (
+            <div className="mt-4 rounded-2xl border border-line/20 dark:border-line-dark/20 p-4">
+              <p className="text-xs opacity-60">Recommended practice</p>
+
+              <p className="font-display font-semibold mt-1">
+                {recommendedTopic.topic}
+              </p>
+              <p className="text-xs mt-2 text-amber">
+                Suggested quiz difficulty: {suggestedDifficulty}
+              </p>
+
+              <p className="text-sm opacity-70 mt-1">
+                Your accuracy is {recommendedTopic.accuracy}% across{" "}
+                {recommendedTopic.answered} answered question
+                {recommendedTopic.answered !== 1 ? "s" : ""}. Practising this
+                topic may help strengthen your understanding.
+              </p>
+
+              <button
+                onClick={() => onExploreTopic?.(recommendedTopic.topic)}
+                className="mt-3 rounded-xl bg-amber px-4 py-2 text-sm font-display text-ink hover:opacity-80 transition"
+              >
+                Review this topic →
+              </button>
+            </div>
+          ) : (
+            <p className="text-sm opacity-60 mt-3">
+              Complete a quiz to receive recommendations based on your
+              performance.
+            </p>
+          )}
+
+          <div className="mt-5">
+            <p className="text-sm font-display font-semibold">
+              Explore something new
+            </p>
+
+            <p className="text-xs opacity-60 mt-1">
+              Related topics you haven't explored yet.
+            </p>
+
+            {newRelatedTopics.length > 0 ? (
+              <div className="flex flex-wrap gap-2 mt-3">
+                {newRelatedTopics.map((item) => (
+                  <button
+                    key={item}
+                    onClick={() => onExploreTopic?.(item)}
+                    className="rounded-full border border-amber/40 px-3 py-2 text-sm hover:bg-amber/10 transition"
+                  >
+                    {item} →
+                  </button>
+                ))}
+              </div>
+            ) : (
+              <p className="text-sm opacity-60 mt-3">
+                Explore a topic first to discover new related topics here.
               </p>
             )}
           </div>
