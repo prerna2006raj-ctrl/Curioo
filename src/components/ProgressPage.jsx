@@ -22,6 +22,7 @@ function ProgressPage({
   relatedTopics = [],
   weakTopics = [],
   onExploreTopic,
+  learningGapRecommendations = [],
   recommendedDifficulty = "Beginner",
   onGoalChange,
   onBack,
@@ -498,6 +499,75 @@ function ProgressPage({
                   >
                     Practice Topic
                   </button>
+                </div>
+              ))}
+            </div>
+          )}
+        </section>
+        {/* Personalized Learning Path */}
+        <section className="mt-6 rounded-2xl border border-gray-200 bg-white p-5 dark:border-gray-700 dark:bg-gray-900">
+          <h2 className="text-lg font-semibold text-gray-900 dark:text-white">
+            Your Personalized Study Path
+          </h2>
+
+          <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
+            Review related concepts before practising topics you find difficult.
+          </p>
+
+          {learningGapRecommendations.length === 0 ? (
+            <p className="mt-4 text-sm text-gray-500 dark:text-gray-400">
+              Your study path will appear here when we identify topics that need
+              more practice.
+            </p>
+          ) : (
+            <div className="mt-4 space-y-4">
+              {learningGapRecommendations.map((item) => (
+                <div
+                  key={item.topic}
+                  className="rounded-xl border border-gray-200 p-4 dark:border-gray-700"
+                >
+                  <div className="flex flex-wrap items-center justify-between gap-2">
+                    <h3 className="font-semibold text-gray-900 dark:text-white">
+                      {item.topic}
+                    </h3>
+
+                    <span className="text-sm text-red-500">
+                      {item.accuracy}% accuracy
+                    </span>
+                  </div>
+
+                  <p className="mt-3 text-sm font-medium text-gray-700 dark:text-gray-300">
+                    Recommended study sequence
+                  </p>
+
+                  <ol className="mt-2 space-y-3">
+                    {item.studyPath.map((studyTopic, index) => (
+                      <li
+                        key={`${item.topic}-${studyTopic}-${index}`}
+                        className="flex items-center gap-3"
+                      >
+                        <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-indigo-100 text-sm font-medium text-indigo-700 dark:bg-indigo-950 dark:text-indigo-300">
+                          {index + 1}
+                        </span>
+
+                        <span className="flex-1 text-sm text-gray-700 dark:text-gray-300">
+                          {studyTopic}
+                        </span>
+
+                        <button
+                          type="button"
+                          onClick={() => onExploreTopic?.(studyTopic)}
+                          className="rounded-lg bg-indigo-600 px-3 py-2 text-sm text-white transition hover:bg-indigo-700"
+                        >
+                          Study
+                        </button>
+                      </li>
+                    ))}
+                  </ol>
+
+                  <p className="mt-3 text-xs text-gray-500 dark:text-gray-400">
+                    Recommended difficulty for the weak topic: {item.difficulty}
+                  </p>
                 </div>
               ))}
             </div>

@@ -619,6 +619,54 @@ function App() {
       .sort((a, b) => a.accuracy - b.accuracy);
   };
 
+  const getLearningGapRecommendations = () => {
+    const weakTopics = getWeakTopics();
+
+    const prerequisiteMap = {
+      "java inheritance": ["Java Classes and Objects", "Java Constructors"],
+      inheritance: ["Classes and Objects", "Constructors"],
+      polymorphism: ["Classes and Objects", "Inheritance"],
+      encapsulation: ["Classes and Objects", "Access Modifiers"],
+      abstraction: ["Classes and Objects", "Encapsulation"],
+      "react hooks": ["React Components", "React State and Props"],
+      useeffect: ["React Components", "React State and Props"],
+      "python loops": ["Python Variables", "Python Conditional Statements"],
+      loops: ["Variables", "Conditional Statements"],
+      functions: ["Variables", "Parameters and Return Values"],
+      arrays: ["Variables", "Loops"],
+    };
+
+    return weakTopics.map((weakTopic) => {
+      const normalizedTopic = weakTopic.topic.trim().toLowerCase();
+
+      const mappedPrerequisites = Object.entries(prerequisiteMap).find(
+        ([key]) => normalizedTopic === key || normalizedTopic.includes(key),
+      )?.[1];
+
+      const fallbackRelated = relatedTopics
+        .map((item) =>
+          typeof item === "string" ? item : item?.topic || item?.title || "",
+        )
+        .filter(Boolean);
+
+      const prerequisites = [
+        ...new Map(
+          (mappedPrerequisites || fallbackRelated)
+            .filter((item) => item.trim().toLowerCase() !== normalizedTopic)
+            .map((item) => [item.trim().toLowerCase(), item.trim()]),
+        ).values(),
+      ].slice(0, 3);
+
+      return {
+        topic: weakTopic.topic,
+        accuracy: weakTopic.accuracy,
+        difficulty: weakTopic.difficulty,
+        prerequisites,
+        studyPath: [...prerequisites, weakTopic.topic],
+      };
+    });
+  };
+
   const handleQuiz = () => {
     if (!topic.trim() || quizLoading) {
       return;
@@ -1334,6 +1382,7 @@ function App() {
           latestTopics={history.slice(0, 10)}
           relatedTopics={relatedTopics}
           weakTopics={getWeakTopics()}
+          learningGapRecommendations={getLearningGapRecommendations()}
           onExploreTopic={(picked) => {
             setTopic(picked);
             setPracticeTopic(picked);
