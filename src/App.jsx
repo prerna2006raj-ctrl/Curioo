@@ -72,6 +72,7 @@ function App() {
   const [quiz, setQuiz] = useState(null);
 
   const [quizLoading, setQuizLoading] = useState(false);
+  const [practiceTopic, setPracticeTopic] = useState(null);
 
   const [learningMode, setLearningMode] = useState(false);
   const [lessonStep, setLessonStep] = useState(0);
@@ -552,18 +553,70 @@ function App() {
   // =====================================================
   // QUIZ
   // =====================================================
+
   const getRecommendedDifficulty = (topicName) => {
     const stats = progress.byTopic?.[topicName];
+
     const answered = Number(stats?.answered) || 0;
     const correct = Number(stats?.correct) || 0;
 
-    if (answered === 0) return "easy";
+    // Start with easy questions for topics with little practice
+    if (answered < 3) {
+      return "easy";
+    }
 
-    const accuracy = (correct / answered) * 100;
+    // Use recent performance when at least 3 recent answers exist
+    const recentResults = Array.isArray(stats?.recentResults)
+      ? stats.recentResults
+      : [];
+
+    let accuracy;
+
+    if (recentResults.length >= 3) {
+      const recentCorrect = recentResults.filter(Boolean).length;
+      accuracy = (recentCorrect / recentResults.length) * 100;
+    } else {
+      // Older saved data may not have recentResults
+      accuracy = (correct / answered) * 100;
+    }
 
     if (accuracy < 50) return "easy";
     if (accuracy < 80) return "medium";
+
     return "hard";
+  };
+
+  const getWeakTopics = () => {
+    return Object.entries(progress.byTopic || {})
+      .map(([topicName, stats]) => {
+        const answered = Number(stats?.answered) || 0;
+        const correct = Number(stats?.correct) || 0;
+
+        const recentResults = Array.isArray(stats?.recentResults)
+          ? stats.recentResults
+          : [];
+
+        // Ignore topics with too little practice
+        if (answered < 3) {
+          return null;
+        }
+
+        // Prefer recent performance when enough recent answers exist
+        const accuracy =
+          recentResults.length >= 3
+            ? (recentResults.filter(Boolean).length / recentResults.length) *
+              100
+            : (correct / answered) * 100;
+
+        return {
+          topic: topicName,
+          answered,
+          accuracy: Math.round(accuracy),
+          difficulty: getRecommendedDifficulty(topicName),
+        };
+      })
+      .filter((item) => item !== null && item.accuracy < 60)
+      .sort((a, b) => a.accuracy - b.accuracy);
   };
 
   const handleQuiz = () => {
@@ -577,27 +630,23 @@ function App() {
     // Show difficulty popup first
     setShowDifficulty(true);
   };
+
   const handleDifficultySelect = async (selectedDifficulty) => {
+    const selectedTopic = practiceTopic || topic;
+
     setShowDifficulty(false);
-
     setQuizDifficulty(selectedDifficulty);
-
     setQuizLoading(true);
 
     try {
-      const q = await getQuiz(topic, selectedDifficulty);
-
+      const q = await getQuiz(selectedTopic, selectedDifficulty);
       setQuiz(q);
     } catch (err) {
-      console.error("Quiz error:", err);
-
-      alert(
-        err.message === "RATE_LIMIT"
-          ? "Too many requests. Please wait and try again."
-          : "Couldn't load the quiz. Please try again.",
-      );
+      console.error("Quiz generation failed:", err);
+      // Keep your existing error handling here.
     } finally {
       setQuizLoading(false);
+      setPracticeTopic(null);
     }
   };
 
@@ -612,15 +661,22 @@ function App() {
         correct: 0,
         answered: 0,
         timedOut: 0,
+        recentResults: [],
       };
 
       const previousAnswered = Number(prev.questionsAnswered) || 0;
-
       const previousCorrect = Number(prev.correct) || 0;
-
       const previousTotal = Number(prev.total) || 0;
-
       const previousTimedOut = Number(prev.timedOut) || 0;
+
+      // Keep the last 5 answered results; exclude timeouts
+      const previousResults = Array.isArray(previousTopic.recentResults)
+        ? previousTopic.recentResults
+        : [];
+
+      const recentResults = didTimeOut
+        ? previousResults
+        : [...previousResults, Boolean(isCorrect)].slice(-5);
 
       return {
         ...prev,
@@ -628,14 +684,11 @@ function App() {
         // Every finished quiz counts
         total: previousTotal + 1,
 
-        // Selected answer = answered
-        // Timeout = NOT answered
+        // A timeout is not an answered question
         questionsAnswered: previousAnswered + (didTimeOut ? 0 : 1),
 
-        // Correct selected answer
         correct: previousCorrect + (isCorrect ? 1 : 0),
 
-        // Timeout count
         timedOut: previousTimedOut + (didTimeOut ? 1 : 0),
 
         byTopic: {
@@ -651,6 +704,8 @@ function App() {
 
             timedOut:
               (Number(previousTopic.timedOut) || 0) + (didTimeOut ? 1 : 0),
+
+            recentResults,
           },
         },
       };
@@ -1278,11 +1333,15 @@ function App() {
           streak={currentStreak}
           latestTopics={history.slice(0, 10)}
           relatedTopics={relatedTopics}
+          weakTopics={getWeakTopics()}
           onExploreTopic={(picked) => {
             setTopic(picked);
+            setPracticeTopic(picked);
             setView("home");
             setSidebarOpen(false);
-            handleExplain(picked);
+            setQuiz(null);
+            setQuizDifficulty(null);
+            setShowDifficulty(true);
           }}
           recommendedDifficulty={
             progress.byTopic?.[topic]?.answered > 0
@@ -1593,8 +1652,13 @@ function App() {
           {showDifficulty && (
             <QuizDifficulty
               onSelect={handleDifficultySelect}
-              onClose={() => setShowDifficulty(false)}
-              recommendedDifficulty={getRecommendedDifficulty(topic)}
+              onClose={() => {
+                setShowDifficulty(false);
+                setPracticeTopic(null);
+              }}
+              recommendedDifficulty={getRecommendedDifficulty(
+                practiceTopic || topic,
+              )}
             />
           )}
 

@@ -20,6 +20,7 @@ function ProgressPage({
   log,
   latestTopics = [],
   relatedTopics = [],
+  weakTopics = [],
   onExploreTopic,
   recommendedDifficulty = "Beginner",
   onGoalChange,
@@ -449,6 +450,59 @@ function ProgressPage({
             )}
           </div>
         </div>
+
+        {/* Weak Topics and Personalized Practice */}
+        <section className="mt-6 rounded-2xl border border-gray-200 bg-white p-5 dark:border-gray-700 dark:bg-gray-900">
+          <h2 className="text-lg font-semibold text-gray-900 dark:text-white">
+            Weak Topics
+          </h2>
+
+          <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
+            Topics that may need more practice based on your recent performance.
+          </p>
+
+          {weakTopics.length === 0 ? (
+            <p className="mt-4 text-sm text-gray-500 dark:text-gray-400">
+              No weak topics detected yet. Answer at least 3 questions on a
+              topic to receive personalized practice recommendations.
+            </p>
+          ) : (
+            <div className="mt-4 space-y-3">
+              {weakTopics.map((item) => (
+                <div
+                  key={item.topic}
+                  className="rounded-xl border border-gray-200 p-4 dark:border-gray-700"
+                >
+                  <div className="flex flex-wrap items-center justify-between gap-2">
+                    <h3 className="font-medium text-gray-900 dark:text-white">
+                      {item.topic}
+                    </h3>
+
+                    <span className="text-sm font-medium text-red-500">
+                      {item.accuracy}% accuracy
+                    </span>
+                  </div>
+
+                  <p className="mt-2 text-sm text-gray-600 dark:text-gray-300">
+                    Recommended difficulty: {item.difficulty}
+                  </p>
+
+                  <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
+                    Practice this topic again to improve your accuracy.
+                  </p>
+
+                  <button
+                    type="button"
+                    onClick={() => onExploreTopic?.(item.topic)}
+                    className="mt-3 rounded-lg bg-indigo-600 px-4 py-2 text-sm font-medium text-white transition hover:bg-indigo-700"
+                  >
+                    Practice Topic
+                  </button>
+                </div>
+              ))}
+            </div>
+          )}
+        </section>
 
         {/* =================================================
           OVERALL ACCURACY
