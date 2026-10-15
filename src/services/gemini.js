@@ -4,34 +4,66 @@ const URL =
   "https://generativelanguage.googleapis.com/v1beta/models/gemini-3.6-flash:generateContent";
 
 async function callGemini(prompt) {
-  const response = await fetch(URL, {
-    method: "POST",
+  const maxAttempts = 3;
 
-    headers: {
-      "Content-Type": "application/json",
-      "x-goog-api-key": API_KEY,
-    },
-
-    body: JSON.stringify({
-      contents: [
-        {
-          parts: [
+  for (let attempt = 0; attempt < maxAttempts; attempt++) {
+    try {
+      const response = await fetch(URL, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "x-goog-api-key": API_KEY,
+        },
+        body: JSON.stringify({
+          contents: [
             {
-              text: prompt,
+              parts: [{ text: prompt }],
             },
           ],
-        },
-      ],
-    }),
-  });
+        }),
+      });
 
-  if (!response.ok) {
-    throw new Error("Something went wrong reaching the AI");
+      if (response.ok) {
+        const data = await response.json();
+        return data.candidates?.[0]?.content?.parts?.[0]?.text || "";
+      }
+
+      const retryableStatuses = [408, 429, 500, 502, 503, 504];
+
+      if (
+        !retryableStatuses.includes(response.status) ||
+        attempt === maxAttempts - 1
+      ) {
+        const details = await response.text();
+        console.error("Gemini API error:", response.status, details);
+        throw new Error(
+          `Gemini API request failed (${response.status}). Please try again.`,
+        );
+      }
+
+      console.warn(
+        `Gemini returned ${response.status}. Retrying attempt ${attempt + 2}/${maxAttempts}...`,
+      );
+    } catch (error) {
+      if (error.message.startsWith("Gemini API request failed")) {
+        throw error;
+      }
+
+      if (attempt === maxAttempts - 1) {
+        console.error("Gemini connection error:", error);
+        throw new Error("Unable to connect to the AI. Please try again.");
+      }
+
+      console.warn(
+        `Gemini request failed. Retrying attempt ${attempt + 2}/${maxAttempts}...`,
+      );
+    }
+
+    // Wait 1 second, then 2 seconds before retrying.
+    await new Promise((resolve) => setTimeout(resolve, 1000 * (attempt + 1)));
   }
 
-  const data = await response.json();
-
-  return data.candidates?.[0]?.content?.parts?.[0]?.text || "";
+  throw new Error("AI request failed. Please try again.");
 }
 
 /* =========================================================
