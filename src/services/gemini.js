@@ -1,69 +1,66 @@
 const API_KEY = import.meta.env.VITE_GEMINI_API_KEY;
 
-const URL =
-  "https://generativelanguage.googleapis.com/v1beta/models/gemini-3.6-flash:generateContent";
+const BASE = "https://generativelanguage.googleapis.com/v1beta/models";
+
+// Tries the first model, then falls back to the next if it stays busy
+const MODELS = [
+  "gemini-3.6-flash",
+  "gemini-2.5-flash",
+  "gemini-2.5-flash-lite",
+];
+
+const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
 async function callGemini(prompt) {
-  const maxAttempts = 3;
+  const retryableStatuses = [408, 429, 500, 502, 503, 504];
 
-  for (let attempt = 0; attempt < maxAttempts; attempt++) {
-    try {
-      const response = await fetch(URL, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "x-goog-api-key": API_KEY,
-        },
-        body: JSON.stringify({
-          contents: [
-            {
-              parts: [{ text: prompt }],
-            },
-          ],
-        }),
-      });
+  for (const model of MODELS) {
+    for (let attempt = 0; attempt < 2; attempt++) {
+      let response;
+
+      try {
+        response = await fetch(`${BASE}/${model}:generateContent`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "x-goog-api-key": API_KEY,
+          },
+          body: JSON.stringify({
+            contents: [{ parts: [{ text: prompt }] }],
+          }),
+        });
+      } catch (error) {
+        // Network problem: wait and try again
+        console.warn(`${model}: connection failed, retrying...`);
+        await sleep(1000 * (attempt + 1));
+        continue;
+      }
 
       if (response.ok) {
         const data = await response.json();
         return data.candidates?.[0]?.content?.parts?.[0]?.text || "";
       }
 
-      const retryableStatuses = [408, 429, 500, 502, 503, 504];
+      console.warn(`${model} returned ${response.status}`);
 
-      if (
-        !retryableStatuses.includes(response.status) ||
-        attempt === maxAttempts - 1
-      ) {
+      // Model name not found: skip straight to the next model
+      if (response.status === 404) break;
+
+      // A real mistake (bad key, bad request): retrying won't help
+      if (!retryableStatuses.includes(response.status)) {
         const details = await response.text();
         console.error("Gemini API error:", response.status, details);
-        throw new Error(
-          `Gemini API request failed (${response.status}). Please try again.`,
-        );
+        throw new Error(`Gemini API request failed (${response.status}).`);
       }
 
-      console.warn(
-        `Gemini returned ${response.status}. Retrying attempt ${attempt + 2}/${maxAttempts}...`,
-      );
-    } catch (error) {
-      if (error.message.startsWith("Gemini API request failed")) {
-        throw error;
-      }
-
-      if (attempt === maxAttempts - 1) {
-        console.error("Gemini connection error:", error);
-        throw new Error("Unable to connect to the AI. Please try again.");
-      }
-
-      console.warn(
-        `Gemini request failed. Retrying attempt ${attempt + 2}/${maxAttempts}...`,
-      );
+      await sleep(1000 * (attempt + 1)); // 1s, then 2s
     }
-
-    // Wait 1 second, then 2 seconds before retrying.
-    await new Promise((resolve) => setTimeout(resolve, 1000 * (attempt + 1)));
+    // this model stayed busy, so the loop moves to the next one
   }
 
-  throw new Error("AI request failed. Please try again.");
+  throw new Error(
+    "The AI is very busy right now. Please try again in a moment.",
+  );
 }
 
 /* =========================================================
